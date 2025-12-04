@@ -10,6 +10,7 @@ const upload = multer({ dest: "uploads/" }); // For parsing multipart/form-data
 router.get("/", authenticate, songController.getVideo);
 
 router.get("/song", authenticate, songController.getById);
+router.delete("/song", authenticate, songController.deletebyId);
 
 // New route for recognition
 router.post(

@@ -80,14 +80,19 @@ const getAll = async (req, res) => {
 };
 
 const deletebyId = async (req, res) => {
-  const { id } = req.params;
+  console.log("DeletebyId called with params:", req.params);
+  const { videoId } = req.params;
   try {
-    const song = await SongSchema.findByIdAndDelete(id);
+    const song = await SongSchema.findOneAndDelete({ videoId: videoId });
+    console.log("Deleted song:", song);
     if (!song) {
       return res.status(404).json({ message: "Song not found" });
     }
     // Remove the song from all playlists
-    await PlaylistSchema.updateMany({ songs: id }, { $pull: { songs: id } });
+    await PlaylistSchema.updateMany(
+      { songs: videoId },
+      { $pull: { songs: videoId } }
+    );
     res.status(200).json({ message: "Song deleted successfully" });
   } catch (error) {
     console.error("Error deleting song:", error);

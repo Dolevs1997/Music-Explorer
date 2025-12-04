@@ -1,11 +1,14 @@
 import styles from "./Song.module.css";
 import { useState, useEffect, useReducer, useRef } from "react";
 import { useNavigate } from "react-router";
-import Button from "../Button/Button";
 import YouTube from "react-youtube";
 import propTypes from "prop-types";
 import { fetchSongYT } from "../../services/YouTube_service";
 import { addSongToPlaylist } from "../../utils/playlist";
+import ListGroup from "react-bootstrap/ListGroup";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 const opts = {
   height: "300",
   width: "400",
@@ -21,12 +24,12 @@ const initialSong = {
   regionCode: "",
   loading: true,
   error: null,
-  playlistId: null,
-  inPlaylist: false,
+  playlists: [],
 };
 // let render = 0;
 function reducer(state, action) {
-  // console.log("Reducer action:", action);
+  console.log("Reducer state:", state);
+  console.log("Reducer action:", action);
   switch (action.type) {
     case "LOADING_SONG":
       return {
@@ -45,8 +48,7 @@ function reducer(state, action) {
     case "SET_IN_PLAYLIST":
       return {
         ...state,
-        inPlaylist: action.payload.inPlaylist,
-        playlistId: action.payload.playlistId,
+        playlists: action.payload.playlists,
       };
     case "SET_ERROR":
       return {
@@ -68,11 +70,13 @@ function Song({
 }) {
   const navigate = useNavigate();
   const [playlistName, setPlaylistName] = useState("");
-  const [options, setOptions] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialSong);
   const playerRef = useRef(null);
   const [setIsSongPlaying] = useState(false);
   const songRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   if (!user.token) {
     navigate("/login");
   }
@@ -89,20 +93,21 @@ function Song({
     console.log("user in handleAddSongToPlaylist:", user);
     const data = await addSongToPlaylist(song, state, playlistName, user);
     console.log("data: ", data);
+    // console.log("playlistName: ", data.playlist.name);
     try {
       dispatch({
         type: "SET_IN_PLAYLIST",
         payload: {
           videoId: data.videoId,
           song: data.song,
-          inPlaylist: true,
-          playlistId: data.playlist._id,
+          playlists: [data.playlist.name],
         },
       });
       // Check if the playlist already exists
       const existingPlaylist = user.playlists.find(
         (playlist) => playlist.name === data.playlist.name
       );
+      console.log("existingPlaylist:", existingPlaylist);
       if (existingPlaylist) {
         // If it exists, update the playlist ID
         user.playlists = user.playlists.map((playlist) =>
@@ -118,7 +123,6 @@ function Song({
       }
 
       localStorage.setItem("user", JSON.stringify(user));
-      setOptions(false);
     } catch (error) {
       console.error("Error adding song to playlist:", error);
     }
@@ -142,7 +146,7 @@ function Song({
               videoId: songRef.current.videoId,
               regionCode: songRef.current.regionCode,
               song: songRef.current.song,
-              playlistId: playlistId,
+              playlists: songRef.current.playlists,
             },
           });
           return;
@@ -160,7 +164,7 @@ function Song({
               videoId: data.videoId,
               regionCode: data.regionCode,
               song: data.song,
-              playlistId: playlistId,
+              playlists: songRef.current.playlists,
             },
           });
         } catch (error) {
@@ -197,104 +201,109 @@ function Song({
   // console.log("playlist id:", playlistId);
   useEffect(
     function () {
-      async function checkSongInPlaylist() {
-        // console.log("state song:", state.videoId);
-        if (!state.videoId) return;
-        const response = await fetch(
-          `http://${
-            import.meta.env.VITE_SERVER_URL
-          }/moodiify/videoSong/song/?id=${state.videoId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-        const data = await response.json();
-
-        if (data) {
-          // console.log("data:", data);
-          // console.log("state", state);
-          if (state.videoId === data.videoId) {
-            dispatch({
-              type: "SET_IN_PLAYLIST",
-              payload: {
-                inPlaylist: true,
-                playlistId: data.playlistId,
-              },
-            });
-          }
-        } else {
-          dispatch({
-            type: "SET_IN_PLAYLIST",
-            payload: {
-              inPlaylist: false,
-            },
-          });
-        }
-        // console.log("checkSongInPlaylist response data:", data);
-      }
+      async function checkSongInPlaylist() {}
       checkSongInPlaylist();
     },
     [state.videoId, user.token]
   );
+  async function handleRemoveSongFromPlaylist(videoId) {
+    try {
+      const response = await fetch(
+        `http://${
+          import.meta.env.VITE_SERVER_URL
+        }/moodiify/songVideo/song/:${videoId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to remove song from playlist");
+      }
+    } catch (error) {
+      console.error("Error removing song from playlist:", error);
+    }
+  }
+
   return (
     <div className="homeContainer">
-      <span
-        className={styles.addBtn}
-        onClick={() =>
-          setOptions(
-            (prev) => !prev,
-            console.log("user playlist", user.playlists)
-          )
-        }
-      >
-        {state.inPlaylist ? "Remove from Playlist" : "Add to Playlist"}
-        {options && (
-          <div className={styles.playlistOptions}>
-            <select
-              className={styles.playlistSelect}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              value={playlistName}
-              onChange={(e) => setPlaylistName(e.target.value)}
+      <div>
+        <button
+          className={styles.optionsBtn}
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen);
+          }}
+          aria-label="Options"
+        >
+          &#x22EE;
+        </button>
+      </div>
+      {menuOpen && (
+        <ListGroup defaultActiveKey>
+          <ListGroup.Item
+            action
+            onClick={() => setMenuPlaylistsOpen((prev) => !prev)}
+          >
+            + Add to Playlist
+          </ListGroup.Item>
+        </ListGroup>
+      )}
+      {menuPlaylistsOpen && (
+        <ListGroup>
+          {user.playlists.map((playlist) => (
+            <ListGroup.Item
+              action
+              key={playlist.name}
+              onClick={() => handleAddSongToPlaylist(playlist.name)}
             >
-              <option value="">Select Playlist</option>
-              {user.playlists.length > 0 ? (
-                user.playlists.map((playlist, index) => (
-                  <option key={index} value={playlist.name}>
-                    {playlist.name}
-                  </option>
-                ))
-              ) : (
-                <option value="">No Playlists</option>
-              )}
-            </select>
-            <input
-              className={styles.playlistInput}
-              type="text"
-              placeholder="Playlist Name"
-              value={playlistName}
-              onChange={(e) => setPlaylistName(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <Button
-              onClick={() => handleAddSongToPlaylist(playlistName)}
-              type="addBtn"
-            >
-              Add Song to Playlist
-            </Button>
-            {state.inPlaylist && <Button>Remove from Playlist</Button>}
-          </div>
-        )}
-      </span>
+              {playlist.name}
+            </ListGroup.Item>
+          ))}
+          <ListGroup.Item action onClick={() => setShowModal(true)}>
+            Create New Playlist
+          </ListGroup.Item>
+          {showModal && (
+            <div className={styles.modalOverlay}>
+              <Modal.Dialog style={{ marginTop: "20px" }}>
+                <Modal.Body>Enter Playlist Name:</Modal.Body>
+                <Form.Control
+                  type="text"
+                  placeholder="Playlist Name"
+                  value={playlistName}
+                  onChange={(e) => setPlaylistName(e.target.value)}
+                />
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleAddSongToPlaylist(playlistName);
+                      setShowModal(false);
+                    }}
+                    variant="primary"
+                  >
+                    Save changes
+                  </Button>
+                </Modal.Footer>
+              </Modal.Dialog>
+            </div>
+          )}
+        </ListGroup>
+      )}
+
+      <div className={styles.optionsMenu}></div>
       <span className={styles.songDetails}>
         {/* {artist} - {songName} */}
         {song}
       </span>
-
       {state.videoId ? (
         // lazy-mount player only for the active/playing song to avoid multiple iframe loads
         playingVideoId === state.videoId ? (

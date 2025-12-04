@@ -14,6 +14,22 @@ const getAll = async (req, res) => {
     }
   );
   const data = await result.json();
+  // console.log("Categories data:", data.categories.items);
+
+  // const resPlaylists = await fetch(
+  //   `https://api.spotify.com/v1/search?q=${data.categories.items[0].name}&type=playlist&limit=5`,
+  //   {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: "Bearer " + token,
+  //     },
+  //   }
+  // );
+  // const dataPlaylists = await resPlaylists.json();
+  // console.log(
+  //   "Playlists data for first category:",
+  //   dataPlaylists.playlists.items
+  // );
   res.status(200).json(data);
 };
 

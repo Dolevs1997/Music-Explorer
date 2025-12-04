@@ -51,7 +51,9 @@ async function fetchPlaylists(
   );
   const controller = new AbortController();
   const signal = controller.signal;
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=23&q=${playlistName} playlists ${location} music playlists&regionCode=${country}&type=playlist&key=${API_KEY}`;
+  const queryStr = `${playlistName} music playlists ${location}`;
+
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=23&q=${queryStr}&regionCode=${country}&type=playlist&key=${API_KEY}`;
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();

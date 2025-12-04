@@ -57,7 +57,7 @@ const getUser = async (email) => {
 };
 const updateUser = async (email, newPlaylist, newSong) => {
   const user = await getUser(email);
-  // console.log("newSong in updateUser:", newSong);
+  console.log("newSong in updateUser:", newSong);
   if (!user) {
     return { error: "User not found" };
   }
