@@ -46,11 +46,12 @@ function NavBar({ user }) {
               user.playlists.map((playlist, index) => (
                 <NavDropdown.Item
                   key={index}
-                  onClick={() =>
-                    navigate(`/myplaylists/${playlist._id}`, {
+                  onClick={() => {
+                    console.log("playlist clicked:", playlist);
+                    navigate(`/myplaylists/${playlist.id}`, {
                       state: { playlist, user },
-                    })
-                  }
+                    });
+                  }}
                 >
                   {playlist.name}
                 </NavDropdown.Item>
@@ -85,7 +86,7 @@ function NavBar({ user }) {
         }}
       >
         <Modal.Dialog>
-          <Modal.Header closeButton>
+          <Modal.Header closeButton onHide={() => setShowModal(false)}>
             <Modal.Title>Enter Playlist Name</Modal.Title>
           </Modal.Header>
 

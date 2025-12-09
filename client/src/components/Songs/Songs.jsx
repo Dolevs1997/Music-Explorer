@@ -2,12 +2,13 @@ import Song from "../Song/Song";
 import styles from "./Songs.module.css";
 import { useState } from "react";
 import propTypes from "prop-types";
+
 function Songs({ songSuggestions, user }) {
   const [playingVideoId, setPlayingVideoId] = useState(null);
   const [playbackPositions, setPlaybackPositions] = useState({});
   return (
     <div>
-      {songSuggestions.length > 1 ? (
+      {songSuggestions.length >= 1 ? (
         <div className={styles.boxSongs}>
           <h2>Song Suggestions</h2>
           <ul>

@@ -7,6 +7,9 @@ const { fetchPlaylistSongs } = require("../services/YouTube_service");
 const SongSchema = require("../schemas/Song_schema"); // Import the Song schema
 const PlaylistSchema = require("../schemas/Playlist_schema"); // Import the Playlist schema
 const fs = require("fs");
+const { deleteSongUser } = require("../models/Firestore/songsUser");
+const { getUser } = require("../models/Firestore/user");
+const { getPlaylistUser } = require("../models/Firestore/playlistsUser");
 
 const getById = async (req, res) => {
   // console.log("GetById called with query:", req.query);
@@ -79,24 +82,57 @@ const getAll = async (req, res) => {
   res.status(200).json(result);
 };
 
-const deletebyId = async (req, res) => {
-  console.log("DeletebyId called with params:", req.params);
+const deletebyVideoId = async (req, res) => {
+  console.log("DeletebyVideoId called with params:", req.params);
   const { videoId } = req.params;
+  const user = req.body.user;
+  const playlistId = req.body.playlistId;
+  if (!videoId || !user || !playlistId) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+  const userRef = await getUser(user.email);
+  if (!userRef || userRef.error) {
+    console.error("Error retrieving user from Firestore:", userRef.error);
+    return res.status(500).json({ message: "Error retrieving user data" });
+  }
+  const playlist = await PlaylistSchema.findById(playlistId);
+  const playlistRef = await getPlaylistUser(playlist.name, userRef);
+  if (!playlist || !playlistRef) {
+    return res.status(404).json({ message: "Playlist not found" });
+  }
   try {
-    const song = await SongSchema.findOneAndDelete({ videoId: videoId });
-    console.log("Deleted song:", song);
+    const song = await SongSchema.findOne({ videoId: videoId });
     if (!song) {
       return res.status(404).json({ message: "Song not found" });
+    } else if (song.playlists.length > 1) {
+      // If the song is in multiple playlists, just remove it from this playlist
+      song.playlists = song.playlists.filter(
+        (pid) => pid.toString() !== playlistId.toString()
+      );
+      await song.save();
     }
-    // Remove the song from all playlists
-    await PlaylistSchema.updateMany(
-      { songs: videoId },
-      { $pull: { songs: videoId } }
+    console.log("handling Firestore deletion for song:", song);
+    const deletedSong = await deleteSongUser(song, playlistRef, userRef);
+    if (!deletedSong) {
+      return res.status(404).json({ message: "Song not found in user songs" });
+    }
+    song.playlists = song.playlists.filter(
+      (pid) => pid.toString() !== playlistId.toString()
     );
+    await song.save();
+    playlist.songs = playlist.songs.filter(
+      (sid) => sid.toString() !== song._id.toString()
+    );
+    await playlist.save();
+
+    //deleting song from user if not in any playlist
+    if (song.playlists.length === 0) {
+      await SongSchema.findByIdAndDelete(song._id);
+    }
     res.status(200).json({ message: "Song deleted successfully" });
   } catch (error) {
     console.error("Error deleting song:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-module.exports = { getVideo, recognizeAudio, getAll, deletebyId, getById };
+module.exports = { getVideo, recognizeAudio, getAll, deletebyVideoId, getById };

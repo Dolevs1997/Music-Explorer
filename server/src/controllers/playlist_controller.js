@@ -220,33 +220,9 @@ const getPlaylistSongs = async (req, res) => {
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
     }
-    const songs = playlist.songs;
-    res.status(200).json({ songs: songs });
+    res.status(200).send(playlist);
   } catch (error) {
     console.error("Error getting playlist songs:", error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-const deleteSong = async (req, res) => {
-  console.log("Deleting song from playlist");
-  const { playlistId, songId } = req.body;
-  try {
-    const playlist = await PlaylistSchema.findById(playlistId);
-    if (!playlist) {
-      return res.status(404).json({ message: "Playlist not found" });
-    }
-    const songIndex = playlist.songs.indexOf(songId);
-    if (songIndex === -1) {
-      return res.status(404).json({ message: "Song not found in playlist" });
-    }
-    playlist.songs.splice(songIndex, 1);
-    await playlist.save();
-
-    res
-      .status(200)
-      .json({ message: "Song deleted from playlist successfully" });
-  } catch (error) {
-    console.error("Error deleting song from playlist:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -254,5 +230,4 @@ const deleteSong = async (req, res) => {
 module.exports = {
   createPlaylist,
   getPlaylistSongs,
-  deleteSong,
 };

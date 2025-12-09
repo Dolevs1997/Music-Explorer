@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
-import Song from "../../components/Song/Song";
+import Songs from "../../components/Songs/Songs";
 import styles from "./SongsPlaylistUser.module.css";
+import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
 import PropTypes from "prop-types";
 
@@ -27,7 +28,7 @@ function SongsPlaylistUser() {
   if (!user) {
     console.error("User not found in local storage or state.");
   }
-  console.log("playlist", playlist);
+  // console.log("playlist", playlist);
 
   useEffect(() => {
     async function fetchPlaylistSongs() {
@@ -47,37 +48,37 @@ function SongsPlaylistUser() {
           throw new Error("Failed to fetch playlist songs");
         }
         const data = await response.json();
-        setSongs(data.songs || []);
+        console.log("Fetched playlist songs data:", data);
+        setSongs(
+          data.songs.map((songObj) => {
+            console.log("songObj: ", songObj);
+            return songObj.song;
+          })
+        );
+
+        // setSongs(() => data.map((song) => song.song));
+        // setSongs(data.playlist.songs.song || []);
+        // console.log("songs", songs);
       } catch (error) {
         console.error("Error fetching playlist songs:", error);
       }
     }
     fetchPlaylistSongs();
-  }, [playlistId, user.token, songs.length]);
+  }, [playlistId, user.token]);
   return (
     <div className={styles.container}>
-      <section className="header">
-        <Logo />
-        <Search />
-        <NavBar user={user} />
-      </section>
-      <h1>{playlist.name} Playlist</h1>
-      {songs.length > 0 ? (
-        <div className={styles.songsList}>
-          {songs.map((song, index) => (
-            <Song
-              key={index}
-              song={song.artist + " - " + song.title}
-              user={user}
-              playingVideoId={null}
-              setPlayingVideoId={() => {}}
-              playlistId={playlist._id}
-            />
-          ))}
-        </div>
-      ) : (
-        <p>No songs found in this playlist.</p>
-      )}
+      <removeBtn.Provider
+        value={{ label: "Remove from Playlist", playlistId: playlistId }}
+      >
+        <section className="header">
+          <Logo />
+          <Search />
+          <NavBar user={user} />
+        </section>
+        <h1>{playlist.name} Playlist</h1>
+        {songs.length === 0 && <p>No songs in this playlist.</p>}
+        {songs.length > 0 && <Songs songSuggestions={songs} user={user} />}
+      </removeBtn.Provider>
     </div>
   );
 }

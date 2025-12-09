@@ -28,4 +28,24 @@ async function addSongToPlaylist(song, state, playlistName, user) {
   // }
   return response.data;
 }
-export { addSongToPlaylist };
+
+async function removeSongFromPlaylist(videoId, user, playlistId) {
+  const response = await axios.delete(
+    `http://${
+      import.meta.env.VITE_SERVER_URL
+    }/moodiify/videoSong/song/${videoId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      data: {
+        user: user,
+        playlistId: playlistId,
+      },
+    }
+  );
+  return response.data;
+}
+
+export { addSongToPlaylist, removeSongFromPlaylist };

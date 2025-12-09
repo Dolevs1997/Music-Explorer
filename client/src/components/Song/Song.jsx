@@ -1,14 +1,19 @@
 import styles from "./Song.module.css";
-import { useState, useEffect, useReducer, useRef } from "react";
+import { useState, useEffect, useReducer, useRef, useContext } from "react";
 import { useNavigate } from "react-router";
 import YouTube from "react-youtube";
 import propTypes from "prop-types";
 import { fetchSongYT } from "../../services/YouTube_service";
-import { addSongToPlaylist } from "../../utils/playlist";
+import {
+  addSongToPlaylist,
+  removeSongFromPlaylist,
+} from "../../utils/playlist";
+import { removeBtn } from "../../Contexts/RemoveContext";
 import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+
 const opts = {
   height: "300",
   width: "400",
@@ -50,6 +55,13 @@ function reducer(state, action) {
         ...state,
         playlists: action.payload.playlists,
       };
+    case "REMOVE_FROM_PLAYLIST":
+      return {
+        ...state,
+        playlists: state.playlists.filter(
+          (playlist) => playlist !== action.payload.playlistName
+        ),
+      };
     case "SET_ERROR":
       return {
         ...state,
@@ -77,6 +89,8 @@ function Song({
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const remove = useContext(removeBtn);
+  // console.log("removeBtn in Song:", remove);
   if (!user.token) {
     navigate("/login");
   }
@@ -206,23 +220,20 @@ function Song({
     },
     [state.videoId, user.token]
   );
-  async function handleRemoveSongFromPlaylist(videoId) {
+  async function handleRemoveSongFromPlaylist(videoId, playlistId) {
+    const data = await removeSongFromPlaylist(videoId, user, playlistId);
+    console.log("Removed song from playlist:", data);
     try {
-      const response = await fetch(
-        `http://${
-          import.meta.env.VITE_SERVER_URL
-        }/moodiify/songVideo/song/:${videoId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to remove song from playlist");
-      }
+      dispatch({
+        type: "REMOVE_FROM_PLAYLIST",
+        payload: {
+          videoId: data.videoId,
+          song: data.song,
+          playlistName: data.playlist.name,
+        },
+      });
+      // Optionally update user.playlists in localStorage if needed
+      localStorage.setItem("user", JSON.stringify(user));
     } catch (error) {
       console.error("Error removing song from playlist:", error);
     }
@@ -242,7 +253,7 @@ function Song({
           &#x22EE;
         </button>
       </div>
-      {menuOpen && (
+      {menuOpen && !remove && (
         <ListGroup defaultActiveKey>
           <ListGroup.Item
             action
@@ -252,6 +263,19 @@ function Song({
           </ListGroup.Item>
         </ListGroup>
       )}
+      {menuOpen && remove && (
+        <ListGroup defaultActiveKey>
+          <ListGroup.Item
+            action
+            onClick={() =>
+              handleRemoveSongFromPlaylist(state.videoId, remove.playlistId)
+            }
+          >
+            Remove from Playlist
+          </ListGroup.Item>
+        </ListGroup>
+      )}
+
       {menuPlaylistsOpen && (
         <ListGroup>
           {user.playlists.map((playlist) => (
@@ -298,7 +322,6 @@ function Song({
           )}
         </ListGroup>
       )}
-
       <div className={styles.optionsMenu}></div>
       <span className={styles.songDetails}>
         {/* {artist} - {songName} */}

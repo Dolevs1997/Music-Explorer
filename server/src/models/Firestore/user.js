@@ -68,7 +68,6 @@ const updateUser = async (email, newPlaylist, newSong) => {
     // If the playlist already exists, add the song to the existing playlist
     if (existingPlaylist) {
       // If the playlist already exists, add the song to the existing playlist
-
       const newSongRef = await addSongsUser(newSong, userRef); // Add the new song to Firestore
       await updateDoc(doc(db, "playlists-user", existingPlaylist.id), {
         songs: arrayUnion(newSongRef), // Add the new song reference to the existing playlist
