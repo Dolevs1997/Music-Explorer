@@ -8,7 +8,6 @@ import styles from "./SongsPlaylistUser.module.css";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
 import PropTypes from "prop-types";
-
 SongsPlaylistUser.propTypes = {
   user: PropTypes.object,
   playlist: PropTypes.object,
@@ -21,7 +20,8 @@ function SongsPlaylistUser() {
   let playlist =
     location.state?.playlist ||
     user?.playlists?.find((p) => p.id === playlistId);
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState(location.state?.songs || []);
+  console.log("SongsPlaylistUser render");
   if (!playlist) {
     console.error("Playlist not found for ID:", playlistId);
   }
@@ -29,7 +29,6 @@ function SongsPlaylistUser() {
     console.error("User not found in local storage or state.");
   }
   // console.log("playlist", playlist);
-
   useEffect(() => {
     async function fetchPlaylistSongs() {
       try {
@@ -48,10 +47,10 @@ function SongsPlaylistUser() {
           throw new Error("Failed to fetch playlist songs");
         }
         const data = await response.json();
-        console.log("Fetched playlist songs data:", data);
+        // console.log("Fetched playlist songs data:", data);
         setSongs(
           data.songs.map((songObj) => {
-            console.log("songObj: ", songObj);
+            // console.log("songObj: ", songObj);
             return songObj.song;
           })
         );
@@ -64,7 +63,12 @@ function SongsPlaylistUser() {
       }
     }
     fetchPlaylistSongs();
-  }, [playlistId, user.token]);
+  }, [playlistId, user.token, songs.length]);
+  function handleRemoveSong(removedSong) {
+    console.log("Removing song:", removedSong);
+    setSongs((prevSongs) => prevSongs.filter((song) => song !== removedSong));
+  }
+
   return (
     <div className={styles.container}>
       <removeBtn.Provider
@@ -77,7 +81,13 @@ function SongsPlaylistUser() {
         </section>
         <h1>{playlist.name} Playlist</h1>
         {songs.length === 0 && <p>No songs in this playlist.</p>}
-        {songs.length > 0 && <Songs songSuggestions={songs} user={user} />}
+        {songs.length > 0 && (
+          <Songs
+            songSuggestions={songs}
+            user={user}
+            onRemoveSong={handleRemoveSong}
+          />
+        )}
       </removeBtn.Provider>
     </div>
   );

@@ -33,8 +33,6 @@ const initialSong = {
 };
 // let render = 0;
 function reducer(state, action) {
-  console.log("Reducer state:", state);
-  console.log("Reducer action:", action);
   switch (action.type) {
     case "LOADING_SONG":
       return {
@@ -55,13 +53,6 @@ function reducer(state, action) {
         ...state,
         playlists: action.payload.playlists,
       };
-    case "REMOVE_FROM_PLAYLIST":
-      return {
-        ...state,
-        playlists: state.playlists.filter(
-          (playlist) => playlist !== action.payload.playlistName
-        ),
-      };
     case "SET_ERROR":
       return {
         ...state,
@@ -79,6 +70,7 @@ function Song({
   playingVideoId,
   setPlayingVideoId,
   playlistId,
+  onRemoveSong,
 }) {
   const navigate = useNavigate();
   const [playlistName, setPlaylistName] = useState("");
@@ -90,7 +82,7 @@ function Song({
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
-  // console.log("removeBtn in Song:", remove);
+  console.log("removeBtn in Song:", remove);
   if (!user.token) {
     navigate("/login");
   }
@@ -224,14 +216,15 @@ function Song({
     const data = await removeSongFromPlaylist(videoId, user, playlistId);
     console.log("Removed song from playlist:", data);
     try {
-      dispatch({
-        type: "REMOVE_FROM_PLAYLIST",
-        payload: {
-          videoId: data.videoId,
-          song: data.song,
-          playlistName: data.playlist.name,
-        },
-      });
+      if (onRemoveSong) {
+        console.log("song", song);
+        console.log("Calling onRemoveSong for videoId:", videoId);
+        onRemoveSong(song);
+      } else {
+        console.log("onRemoveSong:", onRemoveSong);
+        console.warn("onRemoveSong is undefined!");
+      }
+
       // Optionally update user.playlists in localStorage if needed
       localStorage.setItem("user", JSON.stringify(user));
     } catch (error) {
@@ -387,6 +380,7 @@ Song.propTypes = {
   playingVideoId: propTypes.string,
   setPlayingVideoId: propTypes.func,
   playlistId: propTypes.string,
+  onRemoveSong: propTypes.func,
 };
 
 export default Song;

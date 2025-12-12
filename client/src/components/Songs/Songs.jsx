@@ -3,7 +3,7 @@ import styles from "./Songs.module.css";
 import { useState } from "react";
 import propTypes from "prop-types";
 
-function Songs({ songSuggestions, user }) {
+function Songs({ songSuggestions, user, onRemoveSong }) {
   const [playingVideoId, setPlayingVideoId] = useState(null);
   const [playbackPositions, setPlaybackPositions] = useState({});
   return (
@@ -21,6 +21,7 @@ function Songs({ songSuggestions, user }) {
                 setPlayingVideoId={setPlayingVideoId}
                 playbackPositions={playbackPositions}
                 setPlaybackPositions={setPlaybackPositions}
+                onRemoveSong={onRemoveSong}
               />
             ))}
           </ul>
@@ -35,6 +36,7 @@ function Songs({ songSuggestions, user }) {
             setPlayingVideoId={setPlayingVideoId}
             playbackPositions={playbackPositions}
             setPlaybackPositions={setPlaybackPositions}
+            onRemoveSong={onRemoveSong}
           />
         </div>
       )}
@@ -52,6 +54,7 @@ Songs.propTypes = {
       })
     ),
   }).isRequired,
+  onRemoveSong: propTypes.func.isRequired,
 };
 
 export default Songs;
