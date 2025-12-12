@@ -17,7 +17,7 @@ const SongSuggestions = async (text) => {
         role: text.role,
         content:
           text.text +
-          "only artist name - song name - year. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.",
+          " music only artist name - song name - year. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.",
       },
     ],
     store: true,

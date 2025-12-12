@@ -29,7 +29,7 @@ export default function Home() {
   const [error, setError] = useState(null);
   console.log("isMapVisible at home:", isMapVisible);
   // console.log("songSuggestions at home:", songSuggestions);
-  console.log("location at home:", location);
+  // console.log("location at home:", location);
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);
@@ -61,7 +61,19 @@ export default function Home() {
     <main className="home">
       <section className="header">
         <Logo />
-        {!isLoading && !error && <Search />}
+        {!isLoading && !error && (
+          <Search
+            setFormVisible={setFormVisible}
+            formVisible={formVisible}
+            isMapVisible={isMapVisible}
+            setIsMapVisible={setIsMapVisible}
+            isRecording={isRecording}
+            setIsRecording={setIsRecording}
+            userData={userData}
+            setSongSuggestions={setSongSuggestions}
+            setIsVoiceSearch={setIsVoiceSearch}
+          />
+        )}
         <NavBar user={userData} />
       </section>
       <div className="homeContainer">
