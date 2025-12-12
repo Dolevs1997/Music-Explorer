@@ -82,7 +82,6 @@ function Song({
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
-  console.log("removeBtn in Song:", remove);
   if (!user.token) {
     navigate("/login");
   }
@@ -240,6 +239,9 @@ function Song({
           onClick={(e) => {
             e.stopPropagation();
             setMenuOpen(!menuOpen);
+            if (menuPlaylistsOpen) {
+              setMenuPlaylistsOpen(false);
+            }
           }}
           aria-label="Options"
         >

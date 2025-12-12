@@ -1,4 +1,5 @@
 import axios from "axios";
+
 function voiceSearchSong() {
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -14,6 +15,7 @@ function voiceSearchSong() {
   recognition.lang = "en-US";
   recognition.maxAlternatives = 1;
   recognition.start();
+
   return recognition;
 }
 
@@ -26,7 +28,7 @@ async function handleVoiceSearch(userData) {
     }
 
     console.log("Voice search activated");
-    console.log("userData in voice search:", userData);
+    // console.log("userData in voice search:", userData);
     const recognition = voiceSearchSong();
 
     recognition.onresult = async (event) => {
@@ -49,7 +51,7 @@ async function handleVoiceSearch(userData) {
             },
           }
         );
-        console.log("response: \n", response.data);
+        // console.log("response: \n", response.data);
         resolve(response.data);
       } catch (error) {
         console.error("Error fetching song suggestions:", error);

@@ -13,7 +13,6 @@ function Categories({ user }) {
   const [showMore, setShowMore] = useState(false);
   const params = useParams();
   const country = params.country || "US";
-
   const location = useLocation();
   const [currentLocation, setCurrentLocation] = useState(
     location.state?.locationName || "United States"

@@ -6,18 +6,23 @@ import {
 } from "../../utils/recording";
 import { handleVoiceSearch } from "../../utils/voice_search_song";
 import { useNavigate } from "react-router";
-export default function Search({
-  setFormVisible,
-  formVisible,
-  isMapVisible,
-  setIsMapVisible,
-  isRecording,
-  setIsRecording,
-  userData,
-  setSongSuggestions,
-  setIsVoiceSearch,
-}) {
+import { useContext } from "react";
+import { SearchContext } from "../../Contexts/SearchContext";
+
+export default function Search() {
+  const {
+    formVisible,
+    setFormVisible,
+    isMapVisible,
+    setIsMapVisible,
+    isRecording,
+    setIsRecording,
+    setSongSuggestions,
+    setIsVoiceSearch,
+  } = useContext(SearchContext);
+
   const navigate = useNavigate();
+  const userData = JSON.parse(localStorage.getItem("user"));
   return (
     <div className={styles.searchBar}>
       <span
@@ -50,6 +55,9 @@ export default function Search({
       <span
         onClick={() => {
           setFormVisible(!formVisible);
+          setIsVoiceSearch(false);
+          setIsRecording(false);
+          setIsMapVisible(false);
           navigate("/home");
         }}
       >

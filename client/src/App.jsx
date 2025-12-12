@@ -13,6 +13,7 @@ import Logo from "./components/Logo/Logo";
 // import Search from "./components/Search/Search";
 import NavBar from "./components/NavBar/NavBar";
 import { SearchContext } from "./Contexts/SearchContext";
+import Search from "./components/Search/Search";
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [songSuggestions, setSongSuggestions] = useState([]);
@@ -74,9 +75,12 @@ function App() {
               <div className="home">
                 <div className="header">
                   <Logo />
+                  <Search />
                   <NavBar user={user} />
                 </div>
-                <Categories user={user} />
+                <div className="homeContainer">
+                  <Categories user={user} />
+                </div>
               </div>
             }
           />

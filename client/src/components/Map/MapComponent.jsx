@@ -67,7 +67,7 @@ function MapComponent() {
     console.log("Location selected:", location);
     setSelectedLocation(location);
     navigate(`/global/categories/${countryShortName}`, {
-      state: { locationName: locationName },
+      state: { locationName: locationName, isMapVisible: false },
     });
     setShowDialog(false);
   }

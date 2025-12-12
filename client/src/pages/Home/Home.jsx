@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import Form from "../../components/Form/Form";
 import Songs from "../../components/Songs/Songs";
 import NavBar from "../../components/NavBar/NavBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MapComponent from "../../components/Map/MapComponent";
 
 import { SearchContext } from "../../Contexts/SearchContext";
@@ -15,20 +15,21 @@ export default function Home() {
     setSongSuggestions,
     isRecording,
     setIsRecording,
-    isMapVisible,
-    setIsMapVisible,
     formVisible,
     setFormVisible,
     isVoiceSearch,
     setIsVoiceSearch,
   } = useContext(SearchContext);
-
+  const location = useLocation();
+  console.log("location at home:", location);
+  const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  console.log("isMapVisible at home:", isMapVisible);
   // console.log("songSuggestions at home:", songSuggestions);
-  // console.log("location at home:", location);
+  console.log("location at home:", location);
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);
@@ -54,25 +55,13 @@ export default function Home() {
     if (isMapVisible) {
       navigate("/global");
     }
-  }, [isMapVisible, navigate]);
+  }, [isMapVisible, navigate, location.state, setIsMapVisible]);
 
   return (
     <main className="home">
       <section className="header">
         <Logo />
-        {!isLoading && !error && (
-          <Search
-            setFormVisible={setFormVisible}
-            formVisible={formVisible}
-            isMapVisible={isMapVisible}
-            setIsMapVisible={setIsMapVisible}
-            isRecording={isRecording}
-            setIsRecording={setIsRecording}
-            userData={userData}
-            setSongSuggestions={setSongSuggestions}
-            setIsVoiceSearch={setIsVoiceSearch}
-          />
-        )}
+        {!isLoading && !error && <Search />}
         <NavBar user={userData} />
       </section>
       <div className="homeContainer">
