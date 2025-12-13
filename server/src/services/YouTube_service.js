@@ -11,6 +11,7 @@ async function fetchSong(song, country = "US") {
     console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
+  console.log("Fetching song from YouTube API:", song, country);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song}`
   )}&type=video&key=${API_KEY}`;

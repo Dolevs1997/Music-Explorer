@@ -29,6 +29,9 @@ export default function Search() {
           setIsRecording(!isRecording);
           if (isRecording) {
             handleStopRecording(userData, setSongSuggestions);
+            setIsVoiceSearch(false);
+            setIsMapVisible(false);
+            setFormVisible(false);
             navigate("/home");
           } else {
             handleStartRecording();
@@ -45,6 +48,9 @@ export default function Search() {
           console.log("response from voice search:", response);
           setSongSuggestions(response);
           setIsVoiceSearch(false);
+          setIsMapVisible(false);
+          setIsRecording(false);
+          setFormVisible(false);
           navigate("/home");
         }}
       >

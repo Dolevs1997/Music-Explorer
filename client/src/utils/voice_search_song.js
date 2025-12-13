@@ -49,6 +49,7 @@ async function handleVoiceSearch(userData, timeoutMs = 10000) {
       try {
         recognition.stop();
       } catch (e) {
+        console.error("Error stopping recognition:", e);
         // noop
       }
     }, timeoutMs);
@@ -58,7 +59,9 @@ async function handleVoiceSearch(userData, timeoutMs = 10000) {
       clearTimeout(stopTimer);
       try {
         recognition.stop();
-      } catch (e) {}
+      } catch (e) {
+        console.error("Error stopping recognition after error:", e);
+      }
       reject(event.error);
     };
 
