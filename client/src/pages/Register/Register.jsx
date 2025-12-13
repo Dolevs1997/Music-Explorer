@@ -4,6 +4,7 @@ import Button from "../../components/Button/Button";
 import axios from "axios";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import BackgroundMusic from "../../components/BackgroundMusic";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Register() {
   const navigate = useNavigate();
@@ -51,58 +52,61 @@ function Register() {
     } else toast.error("Registration failed! Please try again.");
   };
   return (
-    <form>
-      <h2>Register</h2>
-      <Toaster />
-      <label htmlFor="username">Username:</label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-      />
-      <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <label htmlFor="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+    <>
+      <BackgroundMusic />
+      <form style={{ marginTop: "100px" }}>
+        <h2>Register</h2>
+        <Toaster />
+        <label htmlFor="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-      <label htmlFor="confirm-password">Confirm Password:</label>
-      <input
-        type="password"
-        id="confirm-password"
-        name="confirm-password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-      />
-      <Link to="/login">
-        <Button onClick={handleRegisteration}>Register</Button>
-      </Link>
-
-      <p>
-        Already have an account?
-        <Link to="/login" className="link">
-          {" "}
-          Login here
+        <label htmlFor="confirm-password">Confirm Password:</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirm-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+        <Link to="/login">
+          <Button onClick={handleRegisteration}>Register</Button>
         </Link>
-      </p>
-    </form>
+
+        <p>
+          Already have an account?
+          <Link to="/login" className="link">
+            {" "}
+            Login here
+          </Link>
+        </p>
+      </form>
+    </>
   );
 }
 

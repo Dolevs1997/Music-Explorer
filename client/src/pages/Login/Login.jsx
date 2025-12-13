@@ -1,15 +1,24 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button/Button";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
-
+import BackgroundMusic from "../../components/BackgroundMusic";
+import mySound from "../../assets/sounds/Rockstar_Singer_Sings_Welcome_to_Moodiify_.mp4";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.play().catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+    }
+  }, []);
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -46,40 +55,48 @@ function Login() {
   }
 
   return (
-    <form>
-      <Toaster />
-      <h2>Login</h2>
-      <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <label htmlFor="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+    <div
+      style={{
+        marginTop: "200px",
+      }}
+    >
+      <audio ref={audioRef} src={mySound} autoPlay />
+      <BackgroundMusic />
+      <form>
+        <Toaster />
+        <h2>Login</h2>
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-      <Link to="/home" className="link">
-        <Button onClick={(e) => handleLogin(e)}>Login</Button>
-      </Link>
-
-      <p>
-        Don&apos;t have an account?
-        <Link to="/register" className="link">
-          {" "}
-          Register here
+        <Link to="/home" className="link">
+          <Button onClick={(e) => handleLogin(e)}>Login</Button>
         </Link>
-      </p>
-    </form>
+
+        <p>
+          Don&apos;t have an account?
+          <Link to="/register" className="link">
+            {" "}
+            Register here
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 }
 
