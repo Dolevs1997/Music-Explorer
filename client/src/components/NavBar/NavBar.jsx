@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styles from "./NavBar.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";

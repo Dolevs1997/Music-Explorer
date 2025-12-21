@@ -1,7 +1,7 @@
 import { APIProvider, Map, InfoWindow } from "@vis.gl/react-google-maps";
 import { useState } from "react";
 import Button from "../Button/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PoiMarker from "./Marker";
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;

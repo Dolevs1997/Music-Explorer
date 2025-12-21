@@ -1,7 +1,7 @@
 import styles from "./CategoryPlaylists.module.css";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import PlaylistCategory from "../../components/PlaylistCategory/PlaylistCategory";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useEffect, useState, useContext } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";

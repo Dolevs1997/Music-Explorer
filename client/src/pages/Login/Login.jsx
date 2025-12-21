@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
 import { useState, useRef, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
@@ -11,7 +11,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const audioRef = useRef(null);
-
+  console.log("Login page rendered");
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.play().catch((error) => {

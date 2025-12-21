@@ -79,6 +79,7 @@ ul {
   display: flex;
   padding: 10px;
   width: 95%;
+  position: relative;
 }
 .homeContainer {
   display: flex;

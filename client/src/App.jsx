@@ -10,7 +10,6 @@ import SongsPlaylistUser from "./pages/SongsPlaylistUser/SongsPlaylistUser";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Categories from "./components/Categories/Categories";
 import Logo from "./components/Logo/Logo";
-// import Search from "./components/Search/Search";
 import NavBar from "./components/NavBar/NavBar";
 import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
@@ -26,21 +25,21 @@ function App() {
   }, []);
 
   return (
-    <SearchContext.Provider
-      value={{
-        songSuggestions,
-        setSongSuggestions,
-        isRecording,
-        setIsRecording,
-        isMapVisible,
-        setIsMapVisible,
-        formVisible,
-        setFormVisible,
-        isVoiceSearch,
-        setIsVoiceSearch,
-      }}
-    >
-      <BrowserRouter basename="/moodiify">
+    <BrowserRouter basename="/moodiify">
+      <SearchContext.Provider
+        value={{
+          songSuggestions,
+          setSongSuggestions,
+          isRecording,
+          setIsRecording,
+          isMapVisible,
+          setIsMapVisible,
+          formVisible,
+          setFormVisible,
+          isVoiceSearch,
+          setIsVoiceSearch,
+        }}
+      >
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route index element={<Home />} />
@@ -87,8 +86,8 @@ function App() {
 
           <Route path="*" element={<ErrorPage />} />
         </Routes>
-      </BrowserRouter>
-    </SearchContext.Provider>
+      </SearchContext.Provider>
+    </BrowserRouter>
   );
 }
 

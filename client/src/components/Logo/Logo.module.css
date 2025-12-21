@@ -2,9 +2,11 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  margin-left: -50%;
   cursor: pointer;
   transition: transform 0.3s ease-in-out;
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 
 .logo:hover {

@@ -5,7 +5,8 @@ import { useEffect, useState, useContext } from "react";
 import Form from "../../components/Form/Form";
 import Songs from "../../components/Songs/Songs";
 import NavBar from "../../components/NavBar/NavBar";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
 
 import { SearchContext } from "../../Contexts/SearchContext";
@@ -58,8 +59,8 @@ export default function Home() {
   }, [isMapVisible, navigate, location.state, setIsMapVisible]);
 
   return (
-    <main className="home">
-      <section className="header">
+    <div>
+      <header className="header">
         <Logo />
         {!isLoading && !error && (
           <Search
@@ -75,38 +76,40 @@ export default function Home() {
           />
         )}
         <NavBar user={userData} />
-      </section>
-      <div className="homeContainer">
-        {!isLoading && !error && (
-          <>
-            {formVisible && !isMapVisible && (
-              <Form
-                setSongSuggestions={setSongSuggestions}
-                setFormVisible={setFormVisible}
-                formVisible={formVisible}
-              />
-            )}
-            {songSuggestions.length == 0 && !isMapVisible && (
-              <Categories user={userData} />
-            )}
-            {songSuggestions.length > 0 &&
-              !isVoiceSearch &&
-              !isMapVisible &&
-              !isRecording && (
-                <Songs songSuggestions={songSuggestions} user={userData} />
+      </header>
+      <main className="home">
+        <div className="homeContainer">
+          {!isLoading && !error && (
+            <>
+              {formVisible && !isMapVisible && (
+                <Form
+                  setSongSuggestions={setSongSuggestions}
+                  setFormVisible={setFormVisible}
+                  formVisible={formVisible}
+                />
               )}
-
-            {songSuggestions.length > 0 &&
-              !isMapVisible &&
-              !isRecording &&
-              isVoiceSearch && (
-                <Songs songSuggestions={songSuggestions} user={userData} />
+              {songSuggestions.length == 0 && !isMapVisible && (
+                <Categories user={userData} />
               )}
+              {songSuggestions.length > 0 &&
+                !isVoiceSearch &&
+                !isMapVisible &&
+                !isRecording && (
+                  <Songs songSuggestions={songSuggestions} user={userData} />
+                )}
 
-            {isMapVisible && <MapComponent />}
-          </>
-        )}
-      </div>
-    </main>
+              {songSuggestions.length > 0 &&
+                !isMapVisible &&
+                !isRecording &&
+                isVoiceSearch && (
+                  <Songs songSuggestions={songSuggestions} user={userData} />
+                )}
+
+              {isMapVisible && <MapComponent />}
+            </>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
