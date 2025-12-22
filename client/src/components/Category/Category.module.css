@@ -3,27 +3,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 0 20px 0;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: var(--color-background-100);
-  color: var(--color-text-dark);
-  text-align: center;
-  transition: all 0.3s;
+  width: 150px;
+  height: 150px;
+  margin: 10px;
   cursor: pointer;
-  text-size-adjust: calc(1.5rem + 1vw);
-  font-weight: 500;
-  height: 200px;
-  text-transform: capitalize;
-  border: 1px solid var(--color-background-200);
 }
-
+.category p {
+  font-size: 16px;
+  font-weight: 600;
+}
 .category:hover {
-  background-color: var(--color-background-200);
-}
-
-.category img {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 10px;
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
 }

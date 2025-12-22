@@ -8,7 +8,6 @@ import NavBar from "../../components/NavBar/NavBar";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
-
 import { SearchContext } from "../../Contexts/SearchContext";
 export default function Home() {
   const {
@@ -60,24 +59,24 @@ export default function Home() {
 
   return (
     <div>
-      <header className="header">
-        <Logo />
-        {!isLoading && !error && (
-          <Search
-            setFormVisible={setFormVisible}
-            formVisible={formVisible}
-            isMapVisible={isMapVisible}
-            setIsMapVisible={setIsMapVisible}
-            isRecording={isRecording}
-            setIsRecording={setIsRecording}
-            userData={userData}
-            setSongSuggestions={setSongSuggestions}
-            setIsVoiceSearch={setIsVoiceSearch}
-          />
-        )}
-        <NavBar user={userData} />
-      </header>
       <main className="home">
+        <header className="header">
+          <Logo />
+          {!isLoading && !error && (
+            <Search
+              setFormVisible={setFormVisible}
+              formVisible={formVisible}
+              isMapVisible={isMapVisible}
+              setIsMapVisible={setIsMapVisible}
+              isRecording={isRecording}
+              setIsRecording={setIsRecording}
+              userData={userData}
+              setSongSuggestions={setSongSuggestions}
+              setIsVoiceSearch={setIsVoiceSearch}
+            />
+          )}
+          <NavBar user={userData} />
+        </header>
         <div className="homeContainer">
           {!isLoading && !error && (
             <>

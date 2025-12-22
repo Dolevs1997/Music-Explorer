@@ -3,7 +3,7 @@ import styles from "./Category.module.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import toast, { Toaster } from "react-hot-toast";
-
+import { Card, CardFooter } from "@heroui/card";
 function Category({ category, token, country, location }) {
   const navigate = useNavigate();
   const [, setPlaylistsCategory] = useState([]);
@@ -45,12 +45,27 @@ function Category({ category, token, country, location }) {
     <>
       <Toaster />
       <div className={styles.category}>
-        <img
+        <Card
+          isFooterBlurred
+          className="border-none"
+          radius="lg"
+          onClick={() => handleClickCategory(category.name)}
+        >
+          <img
+            src={category.icons[0].url}
+            alt={category.name}
+            onClick={() => handleClickCategory(category.name)}
+          />
+          <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+            <p>{category.name}</p>
+          </CardFooter>
+        </Card>
+        {/* <img
           src={category.icons[0].url}
           alt={category.name}
           onClick={() => handleClickCategory(category.name)}
         />
-        <h3>{category.name}</h3>
+        <h3>{category.name}</h3> */}
       </div>
     </>
   );

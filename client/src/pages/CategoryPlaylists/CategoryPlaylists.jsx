@@ -2,12 +2,12 @@ import styles from "./CategoryPlaylists.module.css";
 import { useLocation } from "react-router";
 import PlaylistCategory from "../../components/PlaylistCategory/PlaylistCategory";
 import { useNavigate } from "react-router";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 
-import { SearchContext } from "../../Contexts/SearchContext";
+// import { SearchContext } from "../../Contexts/SearchContext";
 function CategoryPlaylists() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,7 +16,7 @@ function CategoryPlaylists() {
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-  const searchContext = useContext(SearchContext);
+  // const searchContext = useContext(SearchContext);
 
   useEffect(() => {
     document.title = "Moodiify | Category Playlists";
@@ -30,23 +30,13 @@ function CategoryPlaylists() {
   }, [location, navigate]);
 
   return (
-    <>
-      <div className={styles.header}>
+    <div>
+      <header className={styles.header}>
         <Logo />
-        <Search
-          setFormVisible={searchContext.setFormVisible}
-          formVisible={searchContext.formVisible}
-          isMapVisible={searchContext.isMapVisible}
-          setIsMapVisible={searchContext.setIsMapVisible}
-          isRecording={searchContext.isRecording}
-          setIsRecording={searchContext.setIsRecording}
-          userData={user}
-          setSongSuggestions={searchContext.setSongSuggestions}
-          setIsVoiceSearch={searchContext.setIsVoiceSearch}
-        />
+        <Search />
         <NavBar user={user} />
-      </div>
-      <div className={styles.playlistsContainer}>
+      </header>
+      <main className={styles.playlistsContainer}>
         <h1 className={styles.title}>{categoryName} Playlist</h1>
 
         <div className={styles.playlists}>
@@ -60,8 +50,8 @@ function CategoryPlaylists() {
               />
             ))}
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }
 

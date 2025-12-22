@@ -70,24 +70,26 @@ function SongsPlaylistUser() {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <removeBtn.Provider
         value={{ label: "Remove from Playlist", playlistId: playlistId }}
       >
-        <section className="header">
+        <header className="header">
           <Logo />
           <Search />
           <NavBar user={user} />
-        </section>
-        <h1>{playlist.name} Playlist</h1>
-        {songs.length === 0 && <p>No songs in this playlist.</p>}
-        {songs.length > 0 && (
-          <Songs
-            songSuggestions={songs}
-            user={user}
-            onRemoveSong={handleRemoveSong}
-          />
-        )}
+        </header>
+        <main className={styles.container}>
+          <h1>{playlist.name} Playlist</h1>
+          {songs.length === 0 && <p>No songs in this playlist.</p>}
+          {songs.length > 0 && (
+            <Songs
+              songSuggestions={songs}
+              user={user}
+              onRemoveSong={handleRemoveSong}
+            />
+          )}
+        </main>
       </removeBtn.Provider>
     </div>
   );

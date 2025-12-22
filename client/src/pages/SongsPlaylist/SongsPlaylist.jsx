@@ -1,10 +1,9 @@
 // import styles from "./SongsPlaylist.module.css";
 import { useParams, useLocation } from "react-router";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
-import { SearchContext } from "../../Contexts/SearchContext";
 import Song from "../../components/Song/Song";
 // import { useNavigate } from "react-router-dom";
 function SongsPlaylist() {
@@ -12,7 +11,6 @@ function SongsPlaylist() {
   const location = useLocation();
   const { playlistName } = location.state || {};
   const [playlist, setPlaylist] = useState([]);
-  const searchContext = useContext(SearchContext);
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
@@ -50,46 +48,37 @@ function SongsPlaylist() {
     fetchPlaylist();
   }, [playlistId, user]);
   return (
-    <main className="homeContainer">
-      <div className="header">
+    <div>
+      <header className="header">
         <Logo />
-        <Search
-          setFormVisible={searchContext.setFormVisible}
-          formVisible={searchContext.formVisible}
-          isMapVisible={searchContext.isMapVisible}
-          setIsMapVisible={searchContext.setIsMapVisible}
-          isRecording={searchContext.isRecording}
-          setIsRecording={searchContext.setIsRecording}
-          userData={user}
-          setSongSuggestions={searchContext.setSongSuggestions}
-          setIsVoiceSearch={searchContext.setIsVoiceSearch}
-          isVoiceSearch={searchContext.isVoiceSearch}
-        />
+        <Search />
         <NavBar user={user} />
-      </div>
-      <h2>{playlistName}</h2>
-      <div className="playlist-songs">
-        {playlist.length > 0 ? (
-          <ul className="songsContainer">
-            {playlist.map((song, index) => (
-              <Song
-                key={index}
-                song={song.title}
-                user={user}
-                country={location.state.country}
-                playingVideoId={playingVideoId}
-                setPlayingVideoId={setPlayingVideoId}
-                playlistId={playlistId}
-                playbackPositions={playbackPositions}
-                setPlaybackPositions={setPlaybackPositions}
-              />
-            ))}
-          </ul>
-        ) : (
-          <p>No songs found in this playlist.</p>
-        )}
-      </div>
-    </main>
+      </header>
+      <main className="homeContainer">
+        <h2>{playlistName}</h2>
+        <div className="playlist-songs">
+          {playlist.length > 0 ? (
+            <ul className="songsContainer">
+              {playlist.map((song, index) => (
+                <Song
+                  key={index}
+                  song={song.title}
+                  user={user}
+                  country={location.state.country}
+                  playingVideoId={playingVideoId}
+                  setPlayingVideoId={setPlayingVideoId}
+                  playlistId={playlistId}
+                  playbackPositions={playbackPositions}
+                  setPlaybackPositions={setPlaybackPositions}
+                />
+              ))}
+            </ul>
+          ) : (
+            <p>No songs found in this playlist.</p>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
 
