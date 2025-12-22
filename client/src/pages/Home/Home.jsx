@@ -58,25 +58,25 @@ export default function Home() {
   }, [isMapVisible, navigate, location.state, setIsMapVisible]);
 
   return (
-    <div>
+    <div className="app-container">
+      <header className="header">
+        <Logo />
+        {!isLoading && !error && (
+          <Search
+            setFormVisible={setFormVisible}
+            formVisible={formVisible}
+            isMapVisible={isMapVisible}
+            setIsMapVisible={setIsMapVisible}
+            isRecording={isRecording}
+            setIsRecording={setIsRecording}
+            userData={userData}
+            setSongSuggestions={setSongSuggestions}
+            setIsVoiceSearch={setIsVoiceSearch}
+          />
+        )}
+        <NavBar user={userData} />
+      </header>
       <main className="home">
-        <header className="header">
-          <Logo />
-          {!isLoading && !error && (
-            <Search
-              setFormVisible={setFormVisible}
-              formVisible={formVisible}
-              isMapVisible={isMapVisible}
-              setIsMapVisible={setIsMapVisible}
-              isRecording={isRecording}
-              setIsRecording={setIsRecording}
-              userData={userData}
-              setSongSuggestions={setSongSuggestions}
-              setIsVoiceSearch={setIsVoiceSearch}
-            />
-          )}
-          <NavBar user={userData} />
-        </header>
         <div className="homeContainer">
           {!isLoading && !error && (
             <>

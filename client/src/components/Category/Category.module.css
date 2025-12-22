@@ -2,17 +2,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: 150px;
-  margin: 10px;
+
+  width: 200px;
+  height: 200px;
+
   cursor: pointer;
 }
+.category img {
+  margin-bottom: 10px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
 .category p {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
+  align-self: center;
 }
 .category:hover {
   transform: scale(1.1);
   transition: transform 0.3s ease;
+}
+.categoryContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

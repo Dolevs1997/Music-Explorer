@@ -125,14 +125,16 @@ ul {
   pointer-events: none;
   z-index: 0;
 }
+
 .header {
   align-items: center;
   justify-content: space-between;
   display: flex;
   padding: 10px;
   width: 95%;
-  position: relative;
-  margin-bottom: 20px;
+  position: fixed;
+  top: 0;
+  z-index: 100;
 }
 .homeContainer {
   display: flex;
@@ -147,6 +149,7 @@ ul {
   justify-content: center;
   height: 100%;
   width: 100%;
+  padding-top: 200px;
 }
 
 @theme inline {
