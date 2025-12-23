@@ -8,7 +8,7 @@ async function fetchSong(song, country = "US") {
   const signal = controller.signal;
   const cachedSong = await getCachedSong(song, country);
   if (cachedSong) {
-    console.log("Returning cached song:", cachedSong);
+    // console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
   console.log("Fetching song from YouTube API:", song, country);
@@ -32,7 +32,10 @@ async function fetchSong(song, country = "US") {
       videoId: videoId,
     };
   } catch (error) {
-    console.error("Error fetching songs:", error);
+    console.error(
+      "YouTube_service file in fetchSong: Error fetching songs:",
+      error
+    );
     throw new Error("Failed to fetch songs");
   }
 }
@@ -58,7 +61,6 @@ async function fetchPlaylists(
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    console.log("Playlists data:", data);
     return data.items.map((item) => ({
       id: item.id.playlistId,
       title: item.snippet.title,
@@ -67,7 +69,10 @@ async function fetchPlaylists(
       publishedAt: item.snippet.publishedAt,
     }));
   } catch (error) {
-    console.error("Error fetching playlists:", error);
+    console.error(
+      "YouTube_service file in fetchPlaylists: Error fetching playlists:",
+      error
+    );
     throw new Error("Failed to fetch playlists");
   }
   // if (!response.ok) {
@@ -79,13 +84,18 @@ async function fetchPlaylistSongs(playlistId) {
   if (!playlistId) {
     throw new Error("Playlist ID is required");
   }
-  // console.log("Fetching songs for playlist ID:", playlistId);
+  console.log("Fetching songs for playlist ID:", playlistId);
   const controller = new AbortController();
   const signal = controller.signal;
 
-  const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${API_KEY}`;
+  // Fetch playlist items with contentDetails to check video duration
+  const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${playlistId}&key=${API_KEY}`;
   const response = await fetch(url, { signal });
   if (!response.ok) {
+    console.error(
+      "YouTube_service file in fetchPlaylistSongs: Error fetching playlist songs:",
+      response.statusText
+    );
     throw new Error(`Error fetching playlist songs: ${response.statusText}`);
   }
   const data = await response.json();
@@ -93,11 +103,46 @@ async function fetchPlaylistSongs(playlistId) {
   if (!data || !data.items) {
     throw new Error("No playlist songs found");
   }
+
+  // Filter to only include actual music videos
   return data.items
-    .filter((item) => item.snippet.resourceId.kind === "youtube#video")
+    .filter((item) => {
+      // Must be a video
+      if (item.snippet.resourceId.kind !== "youtube#video") return false;
+
+      // Exclude private/deleted videos
+      if (
+        item.snippet.title === "Deleted video" ||
+        item.snippet.title === "Private video"
+      )
+        return false;
+
+      // Exclude videos with unwanted content in title (trailers, clips, reviews, etc.)
+      const title = item.snippet.title.toLowerCase();
+      const excludePatterns = [
+        "trailer",
+        "teaser",
+        "official video",
+        "lyric video",
+        "review",
+        "reaction",
+        "tutorial",
+        "podcast",
+        "compilation",
+        "mixtape",
+        "mix",
+      ];
+
+      if (excludePatterns.some((pattern) => title.includes(pattern))) {
+        return false;
+      }
+
+      return true;
+    })
     .map((item) => ({
       id: item.snippet.resourceId.videoId,
       title: item.snippet.title,
+      publishedAt: item.snippet.publishedAt,
     }));
 }
 

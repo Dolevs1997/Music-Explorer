@@ -7,7 +7,7 @@ const { authenticate } = require("../middlewares/auth_middleware");
 const upload = multer({ dest: "uploads/" }); // For parsing multipart/form-data
 
 // Existing route
-router.get("/", authenticate, songController.getVideo);
+// router.get("/", authenticate, songController.getVideo);
 
 router.get("/song", authenticate, songController.getById);
 router.delete("/song/:videoId", authenticate, songController.deletebyVideoId);

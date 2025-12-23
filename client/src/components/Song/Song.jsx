@@ -203,14 +203,7 @@ function Song({
   function onPlayerReady(event) {
     playerRef.current = event.target;
   }
-  // console.log("playlist id:", playlistId);
-  useEffect(
-    function () {
-      async function checkSongInPlaylist() {}
-      checkSongInPlaylist();
-    },
-    [state.videoId, user.token]
-  );
+
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
     const data = await removeSongFromPlaylist(videoId, user, playlistId);
     console.log("Removed song from playlist:", data);

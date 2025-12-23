@@ -4,6 +4,8 @@ const { fetchSong } = require("../services/YouTube_service");
 
 const getAll = async (req, res) => {
   const { song, country } = req.query;
+  // console.log("request:", req.token);
+  // const result =
 
   try {
     const songData = await fetchSong(song, country);
@@ -13,7 +15,7 @@ const getAll = async (req, res) => {
     const videoId = songData.videoId;
     const existingSong = await SongSchema.findOne({ videoId: videoId });
     if (existingSong) {
-      console.log("Song already exists in the database:", existingSong);
+      // console.log("Song already exists in the database:", existingSong);
 
       return res.status(200).json(existingSong);
     }
