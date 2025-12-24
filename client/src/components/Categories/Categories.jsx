@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { countryToLocale } from "../../utils/countryLocalMap";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-function Categories({ user }) {
+function Categories({ user, formVisible }) {
   const [categories, setCategories] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const params = useParams();
@@ -117,7 +117,7 @@ function Categories({ user }) {
   }
 
   return (
-    <div className="homeContainer">
+    <div className={formVisible ? "homeContainerWithForm" : "homeContainer"}>
       <h1>Categories</h1>
 
       <ToastContainer />

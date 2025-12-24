@@ -146,12 +146,15 @@ ul {
   top: 0;
   z-index: 100;
 }
-.homeContainer {
+.homeContainer,
+.homeContainerWithForm {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
+.homeContainerWithForm {
+  margin-top: 250px;
+}
 .home {
   display: flex;
   flex-direction: column;
@@ -161,7 +164,10 @@ ul {
   width: 100%;
   padding-top: 150px;
 }
-
+.playlist-songs {
+  margin-top: 100px;
+  justify-items: center;
+}
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

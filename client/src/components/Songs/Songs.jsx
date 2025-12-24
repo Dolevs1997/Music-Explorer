@@ -10,7 +10,6 @@ function Songs({ songSuggestions, user, onRemoveSong }) {
     <div>
       {songSuggestions.length >= 1 ? (
         <div className={styles.boxSongs}>
-          <h2>Song Suggestions</h2>
           <ul>
             {songSuggestions.map((song) => (
               <Song

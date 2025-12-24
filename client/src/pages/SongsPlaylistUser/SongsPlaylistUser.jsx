@@ -4,7 +4,6 @@ import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 import Songs from "../../components/Songs/Songs";
-import styles from "./SongsPlaylistUser.module.css";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
 import PropTypes from "prop-types";
@@ -70,7 +69,7 @@ function SongsPlaylistUser() {
   }
 
   return (
-    <div>
+    <div className="app-container">
       <removeBtn.Provider
         value={{ label: "Remove from Playlist", playlistId: playlistId }}
       >
@@ -79,16 +78,18 @@ function SongsPlaylistUser() {
           <Search />
           <NavBar user={user} />
         </header>
-        <main className={styles.container}>
-          <h1>{playlist.name} Playlist</h1>
-          {songs.length === 0 && <p>No songs in this playlist.</p>}
-          {songs.length > 0 && (
-            <Songs
-              songSuggestions={songs}
-              user={user}
-              onRemoveSong={handleRemoveSong}
-            />
-          )}
+        <main className="homeContainer">
+          <div className="playlist-songs">
+            <h1>{playlist.name} Playlist</h1>
+            {songs.length === 0 && <p>No songs in this playlist.</p>}
+            {songs.length > 0 && (
+              <Songs
+                songSuggestions={songs}
+                user={user}
+                onRemoveSong={handleRemoveSong}
+              />
+            )}
+          </div>
         </main>
       </removeBtn.Provider>
     </div>

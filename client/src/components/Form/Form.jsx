@@ -27,7 +27,7 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
   }
 
   return (
-    <form className={styles.formOpen}>
+    <form className={formVisible ? styles.formVisible : ""}>
       <label htmlFor="text">What is your mood today?</label>
 
       <textarea id="text" value={text} onChange={handleChange} />

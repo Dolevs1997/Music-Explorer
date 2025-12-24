@@ -88,7 +88,7 @@ export default function Home() {
                 />
               )}
               {songSuggestions.length == 0 && !isMapVisible && (
-                <Categories user={userData} />
+                <Categories user={userData} formVisible={formVisible} />
               )}
               {songSuggestions.length > 0 &&
                 !isVoiceSearch &&

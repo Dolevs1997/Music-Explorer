@@ -48,15 +48,15 @@ function SongsPlaylist() {
     fetchPlaylist();
   }, [playlistId, user]);
   return (
-    <div>
+    <div className="app-container">
       <header className="header">
         <Logo />
         <Search />
         <NavBar user={user} />
       </header>
       <main className="homeContainer">
-        <h2>{playlistName}</h2>
         <div className="playlist-songs">
+          <h2>{playlistName}</h2>
           {playlist.length > 0 ? (
             <ul className="songsContainer">
               {playlist.map((song, index) => (
