@@ -15,3 +15,6 @@
 .searchBar img:active {
   transform: scale(0.9);
 }
+.recordingSpinner {
+  cursor: pointer;
+}

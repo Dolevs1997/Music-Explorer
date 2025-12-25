@@ -12,7 +12,7 @@ const createPlaylist = async (req, res) => {
   console.log("song videoId:", videoId);
   console.log("playlistName", playlistName);
   console.log("user", user);
-  if (!song || !playlistName || !user || !videoId) {
+  if (!playlistName || !user) {
     return res.status(400).json({ message: "Missing required fields" });
   }
   let newSong = null;

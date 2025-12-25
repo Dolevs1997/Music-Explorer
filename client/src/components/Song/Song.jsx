@@ -311,10 +311,7 @@ function Song({
         </ListGroup>
       )}
       <div className={styles.optionsMenu}></div>
-      <span className={styles.songDetails}>
-        {/* {artist} - {songName} */}
-        {song}
-      </span>
+      <span className={styles.songDetails}>{song}</span>
       {state.videoId ? (
         // lazy-mount player only for the active/playing song to avoid multiple iframe loads
         playingVideoId === state.videoId ? (
@@ -336,7 +333,7 @@ function Song({
           />
         ) : (
           // lightweight preview: thumbnail + play button
-          <div className={styles.preview}>
+          <div>
             <img
               src={`https://img.youtube.com/vi/${state.videoId}/hqdefault.jpg`}
               alt={state.title}

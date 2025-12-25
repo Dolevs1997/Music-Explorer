@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
@@ -37,11 +36,17 @@ function NavBar({ user }) {
 
   return (
     <div>
-      <nav className={styles.nav}>
+      <nav className={styles.navbar}>
         <Toaster />
         <NavDropdown title="Menu" menuVariant="dark">
-          <NavDropdown.Item>Profile</NavDropdown.Item>
-          <DropdownButton drop="start" variant="dark" title="Playlists">
+          {/* <NavDropdown.Item>Profile</NavDropdown.Item> */}
+          <NavDropdown
+            drop="start"
+            title="Playlists"
+            id="basic-nav-dropdown"
+            menuVariant="dark"
+            className={styles.playlistDropdown}
+          >
             {user?.playlists && user.playlists.length > 0 ? (
               user.playlists.map((playlist, index) => (
                 <NavDropdown.Item
@@ -65,9 +70,8 @@ function NavBar({ user }) {
             <NavDropdown.Item onClick={() => setShowModal(true)}>
               Create Playlist
             </NavDropdown.Item>
-          </DropdownButton>
-          {/* <NavDropdown.Item>Playlists</NavDropdown.Item> */}
-          {/* <NavDropdown.Item href="#action/3.3">Logout</NavDropdown.Item> */}
+          </NavDropdown>
+
           <NavDropdown.Divider />
           <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
         </NavDropdown>

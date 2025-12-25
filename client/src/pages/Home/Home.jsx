@@ -72,6 +72,7 @@ export default function Home() {
             userData={userData}
             setSongSuggestions={setSongSuggestions}
             setIsVoiceSearch={setIsVoiceSearch}
+            isVoiceSearch={isVoiceSearch}
           />
         )}
         <NavBar user={userData} />
