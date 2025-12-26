@@ -8,7 +8,7 @@ function Songs({ songSuggestions, user, onRemoveSong }) {
   const [playbackPositions, setPlaybackPositions] = useState({});
   return (
     <div>
-      {songSuggestions.length >= 1 ? (
+      {songSuggestions.length > 1 ? (
         <div className={styles.boxSongs}>
           <ul>
             {songSuggestions.map((song) => (
@@ -26,7 +26,7 @@ function Songs({ songSuggestions, user, onRemoveSong }) {
           </ul>
         </div>
       ) : (
-        <div className={styles.boxSongs}>
+        <div className="homeContainer">
           <h2>Song Record Audio</h2>
           <Song
             song={songSuggestions[0]}

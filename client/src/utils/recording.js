@@ -12,7 +12,11 @@ export async function handleStartRecording() {
 
   mediaRecorder.start();
 }
-export async function handleStopRecording(userData, setSongSuggestions) {
+export async function handleStopRecording(
+  userData,
+  setSongSuggestions,
+  setProccessRecording
+) {
   audioChunks = [];
   let songRecognized = "";
   console.log("Stopping recording...");
@@ -50,6 +54,7 @@ export async function handleStopRecording(userData, setSongSuggestions) {
     songRecognized = data.artists[0].name + " - " + data.title;
     console.log("Song recognized:", songRecognized);
     setSongSuggestions([songRecognized]);
+    setProccessRecording(false);
     return songRecognized;
   };
 }

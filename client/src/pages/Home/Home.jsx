@@ -21,15 +21,12 @@ export default function Home() {
     setIsVoiceSearch,
   } = useContext(SearchContext);
   const location = useLocation();
-  console.log("location at home:", location);
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log("isMapVisible at home:", isMapVisible);
-  // console.log("songSuggestions at home:", songSuggestions);
-  // console.log("location at home:", location);
+
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);

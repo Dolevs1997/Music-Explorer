@@ -17,4 +17,8 @@
 }
 .recordingSpinner {
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  margin-top: 0px;
 }

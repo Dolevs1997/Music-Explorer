@@ -53,7 +53,7 @@ function NavBar({ user }) {
                   key={index}
                   onClick={() => {
                     console.log("playlist clicked:", playlist);
-                    navigate(`/myplaylists/${playlist.id}`, {
+                    navigate(`/myplaylists/${playlist._id}`, {
                       state: { playlist, user },
                     });
                   }}
