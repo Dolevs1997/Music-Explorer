@@ -15,7 +15,8 @@ export async function handleStartRecording() {
 export async function handleStopRecording(
   userData,
   setSongSuggestions,
-  setProccessRecording
+  setProccessRecording,
+  setResult
 ) {
   audioChunks = [];
   let songRecognized = "";
@@ -55,6 +56,7 @@ export async function handleStopRecording(
     console.log("Song recognized:", songRecognized);
     setSongSuggestions([songRecognized]);
     setProccessRecording(false);
+    setResult(true);
     return songRecognized;
   };
 }

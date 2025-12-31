@@ -1,6 +1,7 @@
 const express = require("express");
 const OpenAI_service = require("../services/OpenAI_service");
 const openaiRouter = express.Router();
+const { authenticate } = require("../middlewares/auth_middleware");
 
 openaiRouter.post("/openai", async (req, res) => {
   try {

@@ -10,6 +10,7 @@ function MicrophoneAnimation({ setIsVoiceSearch }) {
         autoplay
         style={{ width: 80, height: 80, cursor: "pointer" }}
       />
+      Speak Now...
     </div>
   );
 }

@@ -2,7 +2,6 @@ import Categories from "../../components/Categories/Categories";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import { useEffect, useState, useContext } from "react";
-import Form from "../../components/Form/Form";
 import Songs from "../../components/Songs/Songs";
 import NavBar from "../../components/NavBar/NavBar";
 import { useNavigate } from "react-router";
@@ -68,6 +67,7 @@ export default function Home() {
             setIsRecording={setIsRecording}
             userData={userData}
             setSongSuggestions={setSongSuggestions}
+            songSuggestions={songSuggestions}
             setIsVoiceSearch={setIsVoiceSearch}
             isVoiceSearch={isVoiceSearch}
           />
@@ -78,13 +78,13 @@ export default function Home() {
         <div className="homeContainer">
           {!isLoading && !error && (
             <>
-              {formVisible && !isMapVisible && (
+              {/* {formVisible && !isMapVisible && (
                 <Form
                   setSongSuggestions={setSongSuggestions}
                   setFormVisible={setFormVisible}
                   formVisible={formVisible}
                 />
-              )}
+              )} */}
               {songSuggestions.length == 0 && !isMapVisible && (
                 <Categories user={userData} formVisible={formVisible} />
               )}

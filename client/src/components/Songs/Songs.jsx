@@ -1,5 +1,4 @@
 import Song from "../Song/Song";
-import styles from "./Songs.module.css";
 import { useState } from "react";
 import propTypes from "prop-types";
 
@@ -9,20 +8,24 @@ function Songs({ songSuggestions, user, onRemoveSong }) {
   return (
     <div>
       {songSuggestions.length > 1 ? (
-        <div className={styles.boxSongs}>
+        <div className="homeContainer">
+          <h2>Song Results</h2>
           <ul>
-            {songSuggestions.map((song) => (
-              <Song
-                key={song}
-                song={song}
-                user={user}
-                playingVideoId={playingVideoId}
-                setPlayingVideoId={setPlayingVideoId}
-                playbackPositions={playbackPositions}
-                setPlaybackPositions={setPlaybackPositions}
-                onRemoveSong={onRemoveSong}
-              />
-            ))}
+            {songSuggestions.map(
+              (song) =>
+                console.log("Rendering song:", song) || (
+                  <Song
+                    key={song}
+                    song={song}
+                    user={user}
+                    playingVideoId={playingVideoId}
+                    setPlayingVideoId={setPlayingVideoId}
+                    playbackPositions={playbackPositions}
+                    setPlaybackPositions={setPlaybackPositions}
+                    onRemoveSong={onRemoveSong}
+                  />
+                )
+            )}
           </ul>
         </div>
       ) : (

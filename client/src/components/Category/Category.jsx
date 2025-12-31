@@ -7,7 +7,6 @@ import { Card } from "@heroui/card";
 function Category({ category, token, country, location }) {
   const navigate = useNavigate();
   const [, setPlaylistsCategory] = useState([]);
-
   async function handleClickCategory(name) {
     const response = await fetch(
       `http://${
