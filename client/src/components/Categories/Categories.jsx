@@ -14,6 +14,7 @@ function Categories({ user, formVisible }) {
   const params = useParams();
   const country = params.country || "US";
   const location = useLocation();
+  console.log("user in Categories:", user.token);
   const [currentLocation, setCurrentLocation] = useState(
     location.state?.locationName || "United States"
   );
