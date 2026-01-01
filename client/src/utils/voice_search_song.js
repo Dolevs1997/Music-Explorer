@@ -20,7 +20,7 @@ function voiceSearchSong() {
 }
 
 // timeoutMs controls how long to listen before processing
-async function handleVoiceSearch(userData, timeoutMs = 10000) {
+async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
   return new Promise((resolve, reject) => {
     if (!userData || !userData.token) {
       console.error("User data or token is missing");
@@ -93,8 +93,10 @@ async function handleVoiceSearch(userData, timeoutMs = 10000) {
         );
         console.log("response: \n", response.data);
         resolve(response.data);
+        setResultVoice(response.data);
       } catch (error) {
         console.error("Error fetching song suggestions:", error);
+        setResultVoice(error);
         reject(error);
       }
     };

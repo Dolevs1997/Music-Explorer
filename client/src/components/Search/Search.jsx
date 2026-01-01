@@ -11,6 +11,8 @@ import { BarsScaleMiddleIcon } from "../../components/icons/svg-spinners-bars-sc
 import MicrophoneAnimation from "../../components/icons/MicrophoneAnimation";
 import { Spinner } from "../../components/ui/spinner";
 import Form from "../Form/Form";
+import { Toaster, toast } from "react-hot-toast";
+
 export default function Search() {
   const {
     formVisible,
@@ -28,14 +30,22 @@ export default function Search() {
   const [secondsLeft, setSecondsLeft] = useState(10);
   const [proccessRecording, setProccessRecording] = useState(false);
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
-  const [result, setResult] = useState(false);
-  console.log("Search Component");
-  console.log("formVisible:", formVisible);
+  const [resultRecord, setResultRecord] = useState(null);
+  const [resultVoice, setResultVoice] = useState(null);
+  // console.log("secondsLeft:", secondsLeft);
   useEffect(() => {
-    if (result) {
+    setSecondsLeft(10);
+  }, []);
+  useEffect(() => {
+    if (resultRecord?.error) {
+      toast.error("Voice record failed! Please try again.");
+    } else if (resultVoice?.error) {
+      toast.error("Voice search failed! Please try again.");
+    } else if (resultRecord) {
+      toast.success("Voice record successful! Redirecting to home...");
       navigate("/home");
     }
-  }, [result, navigate]);
+  }, [resultRecord, resultVoice, navigate]);
   function handleSecondsLeft(seconds) {
     setInterval(function () {
       if (seconds > 0) setSecondsLeft(seconds - 1);
@@ -48,7 +58,7 @@ export default function Search() {
         userData,
         setSongSuggestions,
         setProccessRecording,
-        setResult
+        setResultRecord
       );
       setIsVoiceSearch(false);
       setIsMapVisible(false);
@@ -67,7 +77,7 @@ export default function Search() {
                 userData,
                 setSongSuggestions,
                 setProccessRecording,
-                setResult
+                setResultRecord
               );
               setIsVoiceSearch(false);
               setIsMapVisible(false);
@@ -75,7 +85,6 @@ export default function Search() {
             }}
           >
             {handleTimeOut()}
-
             <div className={styles.recordingSpinner}>
               <BarsScaleMiddleIcon
                 width={40}
@@ -95,7 +104,6 @@ export default function Search() {
             onClick={() => {
               setIsRecording(true);
               setProccessRecording(true);
-
               handleStartRecording();
               setIsVoiceSearch(false);
               setIsMapVisible(false);
@@ -120,7 +128,11 @@ export default function Search() {
             onClick={async () => {
               setIsVoiceSearch(true);
               setProccessVoiceSearch(true);
-              const response = await handleVoiceSearch(userData);
+              const response = await handleVoiceSearch(
+                userData,
+                10000,
+                setResultVoice
+              );
               if (!response) return;
               console.log("response from voice search:", response);
               setProccessVoiceSearch(false);
@@ -168,6 +180,7 @@ export default function Search() {
           <img src="/moodiify/earth_i.png" />
         </span>
       </div>
+      <Toaster />
     </>
   );
 }

@@ -82,6 +82,7 @@ function Song({
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
+  console.log("videoId in Song component:", state.videoId);
   if (!user.token) {
     navigate("/login");
   }
@@ -157,29 +158,31 @@ function Song({
           return;
         }
         // console.log("rendering: ", (render += 1));
+        if (!state.error) {
+          try {
+            const data = await fetchSongYT(song, country, user);
+            // console.log("data", data);
+            songRef.current = data;
 
-        try {
-          const data = await fetchSongYT(song, country, user);
-          // console.log("data", data);
-          songRef.current = data;
-
-          dispatch({
-            type: "SET_VIDEO_SONG",
-            payload: {
-              videoId: data.videoId,
-              regionCode: data.regionCode,
-              song: data.song,
-              playlists: songRef.current.playlists,
-            },
-          });
-        } catch (error) {
-          console.error("Error fetching song recommendations:", error);
-          dispatch({
-            type: "SET_ERROR",
-            payload: { error: "Failed to fetch song recommendations" },
-          });
+            dispatch({
+              type: "SET_VIDEO_SONG",
+              payload: {
+                videoId: data.videoId,
+                regionCode: data.regionCode,
+                song: data.song,
+                playlists: songRef.current.playlists,
+              },
+            });
+          } catch (error) {
+            console.error("Error fetching song recommendations:", error);
+            dispatch({
+              type: "SET_ERROR",
+              payload: { error: "Failed to fetch song recommendations" },
+            });
+          }
         }
       }
+
       fetchSong(song, user, country);
     },
     [song, user, country, state, playlistId]
@@ -349,8 +352,8 @@ function Song({
       ) : (
         <div className={styles.noVideo}>No Video Available</div>
       )}
-      {state.loading && <div className={styles.loading}>Loading...</div>}
-      {state.error && <div className={styles.error}>{state.error}</div>}
+      {/* {state.loading && <div className={styles.loading}>Loading...</div>} */}
+      {/* {state.error && <div className={styles.error}>{state.error}</div>} */}
     </div>
   );
 }

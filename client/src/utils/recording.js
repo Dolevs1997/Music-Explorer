@@ -16,7 +16,7 @@ export async function handleStopRecording(
   userData,
   setSongSuggestions,
   setProccessRecording,
-  setResult
+  setResultRecord
 ) {
   audioChunks = [];
   let songRecognized = "";
@@ -27,9 +27,9 @@ export async function handleStopRecording(
     // setIsRecording(false);
     const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
     const formData = new FormData();
-    formData.append("file", audioBlob, "sample.wav");
+    formData.append("audioFile", audioBlob, "sample.wav");
     console.log("Audio blob created:", audioBlob);
-    console.log("FormData prepared:", formData);
+    console.log("FormData prepared:", formData.file);
     const res = await fetch(
       `http://${
         import.meta.env.VITE_SERVER_URL
@@ -49,6 +49,8 @@ export async function handleStopRecording(
 
     if (data.error) {
       console.error("Error:", data.error);
+      setProccessRecording(false);
+      setResultRecord(data);
       return;
     }
 
@@ -56,7 +58,7 @@ export async function handleStopRecording(
     console.log("Song recognized:", songRecognized);
     setSongSuggestions([songRecognized]);
     setProccessRecording(false);
-    setResult(true);
+    setResultRecord(data);
     return songRecognized;
   };
 }
