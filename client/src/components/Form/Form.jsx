@@ -1,20 +1,26 @@
-/* eslint-disable react/prop-types */
 import styles from "./Form.module.css";
 import { useState } from "react";
 import { getSongSuggestions } from "../../services/OpenAI_service";
 import { useNavigate } from "react-router";
 import { Spinner } from "../../components/ui/spinner";
+import propTypes from "prop-types";
+import { Toaster, toast } from "react-hot-toast";
 
 function Form({ setSongSuggestions, setFormVisible, formVisible }) {
   const [text, setText] = useState("I want you to generate ");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   console.log("Form Component");
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) {
+    toast.error("Please login to continue.");
+    navigate("/login");
+  }
   async function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
     const text = document.getElementById("text").value;
-    const response = await getSongSuggestions(text);
+    const response = await getSongSuggestions(text, user.token);
     setSongSuggestions(response);
     setFormVisible(!formVisible);
     setIsLoading(false);
@@ -45,8 +51,15 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
           <p>Getting song suggestions...</p>
         </>
       )}
+      <Toaster />
     </form>
   );
 }
+
+Form.propTypes = {
+  setSongSuggestions: propTypes.func.isRequired,
+  setFormVisible: propTypes.func.isRequired,
+  formVisible: propTypes.bool.isRequired,
+};
 
 export default Form;

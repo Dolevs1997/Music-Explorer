@@ -1,6 +1,6 @@
 import axios from "axios";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const getSongSuggestions = async (text) => {
+const getSongSuggestions = async (text, token) => {
   const payload = {
     text: text,
     role: "user",
@@ -12,6 +12,7 @@ const getSongSuggestions = async (text) => {
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );

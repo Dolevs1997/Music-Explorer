@@ -13,7 +13,7 @@ import { db } from "../../config/firebase_config.js"; // Import the Firestore da
 import { addPlaylistsUser, getPlaylistUser } from "./playlistsUser.js"; // Import the function to add playlists user
 import { addSongsUser } from "./songsUser.js"; // Import the function to add songs user
 
-const addUser = async (name, email) => {
+const addUser = async (email) => {
   try {
     const existingUser = await getUser(email); // Check if the user already exists
     if (existingUser) {
@@ -22,7 +22,6 @@ const addUser = async (name, email) => {
     }
     const docRef = await addDoc(collection(db, "user"), {
       createdAt: new Date(),
-      name: name,
       email: email,
       playlists: [],
     });

@@ -22,6 +22,7 @@ function Categories({ user, formVisible }) {
   let limit = categories.length === 0 ? 6 : categories.length;
   const navigate = useNavigate();
   // console.log("categories");
+  console.log("user in Categories:", user);
   if (!user.token) {
     navigate("/login");
   }

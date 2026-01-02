@@ -10,9 +10,14 @@ const SongSuggestions = async (text) => {
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4.1",
-    temperature: 0.9,
+    temperature: 0.0,
 
     messages: [
+      {
+        role: "system",
+        content:
+          "You are a strict music assistant. Return ONLY song suggestions that clearly match the user's description. Output each suggestion on its own line in exactly this format: Artist - Song Title - Year. Exclude any results that are live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, or any non-music/video content. Do NOT include duplicates, numbering, bullets, commentary, links, or extra text. If no relevant songs exist, return an empty response.",
+      },
       {
         role: text.role,
         content:
