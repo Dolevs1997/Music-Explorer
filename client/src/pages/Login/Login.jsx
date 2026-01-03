@@ -1,24 +1,15 @@
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 import BackgroundMusic from "../../components/BackgroundMusic";
-import mySound from "../../assets/sounds/Rockstar_Singer_Sings_Welcome_to_Moodiify_.mp4";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const audioRef = useRef(null);
-  console.log("Login page rendered");
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play().catch((error) => {
-        console.error("Error playing audio:", error);
-      });
-    }
-  }, []);
+
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -60,7 +51,6 @@ function Login() {
         marginTop: "200px",
       }}
     >
-      <audio ref={audioRef} src={mySound} autoPlay />
       <BackgroundMusic />
       <form>
         <Toaster />
