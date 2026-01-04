@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../schemas/User_schema");
 const { userSchemaZod } = require("../schemas/User_schema");
-const { addUser, getUser } = require("../models/Firestore/user");
+// const { addUser, getUser } = require("../models/Firestore/user");
 const { app } = require("../config/firebase_config");
 const {
   getAuth,
@@ -53,12 +53,12 @@ const register = async (req, res) => {
           refreshTokens: [],
         });
         // Add user to Firestore
-        const firestoreUser = await addUser(email);
-        if (firestoreUser.error) {
-          return res
-            .status(409)
-            .send("CONFLICT: firestore error " + firestoreUser.error);
-        }
+        // const firestoreUser = await addUser(email);
+        // if (firestoreUser.error) {
+        //   return res
+        //     .status(409)
+        //     .send("CONFLICT: firestore error " + firestoreUser.error);
+        // }
         const newUser = await user.save();
         res.status(200).send(newUser);
       })
@@ -107,11 +107,11 @@ const login = async (req, res) => {
         });
         if (!isEmailValid.success)
           return res.status(400).send("BAD REQUEST: Invalid user data");
-        const userFirestore = await getUser(email);
-        if (!userFirestore)
-          return res
-            .status(404)
-            .send("NOT FOUND: User does not exist in Firestore");
+        // const userFirestore = await getUser(email);
+        // if (!userFirestore)
+        //   return res
+        //     .status(404)
+        //     .send("NOT FOUND: User does not exist in Firestore");
 
         const tokens = await generateTokens(user);
         res.status(200).json({

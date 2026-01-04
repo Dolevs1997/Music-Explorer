@@ -90,13 +90,13 @@ const deletebyVideoId = async (req, res) => {
   if (!videoId || !user || !playlistId) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  const userRef = await getUser(user.email);
+  // const userRef = await getUser(user.email);
   if (!userRef || userRef.error) {
     console.error("Error retrieving user from Firestore:", userRef.error);
     return res.status(500).json({ message: "Error retrieving user data" });
   }
   const playlist = await PlaylistSchema.findById(playlistId);
-  const playlistRef = await getPlaylistUser(playlist.name, userRef);
+  // const playlistRef = await getPlaylistUser(playlist.name, userRef);
   if (!playlist || !playlistRef) {
     return res.status(404).json({ message: "Playlist not found" });
   }
@@ -112,10 +112,10 @@ const deletebyVideoId = async (req, res) => {
       await song.save();
     }
     console.log("handling Firestore deletion for song:", song);
-    const deletedSong = await deleteSongUser(song, playlistRef, userRef);
-    if (!deletedSong) {
-      return res.status(404).json({ message: "Song not found in user songs" });
-    }
+    // const deletedSong = await deleteSongUser(song, playlistRef, userRef);
+    // if (!deletedSong) {
+    //   return res.status(404).json({ message: "Song not found in user songs" });
+    // }
     song.playlists = song.playlists.filter(
       (pid) => pid.toString() !== playlistId.toString()
     );

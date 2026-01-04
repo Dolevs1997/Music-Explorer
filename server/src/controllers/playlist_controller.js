@@ -52,20 +52,20 @@ const createPlaylist = async (req, res) => {
           existingSong.playlists.push(existingPlaylist._id);
           await existingSong.save();
           console.log("Added existingPlaylist to existingSong:", song, videoId);
-          const firestoreUpdate = await updateUser(
-            existingUser.email,
-            { name: playlistName, user: userId },
-            existingSong
-          );
-          if (firestoreUpdate.error) {
-            console.error(
-              "Error updating user in Firestore:",
-              firestoreUpdate.error
-            );
-            return res
-              .status(500)
-              .json({ message: "Error updating user in Firestore" });
-          }
+          // const firestoreUpdate = await updateUser(
+          //   existingUser.email,
+          //   { name: playlistName, user: userId },
+          //   existingSong
+          // );
+          // if (firestoreUpdate.error) {
+          //   console.error(
+          //     "Error updating user in Firestore:",
+          //     firestoreUpdate.error
+          //   );
+          //   return res
+          //     .status(500)
+          //     .json({ message: "Error updating user in Firestore" });
+          // }
           existingPlaylist.songs.push(existingSong._id);
           await existingPlaylist.save();
           console.log("Added existingSong to existingPlaylist:", song, videoId);
@@ -150,20 +150,20 @@ const createPlaylist = async (req, res) => {
       await existingUser.save();
     }
 
-    // console.log("new songs:", newSong);
-    console.log("***********************************************************");
-    console.log("Updating user in Firestore with playlist and song");
-    const firestoreUpdate = await updateUser(
-      existingUser.email,
-      { name: playlistName, user: userId },
-      newSong
-    );
-    if (firestoreUpdate.error) {
-      console.error("Error updating user in Firestore:", firestoreUpdate.error);
-      return res
-        .status(500)
-        .json({ message: "Error updating user in Firestore" });
-    }
+    // // console.log("new songs:", newSong);
+    // console.log("***********************************************************");
+    // console.log("Updating user in Firestore with playlist and song");
+    // const firestoreUpdate = await updateUser(
+    //   existingUser.email,
+    //   { name: playlistName, user: userId },
+    //   newSong
+    // );
+    // if (firestoreUpdate.error) {
+    //   console.error("Error updating user in Firestore:", firestoreUpdate.error);
+    //   return res
+    //     .status(500)
+    //     .json({ message: "Error updating user in Firestore" });
+    // }
     const playlist = existingPlaylist ? existingPlaylist : newPlaylist;
     console.log("Playlist after update:", playlist);
     return res.status(200).json({
@@ -200,17 +200,17 @@ const getPlaylistSongs = async (req, res) => {
       console.error("Error retrieving user from Firestore:", userRef.error);
       return res.status(500).json({ message: "Error retrieving user data" });
     }
-    // console.log("User reference from Firestore:", userRef);
-    const firestorePlaylist = await getPlaylistUser(playlistName, userRef);
-    if (!firestorePlaylist || firestorePlaylist.error) {
-      console.error(
-        "Error retrieving playlist from Firestore:",
-        firestorePlaylist.error
-      );
-      return res
-        .status(500)
-        .json({ message: "Error retrieving playlist data" });
-    }
+    // // console.log("User reference from Firestore:", userRef);
+    // const firestorePlaylist = await getPlaylistUser(playlistName, userRef);
+    // if (!firestorePlaylist || firestorePlaylist.error) {
+    //   console.error(
+    //     "Error retrieving playlist from Firestore:",
+    //     firestorePlaylist.error
+    //   );
+    //   return res
+    //     .status(500)
+    //     .json({ message: "Error retrieving playlist data" });
+    // }
     // console.log("Firestore playlist:", firestorePlaylist);
     const playlist = await PlaylistSchema.findById(playlistId).populate(
       "songs"
