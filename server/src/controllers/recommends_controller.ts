@@ -1,14 +1,15 @@
-const SongSchema = require("../schemas/Song_schema");
-const { addSongVideo } = require("../models/Firestore/songVideo");
-const { fetchSong } = require("../services/YouTube_service");
+import SongSchema from "../schemas/Song_schema";
+import { addSongVideo } from "../models/Firestore/songVideo";
+import { fetchSong } from "../services/YouTube_service";
+import { Request, Response } from "express";
 
-const getAll = async (req, res) => {
+const getAll = async (req: Request, res: Response) => {
   const { song, country } = req.query;
   // console.log("request:", req.token);
   // const result =
 
   try {
-    const songData = await fetchSong(song, country);
+    const songData = await fetchSong(song as string, country as string);
     if (!songData) {
       return res.status(404).json({ error: "No song data from YouTube" });
     }
@@ -30,9 +31,9 @@ const getAll = async (req, res) => {
       videoId: videoId,
       regionCode: country,
     });
-  } catch (err) {
+  } catch (err: Error | any) {
     return res.status(400).json({ error: err.message });
   }
 };
 
-module.exports = { getAll };
+export default { getAll };

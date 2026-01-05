@@ -1,17 +1,17 @@
 // Description: This file is the entry point of the application.
 
-const express = require("express");
-const mongoose = require("mongoose");
-const categoriesRouter = require("./src/routes/Categories_route");
-const recommendRouter = require("./src/routes/Recommends_routes");
-const songRouter = require("./src/routes/Song_routes");
-const openaiRouter = require("./src/routes/OpenAI_route");
-const authRouter = require("./src/routes/Auth_routes");
-const playlistRouter = require("./src/routes/playlist_routes");
-const cors = require("cors");
-const { json, urlencoded } = require("body-parser");
-const { connectRedis } = require("./src/services/Redis_service");
-const dotenv = require("dotenv");
+import express from "express";
+import mongoose from "mongoose";
+import categoriesRouter from "./routes/Categories_routes";
+import recommendRouter from "./routes/Recommends_routes";
+import songRouter from "./routes/Song_routes";
+import openaiRouter from "./routes/OpenAI_routes";
+import authRouter from "./routes/Auth_routes";
+import playlistRouter from "./routes/playlist_routes";
+import cors from "cors";
+import { json, urlencoded } from "body-parser";
+import { connectRedis } from "./services/Redis_service";
+import dotenv from "dotenv";
 dotenv.config();
 
 const initApp = async () => {
@@ -19,12 +19,13 @@ const initApp = async () => {
   try {
     // Connect to MongoDB
     // console.log("Connecting to MongoDB...");
-    mongoose.connect(process.env.DATABASE_URL);
+    mongoose.connect(process.env.DATABASE_URL as string);
     const db = mongoose.connection;
     db.on("error", (error) => console.error(error));
     db.once("connected", () => console.log("Connected to MongoDB"));
     // Connect to Redis
     await connectRedis();
+
     // Initialize Express app
     const app = express();
     app.use(cors()); // Enable CORS for all routes
@@ -38,9 +39,11 @@ const initApp = async () => {
     app.use("/api", openaiRouter);
 
     return app;
-  } catch (e) {
-    console.error(e.message);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error(e.message);
+    }
   }
 };
 
-module.exports = initApp;
+export default initApp;

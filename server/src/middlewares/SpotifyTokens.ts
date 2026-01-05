@@ -1,11 +1,11 @@
-const dotenv = require("dotenv");
-
+import dotenv from "dotenv";
+import { Request, Response, NextFunction } from "express";
 dotenv.config();
 
 var client_id = process.env.SPOTIFY_CLIENT_ID;
 var client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 
-const getTokens = async () => {
+const getToken = async () => {
   const result = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
@@ -21,10 +21,14 @@ const getTokens = async () => {
   return data.access_token;
 };
 
-const validateToken = async (req, res, next) => {
+const validateToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const token = await getTokens();
-    req.token = token;
+    const token: string = await getToken();
+    req.headers["spotify-token"] = token;
     next();
   } catch (error) {
     console.log(error);
@@ -32,4 +36,4 @@ const validateToken = async (req, res, next) => {
   }
 };
 
-module.exports = { validateToken };
+export { validateToken };

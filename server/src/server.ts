@@ -1,7 +1,7 @@
-const { createServer } = require("http");
-const initApp = require("./app");
+import { createServer } from "http";
+import initApp from "./app";
+import dotenv from "dotenv";
 const port = process.env.PORT || 3000;
-const dotenv = require("dotenv");
 dotenv.config();
 
 initApp().then((app) => {
@@ -16,7 +16,7 @@ initApp().then((app) => {
 
   if (process.env.NODE_ENV === "production") {
     console.log("Server is running in production mode");
-    app.listen(port, () => {
+    app?.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
   }

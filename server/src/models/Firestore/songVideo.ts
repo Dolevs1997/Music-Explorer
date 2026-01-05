@@ -1,7 +1,12 @@
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../../config/firebase_config.js";
+import { db } from "../../config/firebase_config";
 
-const addSongVideo = async (songVideo) => {
+export type SongVideo = {
+  title: string;
+  videoId: string;
+};
+
+const addSongVideo = async (songVideo: SongVideo) => {
   console.log("Adding song video:", songVideo);
   try {
     // Check if the song video already exists

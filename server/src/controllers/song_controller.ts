@@ -1,17 +1,18 @@
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
+import identify from "../services/MusicRecognition_service";
+import defaultOptions from "../config/acr_config";
+import { fetchPlaylistSongs } from "../services/YouTube_service";
+import SongSchema from "../schemas/Song_schema"; // Import the Song schema
+import PlaylistSchema from "../schemas/Playlist_schema";
+import fs from "fs";
+import { Request, Response } from "express";
+import { Options } from "../services/MusicRecognition_service";
+// import { deleteSongUser } from "../models/Firestore/songsUser";
+// import { getUser } from "../models/Firestore/user";
+// import { getPlaylistUser } from "../models/Firestore/playlistsUser";
 dotenv.config();
-const API_KEY = process.env.YOUTUBE_API_KEY;
-const identify = require("../services/MusicRecognition_service");
-const defaultOptions = require("../config/acr_config"); // your ACRCloud keys
-const { fetchPlaylistSongs } = require("../services/YouTube_service");
-const SongSchema = require("../schemas/Song_schema"); // Import the Song schema
-const PlaylistSchema = require("../schemas/Playlist_schema"); // Import the Playlist schema
-const fs = require("fs");
-const { deleteSongUser } = require("../models/Firestore/songsUser");
-const { getUser } = require("../models/Firestore/user");
-const { getPlaylistUser } = require("../models/Firestore/playlistsUser");
 
-const getById = async (req, res) => {
+const getById = async (req: Request, res: Response) => {
   // console.log("GetById called with query:", req.query);
   const { id } = req.query;
   if (!id) {
@@ -44,37 +45,43 @@ const getById = async (req, res) => {
 //   res.status(200).json(data);
 // };
 
-const recognizeAudio = async (req, res) => {
+const recognizeAudio = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "Audio file missing" });
   }
 
   console.log("options:", defaultOptions);
-  let data = fs.readFileSync(req.file.path);
+  let data: Buffer = fs.readFileSync(req.file.path);
   if (!data) {
     return res.status(400).json({ error: "Audio file missing" });
   }
-  identify(data, defaultOptions.default, async function (err, body) {
-    if (err) console.log(err);
-    console.log("ACRCloud response body:", body);
-    if (!body || !body.metadata || !body.metadata.music) {
-      return res.status(400).json({ error: "Unable to recognize audio" });
-    }
-    // Process the recognized music data
-    const musicInfo = body.metadata.music[0];
-    console.log("Recognized music info:", musicInfo);
-    // Clean up the uploaded file
-    fs.unlink(req.file.path, (err) => {
-      if (err) {
-        console.error("Error deleting temporary audio file:", err);
+  identify(
+    data,
+    defaultOptions as Options,
+    async function (err: Error, body: any) {
+      if (err) console.log(err);
+      console.log("ACRCloud response body:", body);
+      if (!body || !body.metadata || !body.metadata.music) {
+        return res.status(400).json({ error: "Unable to recognize audio" });
       }
-    });
-    res.status(200).json(musicInfo);
-  });
+      // Process the recognized music data
+      const musicInfo = body.metadata.music[0];
+      console.log("Recognized music info:", musicInfo);
+      // Clean up the uploaded file
+      if (req.file && req.file.path) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) {
+            console.error("Error deleting temporary audio file:", err);
+          }
+        });
+      }
+      res.status(200).json(musicInfo);
+    }
+  );
 };
 
-const getAll = async (req, res) => {
-  const playlistId = req.query.id;
+const getAll = async (req: Request, res: Response) => {
+  const playlistId = req.query.id as string;
   const result = await fetchPlaylistSongs(playlistId);
   if (!result) {
     return res.status(400).json({ error: "No playlist songs found" });
@@ -82,7 +89,7 @@ const getAll = async (req, res) => {
   res.status(200).json(result);
 };
 
-const deletebyVideoId = async (req, res) => {
+const deletebyVideoId = async (req: Request, res: Response) => {
   console.log("DeletebyVideoId called with params:", req.params);
   const { videoId } = req.params;
   const user = req.body.user;
@@ -91,13 +98,13 @@ const deletebyVideoId = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
   // const userRef = await getUser(user.email);
-  if (!userRef || userRef.error) {
-    console.error("Error retrieving user from Firestore:", userRef.error);
-    return res.status(500).json({ message: "Error retrieving user data" });
-  }
+  // if (!userRef || userRef.error) {
+  //   console.error("Error retrieving user from Firestore:", userRef.error);
+  //   return res.status(500).json({ message: "Error retrieving user data" });
+  // }
   const playlist = await PlaylistSchema.findById(playlistId);
   // const playlistRef = await getPlaylistUser(playlist.name, userRef);
-  if (!playlist || !playlistRef) {
+  if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
   try {
@@ -135,4 +142,10 @@ const deletebyVideoId = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-module.exports = { recognizeAudio, getAll, deletebyVideoId, getById };
+
+export default {
+  getById,
+  recognizeAudio,
+  getAll,
+  deletebyVideoId,
+};

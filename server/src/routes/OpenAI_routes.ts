@@ -1,13 +1,13 @@
-const express = require("express");
-const OpenAI_service = require("../services/OpenAI_service");
+import express from "express";
+import OpenAI_service from "../services/OpenAI_service";
+import { authenticate } from "../middlewares/auth_middleware";
 const openaiRouter = express.Router();
-const { authenticate } = require("../middlewares/auth_middleware");
 
 openaiRouter.post("/openai", authenticate, async (req, res) => {
   try {
     const suggestions = await OpenAI_service.SongSuggestions(req.body);
     res.status(200).json(suggestions);
-  } catch (error) {
+  } catch (error: Error | any) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -22,9 +22,9 @@ openaiRouter.post("/openai/voice-search", authenticate, async (req, res) => {
 
     const songSuggestions = await OpenAI_service.SongSuggestionsVoice();
     res.status(200).json(songSuggestions);
-  } catch (error) {
+  } catch (error: Error | any) {
     res.status(500).json({ error: error.message });
   }
 });
 
-module.exports = openaiRouter;
+export default openaiRouter;

@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
+import playlistController from "../controllers/playlist_controller";
+import { authenticate } from "../middlewares/auth_middleware";
+import { validateToken } from "../middlewares/SpotifyTokens";
 const router = express.Router();
-const playlistController = require("../controllers/playlist_controller");
-const { authenticate } = require("../middlewares/auth_middleware");
-const { validateToken } = require("../middlewares/SpotifyTokens");
 
 router.post(
   "/create",
@@ -23,4 +23,4 @@ router.get(
 //   playlistController.checkSongInPlaylist
 // );
 
-module.exports = router;
+export default router;

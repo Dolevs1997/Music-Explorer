@@ -1,10 +1,13 @@
-const PlaylistSchema = require("../schemas/Playlist_schema");
-const UserSchema = require("../schemas/User_schema");
-const SongSchema = require("../schemas/Song_schema");
-const { updateUser, getUser } = require("../models/Firestore/user");
-const { getPlaylistUser } = require("../models/Firestore/playlistsUser");
+import PlaylistSchema from "../schemas/Playlist_schema";
+import { UserModel } from "../schemas/User_schema";
+import SongSchema from "../schemas/Song_schema";
+import { Request, Response } from "express";
+import { Types } from "mongoose";
 
-const createPlaylist = async (req, res) => {
+// import { updateUser, getUser } from "../models/Firestore/user";
+// import { getPlaylistUser } from "../models/Firestore/playlistsUser";
+
+const createPlaylist = async (req: Request, res: Response) => {
   const { song, playlistName, user, videoId } = req.body;
 
   console.log("createPlaylist in playlist_controller called");
@@ -17,11 +20,14 @@ const createPlaylist = async (req, res) => {
   }
   let newSong = null;
   try {
+    if (user._id === undefined) {
+      return res.status(400).json({ message: "Invalid user data" });
+    }
     const userId = user._id; // Assuming you have the user ID from the authentication middleware
     let newPlaylist;
 
     // Check if the user exists
-    const existingUser = await UserSchema.findById(userId);
+    const existingUser = await UserModel.findById(userId);
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -176,7 +182,7 @@ const createPlaylist = async (req, res) => {
   }
 };
 
-const getPlaylistSongs = async (req, res) => {
+const getPlaylistSongs = async (req: Request, res: Response) => {
   console.log("Getting playlist songs");
   console.log("Request query ID:", req.query.id);
 
@@ -187,19 +193,19 @@ const getPlaylistSongs = async (req, res) => {
     if (!playlistObject) {
       return res.status(404).json({ message: "Playlist not found" });
     }
-    const userId = playlistObject.user;
-    const userObject = await UserSchema.findById(userId);
+    const userId: Types.ObjectId = playlistObject.user;
+    const userObject = await UserModel.findById(userId);
     // console.log("User object:", userObject);
     if (!userObject) {
       return res.status(404).json({ message: "User not found" });
     }
-    const userEmail = userObject.email;
-    const playlistName = playlistObject.name;
-    const userRef = await getUser(userEmail);
-    if (!userRef || userRef.error) {
-      console.error("Error retrieving user from Firestore:", userRef.error);
-      return res.status(500).json({ message: "Error retrieving user data" });
-    }
+    // const userEmail = userObject.email;
+    // const playlistName = playlistObject.name;
+    // const userRef = await getUser(userEmail);
+    // if (!userRef || userRef.error) {
+    //   console.error("Error retrieving user from Firestore:", userRef.error);
+    //   return res.status(500).json({ message: "Error retrieving user data" });
+    // }
     // // console.log("User reference from Firestore:", userRef);
     // const firestorePlaylist = await getPlaylistUser(playlistName, userRef);
     // if (!firestorePlaylist || firestorePlaylist.error) {
@@ -227,7 +233,4 @@ const getPlaylistSongs = async (req, res) => {
   }
 };
 
-module.exports = {
-  createPlaylist,
-  getPlaylistSongs,
-};
+export default { createPlaylist, getPlaylistSongs };

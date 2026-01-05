@@ -1,16 +1,17 @@
-const jwt = require("jsonwebtoken");
-const User = require("../schemas/User_schema");
-const { userSchemaZod } = require("../schemas/User_schema");
+import jwt, { PrivateKey, PublicKey } from "jsonwebtoken";
+import { userSchemaZod, UserModel } from "../schemas/User_schema";
+import { Request, Response } from "express";
 // const { addUser, getUser } = require("../models/Firestore/user");
-const { app } = require("../config/firebase_config");
-const {
+import { app } from "../config/firebase_config";
+import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   validatePassword,
   signOut,
-} = require("firebase/auth");
-const register = async (req, res) => {
+  User,
+} from "firebase/auth";
+const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   console.log("Registering user with email:", email);
   try {
@@ -19,7 +20,7 @@ const register = async (req, res) => {
       password: password,
     });
 
-    const existedUser = await User.findOne({ email: email });
+    const existedUser = await UserModel.findOne({ email: email });
     if (existedUser != null)
       return res.status(409).send("CONFLICT: User already existed");
     const auth = getAuth(app);
@@ -28,8 +29,8 @@ const register = async (req, res) => {
       if (
         status.containsLowercaseLetter === false ||
         status.containsUppercaseLetter === false ||
-        status.containsDigit === false ||
-        status.containsSpecialCharacter === false
+        status.containsNumericCharacter === false ||
+        status.containsNonAlphanumericCharacter === false
       ) {
         return res
           .status(400)
@@ -41,14 +42,13 @@ const register = async (req, res) => {
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         // Signed up
-        const userAuth = userCredential.user;
+        const userAuth: User = userCredential.user;
         // console.log("User created in Firebase Auth:", user);
         console.log("Firebase Auth user creation successful:", userAuth.uid);
-        const encryptedPassword = userAuth.reloadUserInfo?.passwordHash;
 
-        const user = new User({
+        const user = new UserModel({
+          uid: userAuth.uid,
           email: email,
-          password: encryptedPassword,
           playlists: [],
           refreshTokens: [],
         });
@@ -72,28 +72,35 @@ const register = async (req, res) => {
         );
         return res.status(500).send("INTERNAL SERVER ERROR: " + errorMessage);
       });
-  } catch (error) {
-    res.status(400).send("BAD REQUEST: Register failed " + error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error during registration:", error.message);
+      console.error("Stack trace:", error.stack);
+      res.status(400).send("BAD REQUEST: Register failed " + error.message);
+    }
   }
 };
 
-const generateTokens = async (user) => {
-  const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.JWT_TOKEN_EXPIRATION_TIME,
-  });
+const generateTokens = async (user: jwt.JwtPayload) => {
+  const token = jwt.sign(
+    { id: user?._id },
+    process.env.ACCESS_TOKEN_SECRET as PrivateKey
+  );
   const refreshToken = jwt.sign(
     { id: user._id },
-    process.env.REFRESH_TOKEN_SECRET
+    process.env.REFRESH_TOKEN_SECRET as PrivateKey
   );
   if (user.refreshTokens == null) user.refreshTokens = [refreshToken];
   else user.refreshTokens.push(refreshToken);
   await user.save();
   return { token, refreshToken };
 };
-const login = async (req, res) => {
+const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email: email }).populate("playlists");
+    const user = await UserModel.findOne({ email: email }).populate(
+      "playlists"
+    );
     if (!user) return res.status(404).send("NOT FOUND: User does not exist");
     const auth = getAuth(app);
     signInWithEmailAndPassword(auth, email, password)
@@ -132,13 +139,17 @@ const login = async (req, res) => {
         );
         return res.status(500).send("INTERNAL SERVER ERROR: " + errorMessage);
       });
-  } catch (error) {
-    res.status(400).send("BAD REQUEST: Login failed " + error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error during login:", error.message);
+      console.error("Stack trace:", error.stack);
+      res.status(400).send("BAD REQUEST: Login failed " + error.message);
+    }
   }
 };
 
 // This function is used to logout the user by removing the refresh token from the database
-const logout = async (req, res) => {
+const logout = async (req: Request, res: Response) => {
   const refreshToken = req.headers["authorization"]?.split(" ")[1];
   if (!refreshToken) return res.sendStatus(401);
   const auth = getAuth(app);
@@ -146,13 +157,16 @@ const logout = async (req, res) => {
     .then(() => {
       jwt.verify(
         refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET as PublicKey,
         async (err, user) => {
+          if (!user || typeof user === "string")
+            return res.status(401).send("UNAUTHORIZED: Invalid token");
           if (err) return res.sendStatus(403);
-          const foundUser = await User.findById(user.id);
-          if (!foundUser) return res.sendStatus(401);
+          const foundUser = await UserModel.findById(user.id);
+          if (foundUser == null || foundUser == undefined)
+            return res.status(401).send("UNAUTHORIZED: User not found");
 
-          foundUser.refreshTokens = foundUser.refreshTokens.filter(
+          foundUser.refreshTokens = foundUser.refreshTokens?.filter(
             (token) => token !== refreshToken
           );
           await foundUser.save();
@@ -168,18 +182,20 @@ const logout = async (req, res) => {
 
 // This function is used to refresh the access token using the refresh token
 // The refresh token is sent in the request headers and is verified.
-const refreshToken = async (req, res) => {
+const refreshToken = async (req: Request, res: Response) => {
   const refreshToken = req.headers["authorization"]?.split(" ")[1];
   if (!refreshToken) return res.sendStatus(401);
 
   jwt.verify(
     refreshToken,
-    process.env.REFRESH_TOKEN_SECRET,
+    process.env.REFRESH_TOKEN_SECRET as PublicKey,
     async (err, user) => {
+      if (!user || typeof user === "string")
+        return res.status(401).send("UNAUTHORIZED: Invalid token");
       if (err) return res.sendStatus(403);
-      const foundUser = await User.findById(user.id);
+      const foundUser = await UserModel.findById(user.id);
       if (!foundUser) return res.sendStatus(401);
-      if (!foundUser.refreshTokens.includes(refreshToken))
+      if (!foundUser.refreshTokens?.includes(refreshToken))
         return res.sendStatus(403);
       const tokens = await generateTokens(foundUser);
       res.status(200).json({
@@ -192,4 +208,4 @@ const refreshToken = async (req, res) => {
   );
 };
 
-module.exports = { register, login, refreshToken, logout };
+export default { register, login, refreshToken, logout };

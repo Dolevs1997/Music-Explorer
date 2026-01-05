@@ -1,21 +1,31 @@
-var crypto = require("crypto");
-const axios = require("axios");
-const FormData = require("form-data");
+import crypto from "crypto";
+import axios from "axios";
+import FormData from "form-data";
+
+export type Options = {
+  host: string;
+  endpoint: string;
+  signature_version: string;
+  data_type: string;
+  secure: boolean;
+  access_key: string;
+  access_secret: string;
+};
 
 function buildStringToSign(
-  method,
-  uri,
-  accessKey,
-  dataType,
-  signatureVersion,
-  timestamp
+  method: string,
+  uri: string,
+  accessKey: string,
+  dataType: string,
+  signatureVersion: string,
+  timestamp: number
 ) {
   return [method, uri, accessKey, dataType, signatureVersion, timestamp].join(
     "\n"
   );
 }
 
-function sign(signString, accessSecret) {
+function sign(signString: string, accessSecret: string) {
   return crypto
     .createHmac("sha1", accessSecret)
     .update(Buffer.from(signString, "utf-8"))
@@ -26,7 +36,7 @@ function sign(signString, accessSecret) {
 /**
  * Identifies a sample of bytes
  */
-function identify(data, options, cb) {
+function identify(data: Buffer, options: Options, cb: Function) {
   var current_data = new Date();
   var timestamp = current_data.getTime() / 1000;
   console.log("options:", options);
@@ -77,4 +87,4 @@ function identify(data, options, cb) {
   //      .catch((err) => {cb(null, err)});
 }
 
-module.exports = identify;
+export default identify;

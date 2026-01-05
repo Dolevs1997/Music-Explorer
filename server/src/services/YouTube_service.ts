@@ -1,9 +1,29 @@
-const dotenv = require("dotenv");
-const { getCachedSong, setCachedSong } = require("./Redis_service");
+import dotenv from "dotenv";
+import { getCachedSong, setCachedSong } from "./Redis_service";
 dotenv.config();
 const API_KEY = process.env.YOUTUBE_API_KEY;
 
-async function fetchSong(song, country = "US") {
+type YouTubePlaylistItem = {
+  id: {
+    playlistId: string;
+  };
+  snippet: {
+    title: string;
+    description: string;
+    thumbnails: {
+      default: {
+        url: string;
+      };
+    };
+    publishedAt: string;
+    resourceId: {
+      kind: string;
+      videoId: string;
+    };
+  };
+};
+
+async function fetchSong(song: string, country = "US") {
   const controller = new AbortController();
   const signal = controller.signal;
   const cachedSong = await getCachedSong(song, country);
@@ -41,9 +61,9 @@ async function fetchSong(song, country = "US") {
 }
 
 async function fetchPlaylists(
-  playlistName,
-  country = "US",
-  location = "United States"
+  playlistName: string,
+  country: string = "US",
+  location: string = "United States"
 ) {
   console.log(
     "Fetching playlists for:",
@@ -61,7 +81,7 @@ async function fetchPlaylists(
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    return data.items.map((item) => ({
+    return data.items.map((item: YouTubePlaylistItem) => ({
       id: item.id.playlistId,
       title: item.snippet.title,
       description: item.snippet.description,
@@ -80,7 +100,7 @@ async function fetchPlaylists(
   // }
 }
 
-async function fetchPlaylistSongs(playlistId) {
+async function fetchPlaylistSongs(playlistId: string) {
   if (!playlistId) {
     throw new Error("Playlist ID is required");
   }
@@ -106,7 +126,7 @@ async function fetchPlaylistSongs(playlistId) {
 
   // Filter to only include actual music videos
   return data.items
-    .filter((item) => {
+    .filter((item: YouTubePlaylistItem) => {
       // Must be a video
       if (item.snippet.resourceId.kind !== "youtube#video") return false;
 
@@ -139,15 +159,11 @@ async function fetchPlaylistSongs(playlistId) {
 
       return true;
     })
-    .map((item) => ({
+    .map((item: YouTubePlaylistItem) => ({
       id: item.snippet.resourceId.videoId,
       title: item.snippet.title,
       publishedAt: item.snippet.publishedAt,
     }));
 }
 
-module.exports = {
-  fetchPlaylists,
-  fetchPlaylistSongs,
-  fetchSong,
-};
+export { fetchPlaylists, fetchPlaylistSongs, fetchSong };

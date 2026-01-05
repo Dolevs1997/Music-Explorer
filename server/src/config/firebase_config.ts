@@ -1,10 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file

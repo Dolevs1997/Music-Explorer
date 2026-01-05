@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const zod = require("zod");
-const { z } = zod;
+import mongoose from "mongoose";
+import zod from "zod";
+const z = zod;
 
 // Zod schema for user validation
 const userSchemaZod = z.object({
@@ -34,5 +34,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("User", userSchema);
-module.exports.userSchemaZod = userSchemaZod;
+export type UserType = mongoose.InferSchemaType<typeof userSchema>;
+const UserModel = mongoose.model("User", userSchema);
+export { userSchemaZod, UserModel };
