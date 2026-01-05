@@ -37,6 +37,7 @@ const SongSuggestions = async (text: Message) => {
   console.log("completion message: \n", completion.choices[0].message.content);
 
   const suggestions: string | null = completion.choices[0].message.content;
+  console.log("suggestions: ", suggestions);
   if (!suggestions) {
     return [];
   }
@@ -67,7 +68,4 @@ const SongSuggestionsVoice = async () => {
   return songSuggestions;
 };
 
-export default {
-  SongSuggestions,
-  SongSuggestionsVoice,
-};
+export { SongSuggestions, SongSuggestionsVoice };

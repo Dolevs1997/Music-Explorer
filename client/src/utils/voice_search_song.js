@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import { getSongSuggestions } from "../services/OpenAI_service";
 function voiceSearchSong() {
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -75,25 +76,15 @@ async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
       }
       console.log("Recognized text:", transcript);
       const payload = {
-        text: transcript,
+        content: transcript,
         role: "user",
       };
 
       try {
-        const response = await axios.post(
-          `http://${import.meta.env.VITE_SERVER_URL}/api/openai`,
-          payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-
-              Authorization: `Bearer ${userData.token}`,
-            },
-          }
-        );
-        console.log("response: \n", response.data);
-        resolve(response.data);
-        setResultVoice(response.data);
+        const response = await getSongSuggestions(payload, userData.token);
+        console.log("response: \n", response);
+        resolve(response);
+        setResultVoice(response);
       } catch (error) {
         console.error("Error fetching song suggestions:", error);
         setResultVoice(error);

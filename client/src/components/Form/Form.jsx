@@ -20,7 +20,11 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
     e.preventDefault();
     setIsLoading(true);
     const text = document.getElementById("text").value;
-    const response = await getSongSuggestions(text, user.token);
+    const payload = {
+      content: text,
+      role: "user",
+    };
+    const response = await getSongSuggestions(payload, user.token);
     setSongSuggestions(response);
     setFormVisible(!formVisible);
     setIsLoading(false);
