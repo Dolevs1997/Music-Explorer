@@ -9,14 +9,14 @@ import Song from "../../components/Song/Song";
 function SongsPlaylist() {
   const { playlistId } = useParams();
   const location = useLocation();
-  const { playlistName } = location.state || {};
+  const { playlistName, country } = location.state || {};
   const [playlist, setPlaylist] = useState([]);
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   const [playingVideoId, setPlayingVideoId] = useState(null);
   const [playbackPositions, setPlaybackPositions] = useState({});
-
+  console.log("SongsPlaylist page");
   // console.log("playlist", playlist);
   // console.log("SearchContext in SongsPlaylist:", searchContext);
   useEffect(() => {
@@ -25,7 +25,7 @@ function SongsPlaylist() {
         const response = await fetch(
           `http://${
             import.meta.env.VITE_SERVER_URL
-          }/moodiify/videoSong/playlist/?id=${playlistId}`,
+          }/moodiify/videoSong/playlist/?id=${playlistId}&country=${country}`,
           {
             method: "GET",
             headers: {
@@ -39,14 +39,14 @@ function SongsPlaylist() {
         }
         const data = await response.json();
         setPlaylist(data);
-        // console.log("Fetched playlist data:", data);
+        console.log("Fetched playlist data:", data);
       } catch (error) {
         console.error("Error fetching playlist:", error);
       }
     };
 
     fetchPlaylist();
-  }, [playlistId, user]);
+  }, [playlistId, user, country]);
   return (
     <div className="app-container">
       <header className="header">

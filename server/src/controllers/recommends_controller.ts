@@ -7,7 +7,7 @@ const getAll = async (req: Request, res: Response) => {
   const { song, country } = req.query;
   // console.log("request:", req.token);
   // const result =
-
+  // console.log("recommends_controller");
   try {
     const songData = await fetchSong(song as string, country as string);
     if (!songData) {

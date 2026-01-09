@@ -1,11 +1,10 @@
 import Redis from "ioredis";
 import { createClient } from "redis";
 import { SongVideo } from "../models/Firestore/songVideo";
-
+import { YouTubePlaylistItem } from "./YouTube_service";
 function cacheKey(song: string, country: string) {
   return `recommends:${encodeURIComponent(song)}|${country}`;
 }
-
 async function getCachedSong(song: string, country: string) {
   const redis = new Redis(process.env.REDIS_URL || "string");
 
@@ -15,10 +14,35 @@ async function getCachedSong(song: string, country: string) {
 }
 async function setCachedSong(song: string, country: string, data: SongVideo) {
   const redis = new Redis(process.env.REDIS_URL || "string");
-
+  console.log("song title: ", song);
+  console.log("country: ", country);
   console.log("Setting cache for song:", data);
+
   const key = cacheKey(song, country);
   await redis.set(key, JSON.stringify(data), "EX", 3600); // Cache for 1 hour
+}
+
+async function getCachedSongPlaylist(playlistId: string, country: string) {
+  const redis = new Redis(process.env.REDIS_URL || "string");
+
+  const key = cachePlaylistKey(playlistId, country);
+  // await redis.del(key);
+  const cachedData = await redis.get(key);
+  return cachedData ? [...JSON.parse(cachedData)] : null;
+}
+
+function cachePlaylistKey(playlistId: string, country: string) {
+  return `playlist:${encodeURIComponent(playlistId)} - ${country}}`;
+}
+
+async function setCachedPlaylistSongs(
+  playlistId: string,
+  country: string,
+  data: YouTubePlaylistItem
+) {
+  const redis = new Redis(process.env.REDIS_URL || "string");
+  const key = cachePlaylistKey(playlistId, country);
+  await redis.set(key, JSON.stringify(data), "EX", 3600);
 }
 
 async function connectRedis() {
@@ -34,4 +58,10 @@ async function connectRedis() {
   }
 }
 
-export { getCachedSong, setCachedSong, connectRedis };
+export {
+  getCachedSong,
+  setCachedSong,
+  connectRedis,
+  getCachedSongPlaylist,
+  setCachedPlaylistSongs,
+};

@@ -7,7 +7,7 @@ export type SongVideo = {
 };
 
 const addSongVideo = async (songVideo: SongVideo) => {
-  console.log("Adding song video:", songVideo);
+  // console.log("Adding song video:", songVideo);
   try {
     // Check if the song video already exists
     const songVideoQuery = query(
@@ -17,7 +17,7 @@ const addSongVideo = async (songVideo: SongVideo) => {
     );
     const querySnapshot = await getDocs(songVideoQuery);
     if (!querySnapshot.empty) {
-      console.log("Song video already exists:", querySnapshot.docs[0].id);
+      // console.log("Song video already exists:", querySnapshot.docs[0].id);
       return; // Song video already exists, no need to add
     }
     const docRef = await addDoc(collection(db, "song-video"), {

@@ -141,7 +141,6 @@ function Song({
         if (!song || !user.token) return;
         // if we already cached the resolved song and state already set -> do nothing
         if (songRef.current && state.videoId === songRef.current.videoId) {
-          // nothing to do
           return;
         }
         if (songRef.current) {
@@ -157,11 +156,9 @@ function Song({
           });
           return;
         }
-        // console.log("rendering: ", (render += 1));
         if (!state.error) {
           try {
             const data = await fetchSongYT(song, country, user);
-            // console.log("data", data);
             songRef.current = data;
 
             dispatch({

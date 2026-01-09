@@ -1,9 +1,14 @@
 import dotenv from "dotenv";
-import { getCachedSong, setCachedSong } from "./Redis_service";
+import {
+  getCachedSong,
+  setCachedSong,
+  getCachedSongPlaylist,
+  setCachedPlaylistSongs,
+} from "./Redis_service";
 dotenv.config();
 const API_KEY = process.env.YOUTUBE_API_KEY;
 
-type YouTubePlaylistItem = {
+export type YouTubePlaylistItem = {
   id: {
     playlistId: string;
   };
@@ -31,7 +36,7 @@ async function fetchSong(song: string, country = "US") {
     // console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
-  console.log("Fetching song from YouTube API:", song, country);
+  // console.log("Fetching song from YouTube API:", song, country);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song}`
   )}&type=video&key=${API_KEY}`;
@@ -100,9 +105,25 @@ async function fetchPlaylists(
   // }
 }
 
-async function fetchPlaylistSongs(playlistId: string) {
+async function fetchPlaylistSongs(playlistId: string, country: string = "") {
   if (!playlistId) {
     throw new Error("Playlist ID is required");
+  } else if (country == "") {
+    throw new Error("country is required");
+  }
+  const cachedPlaylistSong = await getCachedSongPlaylist(playlistId, country);
+  if (cachedPlaylistSong) {
+    // console.log(
+    //   "Returning playlist song from CachedSongPlaylist: ",
+    //   cachedPlaylistSong
+    // );
+    return cachedPlaylistSong;
+    // return cachedPlaylistSong[0].map((item: YouTubePlaylistItem) => ({
+    //   id: item.snippet.resourceId.videoId,
+    //   title: item.snippet.title,
+    //   publishedAt: item.snippet.publishedAt,
+    // }));
+    // return;
   }
   console.log("Fetching songs for playlist ID:", playlistId);
   const controller = new AbortController();
@@ -123,7 +144,49 @@ async function fetchPlaylistSongs(playlistId: string) {
   if (!data || !data.items) {
     throw new Error("No playlist songs found");
   }
+  setCachedPlaylistSongs(
+    playlistId,
+    country,
+    data.items
+      .filter((item: YouTubePlaylistItem) => {
+        // Must be a video
+        if (item.snippet.resourceId.kind !== "youtube#video") return false;
 
+        // Exclude private/deleted videos
+        if (
+          item.snippet.title === "Deleted video" ||
+          item.snippet.title === "Private video"
+        )
+          return false;
+
+        // Exclude videos with unwanted content in title (trailers, clips, reviews, etc.)
+        const title = item.snippet.title.toLowerCase();
+        const excludePatterns = [
+          "trailer",
+          "teaser",
+          "official video",
+          "lyric video",
+          "review",
+          "reaction",
+          "tutorial",
+          "podcast",
+          "compilation",
+          "mixtape",
+          "mix",
+        ];
+
+        if (excludePatterns.some((pattern) => title.includes(pattern))) {
+          return false;
+        }
+
+        return true;
+      })
+      .map((item: YouTubePlaylistItem) => ({
+        id: item.snippet.resourceId.videoId,
+        title: item.snippet.title,
+        publishedAt: item.snippet.publishedAt,
+      }))
+  );
   // Filter to only include actual music videos
   return data.items
     .filter((item: YouTubePlaylistItem) => {

@@ -81,8 +81,10 @@ const recognizeAudio = async (req: Request, res: Response) => {
 };
 
 const getAll = async (req: Request, res: Response) => {
+  // console.log("song_controller for fetching song playlists");
   const playlistId = req.query.id as string;
-  const result = await fetchPlaylistSongs(playlistId);
+  const country = req.query.country as string;
+  const result = await fetchPlaylistSongs(playlistId, country);
   if (!result) {
     return res.status(400).json({ error: "No playlist songs found" });
   }
