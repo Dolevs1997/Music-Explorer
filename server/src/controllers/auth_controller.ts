@@ -17,7 +17,6 @@ const register = async (req: Request, res: Response) => {
   try {
     userSchemaZod.parse({
       email: email,
-      password: password,
     });
 
     const existedUser = await UserModel.findOne({ email: email });
@@ -35,7 +34,7 @@ const register = async (req: Request, res: Response) => {
         return res
           .status(400)
           .send(
-            "BAD REQUEST: Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+            "BAD REQUEST: Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character.",
           );
       }
     }
@@ -68,7 +67,7 @@ const register = async (req: Request, res: Response) => {
         console.error(
           "Error creating user in Firebase Auth:",
           errorCode,
-          errorMessage
+          errorMessage,
         );
         return res.status(500).send("INTERNAL SERVER ERROR: " + errorMessage);
       });
@@ -84,11 +83,11 @@ const register = async (req: Request, res: Response) => {
 const generateTokens = async (user: jwt.JwtPayload) => {
   const token = jwt.sign(
     { id: user?._id },
-    process.env.ACCESS_TOKEN_SECRET as PrivateKey
+    process.env.ACCESS_TOKEN_SECRET as PrivateKey,
   );
   const refreshToken = jwt.sign(
     { id: user._id },
-    process.env.REFRESH_TOKEN_SECRET as PrivateKey
+    process.env.REFRESH_TOKEN_SECRET as PrivateKey,
   );
   if (user.refreshTokens == null) user.refreshTokens = [refreshToken];
   else user.refreshTokens.push(refreshToken);
@@ -99,7 +98,7 @@ const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     const user = await UserModel.findOne({ email: email }).populate(
-      "playlists"
+      "playlists",
     );
     if (!user) return res.status(404).send("NOT FOUND: User does not exist");
     const auth = getAuth(app);
@@ -107,10 +106,10 @@ const login = async (req: Request, res: Response) => {
       .then(async (userCredential) => {
         // Signed in
         const userAuth = userCredential.user;
+        console.log("userAuth:", userAuth);
         // console.log("User signed in to Firebase Auth:", user);
         const isEmailValid = userSchemaZod.safeParse({
           email: userAuth.email,
-          password: password,
         });
         if (!isEmailValid.success)
           return res.status(400).send("BAD REQUEST: Invalid user data");
@@ -124,7 +123,6 @@ const login = async (req: Request, res: Response) => {
         res.status(200).json({
           email: user.email,
           _id: user._id,
-          password: user.password,
           playlists: user.playlists,
           ...tokens,
         });
@@ -135,7 +133,7 @@ const login = async (req: Request, res: Response) => {
         console.error(
           "Error signing in user in Firebase Auth:",
           errorCode,
-          errorMessage
+          errorMessage,
         );
         return res.status(500).send("INTERNAL SERVER ERROR: " + errorMessage);
       });
@@ -167,11 +165,11 @@ const logout = async (req: Request, res: Response) => {
             return res.status(401).send("UNAUTHORIZED: User not found");
 
           foundUser.refreshTokens = foundUser.refreshTokens?.filter(
-            (token) => token !== refreshToken
+            (token) => token !== refreshToken,
           );
           await foundUser.save();
           res.sendStatus(204);
-        }
+        },
       );
     })
     .catch((error) => {
@@ -201,10 +199,9 @@ const refreshToken = async (req: Request, res: Response) => {
       res.status(200).json({
         email: foundUser.email,
         _id: foundUser._id,
-        password: foundUser.password,
         ...tokens,
       });
-    }
+    },
   );
 };
 
