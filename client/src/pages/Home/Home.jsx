@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
 import { SearchContext } from "../../Contexts/SearchContext";
+import { useInactivity } from "../../hooks/useInactivity";
 export default function Home() {
   const {
     songSuggestions,
@@ -25,6 +26,13 @@ export default function Home() {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Add inactivity detection
+  useInactivity(30 * 60 * 1000, () => {
+    // 30 minutes
+    localStorage.removeItem("user");
+    setUserData(null);
+    navigate("/login");
+  });
 
   useEffect(() => {
     document.title = "Moodiify | Home";
