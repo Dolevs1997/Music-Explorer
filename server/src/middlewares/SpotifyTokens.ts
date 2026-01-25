@@ -24,10 +24,11 @@ const getToken = async () => {
 const validateToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const token: string = await getToken();
+    console.log("token: ", token);
     req.headers["spotify-token"] = token;
     next();
   } catch (error) {

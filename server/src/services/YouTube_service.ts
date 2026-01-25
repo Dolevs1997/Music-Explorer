@@ -38,7 +38,7 @@ async function fetchSong(song: string, country = "US") {
   }
   // console.log("Fetching song from YouTube API:", song, country);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
-    `${song}`
+    `${song}`,
   )}&type=video&key=${API_KEY}`;
   try {
     const response = await fetch(url, { signal });
@@ -59,7 +59,7 @@ async function fetchSong(song: string, country = "US") {
   } catch (error) {
     console.error(
       "YouTube_service file in fetchSong: Error fetching songs:",
-      error
+      error,
     );
     throw new Error("Failed to fetch songs");
   }
@@ -68,7 +68,7 @@ async function fetchSong(song: string, country = "US") {
 async function fetchPlaylists(
   playlistName: string,
   country: string = "US",
-  location: string = "United States"
+  location: string = "United States",
 ) {
   console.log(
     "Fetching playlists for:",
@@ -76,27 +76,51 @@ async function fetchPlaylists(
     "in",
     location,
     "and country",
-    country
+    country,
   );
   const controller = new AbortController();
   const signal = controller.signal;
   const queryStr = `${playlistName} music playlists ${location}`;
 
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=23&q=${queryStr}&regionCode=${country}&type=playlist&key=${API_KEY}`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${queryStr}&regionCode=${country}&type=playlist&key=${API_KEY}`;
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    return data.items.map((item: YouTubePlaylistItem) => ({
-      id: item.id.playlistId,
-      title: item.snippet.title,
-      description: item.snippet.description,
-      thumbnail: item.snippet.thumbnails.default.url,
-      publishedAt: item.snippet.publishedAt,
-    }));
+    return data.items
+      .sort((item1: YouTubePlaylistItem, item2: YouTubePlaylistItem) => {
+        const titleItem1 = item1.snippet.title.toLowerCase();
+        const descriptionItem1 = item1.snippet.description.toLowerCase();
+        const categoryLower = playlistName.toLowerCase();
+        const titleItem2 = item2.snippet.title.toLowerCase();
+        const descriptionItem2 = item2.snippet.description.toLowerCase();
+
+        if (
+          titleItem1.includes(categoryLower) ||
+          (descriptionItem1.includes(categoryLower) &&
+            !titleItem2.includes(categoryLower)) ||
+          descriptionItem2.includes(categoryLower)
+        )
+          return -1;
+        if (
+          titleItem2.includes(categoryLower) ||
+          (descriptionItem2.includes(categoryLower) &&
+            !titleItem1.includes(categoryLower)) ||
+          !descriptionItem1.includes(categoryLower)
+        )
+          return 1;
+      })
+
+      .map((item: YouTubePlaylistItem) => ({
+        id: item.id.playlistId,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails.default.url,
+        publishedAt: item.snippet.publishedAt,
+      }));
   } catch (error) {
     console.error(
       "YouTube_service file in fetchPlaylists: Error fetching playlists:",
-      error
+      error,
     );
     throw new Error("Failed to fetch playlists");
   }
@@ -135,7 +159,7 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
   if (!response.ok) {
     console.error(
       "YouTube_service file in fetchPlaylistSongs: Error fetching playlist songs:",
-      response.statusText
+      response.statusText,
     );
     throw new Error(`Error fetching playlist songs: ${response.statusText}`);
   }
@@ -185,7 +209,7 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
         id: item.snippet.resourceId.videoId,
         title: item.snippet.title,
         publishedAt: item.snippet.publishedAt,
-      }))
+      })),
   );
   // Filter to only include actual music videos
   return data.items
