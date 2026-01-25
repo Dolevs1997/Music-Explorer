@@ -20,13 +20,14 @@ async function addSongToPlaylist(song, state, playlistName, user) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
-    }
+    },
   );
-
+  console.log("response: ", response);
   // if (!Array.isArray(user.playlists)) {
   //   user.playlists = [];
   // }
-  return response.data;
+
+  return response;
 }
 
 async function removeSongFromPlaylist(videoId, user, playlistId) {
@@ -43,7 +44,7 @@ async function removeSongFromPlaylist(videoId, user, playlistId) {
         user: user,
         playlistId: playlistId,
       },
-    }
+    },
   );
   return response.data;
 }

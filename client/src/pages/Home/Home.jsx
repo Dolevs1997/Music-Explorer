@@ -9,7 +9,8 @@ import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
 import { SearchContext } from "../../Contexts/SearchContext";
 import { useInactivity } from "../../hooks/useInactivity";
-export default function Home() {
+import propTypes from "prop-types";
+export default function Home({ user }) {
   const {
     songSuggestions,
     setSongSuggestions,
@@ -23,14 +24,12 @@ export default function Home() {
   const location = useLocation();
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   // Add inactivity detection
   useInactivity(30 * 60 * 1000, () => {
     // 30 minutes
     localStorage.removeItem("user");
-    setUserData(null);
     navigate("/login");
   });
 
@@ -39,21 +38,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-
     setIsLoading(true);
 
     if (!user) {
       setIsLoading(false);
+      console.log("no user");
       setError("User not authenticated. Please log in.");
       navigate("/login");
       return;
     }
     setIsLoading(false);
-    if (user) {
-      setUserData(JSON.parse(user));
-    }
-  }, [navigate]);
+  }, [navigate, user]);
 
   useEffect(() => {
     if (isMapVisible) {
@@ -73,14 +68,14 @@ export default function Home() {
             setIsMapVisible={setIsMapVisible}
             isRecording={isRecording}
             setIsRecording={setIsRecording}
-            userData={userData}
+            userData={user}
             setSongSuggestions={setSongSuggestions}
             songSuggestions={songSuggestions}
             setIsVoiceSearch={setIsVoiceSearch}
             isVoiceSearch={isVoiceSearch}
           />
         )}
-        <NavBar user={userData} />
+        <NavBar user={user} />
       </header>
       <main className="home">
         <div className="homeContainer">
@@ -94,21 +89,17 @@ export default function Home() {
                 />
               )} */}
               {songSuggestions.length == 0 && !isMapVisible && (
-                <Categories user={userData} formVisible={formVisible} />
+                <Categories formVisible={formVisible} user={user} />
               )}
               {songSuggestions.length > 0 &&
                 !isVoiceSearch &&
                 !isMapVisible &&
-                !isRecording && (
-                  <Songs songSuggestions={songSuggestions} user={userData} />
-                )}
+                !isRecording && <Songs songSuggestions={songSuggestions} />}
 
               {songSuggestions.length > 0 &&
                 !isMapVisible &&
                 !isRecording &&
-                isVoiceSearch && (
-                  <Songs songSuggestions={songSuggestions} user={userData} />
-                )}
+                isVoiceSearch && <Songs songSuggestions={songSuggestions} />}
 
               {isMapVisible && <MapComponent />}
             </>
@@ -118,3 +109,16 @@ export default function Home() {
     </div>
   );
 }
+
+Home.propTypes = {
+  user: propTypes.shape({
+    email: propTypes.string.isRequired,
+    token: propTypes.string.isRequired,
+    playlists: propTypes.arrayOf(
+      propTypes.shape({
+        _id: propTypes.string,
+        name: propTypes.string,
+      }),
+    ),
+  }),
+};

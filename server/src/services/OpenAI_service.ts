@@ -29,7 +29,7 @@ const SongSuggestions = async (text: Message) => {
         content:
           "Provide me with a list of song suggestions based on the following description: " +
           text.content +
-          " music only: artist name - song name - year. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.",
+          " music only: artist name - song name - year. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.  If NO relevant songs exist || if it's NOT a song, return an empty response",
       },
     ],
     store: true,

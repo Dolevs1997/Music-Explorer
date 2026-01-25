@@ -13,81 +13,89 @@ import Logo from "./components/Logo/Logo";
 import NavBar from "./components/NavBar/NavBar";
 import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
+import { UserProvider } from "./Contexts/UserContext";
+import { getStoredUser } from "./global/StoredUser";
+
 function App() {
-  const user = JSON.parse(localStorage.getItem("user"));
   const [songSuggestions, setSongSuggestions] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
+  const user = getStoredUser();
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);
 
   return (
-    <BrowserRouter basename="/moodiify">
-      <SearchContext.Provider
-        value={{
-          songSuggestions,
-          setSongSuggestions,
-          isRecording,
-          setIsRecording,
-          isMapVisible,
-          setIsMapVisible,
-          formVisible,
-          setFormVisible,
-          isVoiceSearch,
-          setIsVoiceSearch,
-        }}
-      >
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route index element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+    <UserProvider>
+      <BrowserRouter basename="/moodiify">
+        <SearchContext.Provider
+          value={{
+            songSuggestions,
+            setSongSuggestions,
+            isRecording,
+            setIsRecording,
+            isMapVisible,
+            setIsMapVisible,
+            formVisible,
+            setFormVisible,
+            isVoiceSearch,
+            setIsVoiceSearch,
+          }}
+        >
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route index element={<Home user={user} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          <Route path="/home" element={<Home />}>
-            <Route path="categories" element={<Categories user={user} />} />
+            <Route path="/home" element={<Home user={user} />}>
+              <Route
+                path="categories"
+                element={<Categories formVisible={formVisible} user={user} />}
+              />
+              <Route
+                path="songSuggestions"
+                element={<Navigate to="/home" replace />}
+              />
+            </Route>
+
             <Route
-              path="songSuggestions"
-              element={<Navigate to="/home" replace />}
+              path="/category/playlists"
+              element={<CategoryPlaylists />}
+            ></Route>
+            <Route
+              path="/category/playlists/:playlistId/songs"
+              element={<SongsPlaylist />}
             />
-          </Route>
 
-          <Route
-            path="/category/playlists"
-            element={<CategoryPlaylists />}
-          ></Route>
-          <Route
-            path="/category/playlists/:playlistId/songs"
-            element={<SongsPlaylist />}
-          />
-
-          <Route
-            path="/myplaylists/:playlistId"
-            element={<SongsPlaylistUser />}
-          />
-          <Route path="/global" element={<Home />} />
-          <Route
-            path="/global/categories/:country"
-            element={
-              <div className="home">
-                <div className="header">
-                  <Logo />
-                  <Search />
-                  <NavBar user={user} />
+            <Route
+              path="/myplaylists/:playlistId"
+              element={<SongsPlaylistUser />}
+            />
+            <Route path="/global" element={<Home user={user} />} />
+            <Route
+              path="/global/categories/:country"
+              element={
+                <div className="home">
+                  <div className="header">
+                    <Logo />
+                    <Search />
+                    <NavBar />
+                  </div>
+                  <div className="homeContainer">
+                    <Categories />
+                  </div>
                 </div>
-                <div className="homeContainer">
-                  <Categories user={user} />
-                </div>
-              </div>
-            }
-          />
+              }
+            />
 
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </SearchContext.Provider>
-    </BrowserRouter>
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </SearchContext.Provider>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 
