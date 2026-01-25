@@ -13,7 +13,8 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
+import toast, { Toaster } from "react-hot-toast";
+import UserContext from "../../Contexts/UserContext";
 const opts = {
   height: "300",
   width: "400",
@@ -30,6 +31,7 @@ const initialSong = {
   loading: true,
   error: null,
   playlists: [],
+  playing: false,
 };
 // let render = 0;
 function reducer(state, action) {
@@ -58,6 +60,11 @@ function reducer(state, action) {
         ...state,
         error: action.payload.error,
       };
+    case "PLAY":
+      return { ...state, playing: true };
+    case "PAUSE":
+      return { ...state, playing: false };
+
     default:
       return state;
   }
@@ -65,7 +72,6 @@ function reducer(state, action) {
 
 function Song({
   song,
-  user,
   country = "US",
   playingVideoId,
   setPlayingVideoId,
@@ -75,14 +81,14 @@ function Song({
   const navigate = useNavigate();
   const [playlistName, setPlaylistName] = useState("");
   const [state, dispatch] = useReducer(reducer, initialSong);
-  const playerRef = useRef(null);
-  const [setIsSongPlaying] = useState(false);
   const songRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
-  console.log("videoId in Song component:", state.videoId);
+  const { user } = useContext(UserContext);
+  // console.log("videoId in Song component:", state.videoId);
+  // console.log("user:", user);
   if (!user.token) {
     navigate("/login");
   }
@@ -97,7 +103,10 @@ function Song({
 
   async function handleAddSongToPlaylist(playlistName) {
     console.log("user in handleAddSongToPlaylist:", user);
-    const data = await addSongToPlaylist(song, state, playlistName, user);
+    const response = await addSongToPlaylist(song, state, playlistName, user);
+    if (response.status == 200) toast.success(`${response.data.message}`);
+    else if (response.status != 200) toast.error(`${response.data.message}`);
+    const data = response.data;
     console.log("data: ", data);
     // console.log("playlistName: ", data.playlist.name);
     try {
@@ -111,7 +120,7 @@ function Song({
       });
       // Check if the playlist already exists
       const existingPlaylist = user.playlists.find(
-        (playlist) => playlist.name === data.playlist.name
+        (playlist) => playlist.name === data.playlist.name,
       );
       console.log("existingPlaylist:", existingPlaylist);
       if (existingPlaylist) {
@@ -119,7 +128,7 @@ function Song({
         user.playlists = user.playlists.map((playlist) =>
           playlist.name === data.playlist.name
             ? { ...playlist, id: data.playlist._id }
-            : playlist
+            : playlist,
         );
       } else {
         user.playlists.push({
@@ -182,27 +191,8 @@ function Song({
 
       fetchSong(song, user, country);
     },
-    [song, user, country, state, playlistId]
+    [song, user, country, state, playlistId],
   );
-
-  useEffect(() => {
-    if (
-      playerRef.current &&
-      playingVideoId &&
-      playingVideoId !== state.videoId
-    ) {
-      try {
-        playerRef.current.pauseVideo();
-        setIsSongPlaying(false);
-      } catch (error) {
-        // ignore if player not ready
-        console.error("Error pausing video:", error);
-      }
-    }
-  }, [playingVideoId, state.videoId, setIsSongPlaying]);
-  function onPlayerReady(event) {
-    playerRef.current = event.target;
-  }
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
     const data = await removeSongFromPlaylist(videoId, user, playlistId);
@@ -227,6 +217,7 @@ function Song({
   return (
     <div className="homeContainer">
       <div>
+        <Toaster />
         <button
           className={styles.optionsBtn}
           onClick={(e) => {
@@ -319,16 +310,11 @@ function Song({
             videoId={state.videoId}
             title={state.title}
             opts={opts}
-            onReady={onPlayerReady}
             onPlay={() => {
-              setPlayingVideoId(state.videoId);
-              setIsSongPlaying(true);
+              dispatch({ type: "PLAY", payload: { playing: true } });
             }}
             onPause={() => {
-              setIsSongPlaying(false);
-              if (playingVideoId === state.videoId) {
-                setPlayingVideoId(null);
-              }
+              dispatch({ type: "PAUSE", payload: { playing: false } });
             }}
           />
         ) : (
@@ -357,17 +343,6 @@ function Song({
 
 Song.propTypes = {
   song: propTypes.string.isRequired,
-  user: propTypes.shape({
-    _id: propTypes.string.isRequired,
-    name: propTypes.string.isRequired,
-    email: propTypes.string.isRequired,
-    token: propTypes.string.isRequired,
-    playlists: propTypes.arrayOf(
-      propTypes.shape({
-        name: propTypes.string,
-      })
-    ),
-  }).isRequired,
   country: propTypes.string,
   playingVideoId: propTypes.string,
   setPlayingVideoId: propTypes.func,

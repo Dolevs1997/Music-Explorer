@@ -6,10 +6,31 @@ import toast, { Toaster } from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { addSongToPlaylist } from "../../utils/playlist";
+import UserContext from "../../Contexts/UserContext";
 function NavBar({ user }) {
   const [showModal, setShowModal] = useState(false);
+  const [playlistName, setPlaylistName] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
+
+  // console.log("user: ", user);
+
+  async function handleAddPlaylist() {
+    setShowModal(false);
+    const result = await addSongToPlaylist("", "", playlistName, user);
+    if (result.status == 200) {
+      const updatedUser = {
+        ...user,
+        playlists: [...user.playlists, result.data.playlist],
+      };
+      setUser(updatedUser);
+
+      toast.success(`${result.data.message}`);
+    } else toast.error(`${result.data.message}`);
+  }
+
   async function handleLogout() {
     try {
       const response = await axios.get(
@@ -19,10 +40,10 @@ function NavBar({ user }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.refreshToken}`,
           },
-        }
+        },
       );
       if (response.status === 204) {
-        localStorage.removeItem("user");
+        setUser(null);
         toast.success("Logout successful! Redirecting to login...");
         setTimeout(() => {
           navigate("/login");
@@ -95,20 +116,19 @@ function NavBar({ user }) {
           </Modal.Header>
 
           <Modal.Body>
-            <input type="text" placeholder="Enter playlist name" />
+            <input
+              type="text"
+              placeholder="Enter playlist name"
+              value={playlistName}
+              onChange={(e) => setPlaylistName(e.target.value)}
+            />
           </Modal.Body>
 
           <Modal.Footer>
             <Button variant="dark" onClick={() => setShowModal(false)}>
               Close
             </Button>
-            <Button
-              variant="dark"
-              onClick={() => {
-                setShowModal(false);
-                toast.success("Playlist created successfully!");
-              }}
-            >
+            <Button variant="dark" onClick={handleAddPlaylist}>
               Save changes
             </Button>
           </Modal.Footer>

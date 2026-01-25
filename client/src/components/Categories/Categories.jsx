@@ -3,32 +3,29 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Category from "../Category/Category";
 import styles from "./Categories.module.css";
-import { Link, useNavigate, useParams, useLocation } from "react-router";
+import { Link, useParams, useLocation, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { countryToLocale } from "../../utils/countryLocalMap";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-function Categories({ user, formVisible }) {
+function Categories({ formVisible, user }) {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const params = useParams();
   const country = params.country || "US";
   const location = useLocation();
   const [currentLocation, setCurrentLocation] = useState(
-    location.state?.locationName || "United States"
+    location.state?.locationName || "United States",
   );
   // Determine locale based on country code
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
-  const navigate = useNavigate();
   // console.log("categories");
-  // console.log("user in Categories:", user);
-  if (!user.token) {
-    navigate("/login");
-  }
-  if (user.token === "undefined") {
-    navigate("/login");
-  }
+  console.log("user token in Categories:", user);
+  useEffect(() => {
+    if (user == null) navigate("/login");
+  });
   useEffect(() => {
     if (location.state?.locationName) {
       setCurrentLocation(location.state.locationName);
@@ -49,7 +46,7 @@ function Categories({ user, formVisible }) {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${user.token}`,
               },
-            }
+            },
           );
 
           setCategories(response.data.categories.items);
@@ -68,7 +65,7 @@ function Categories({ user, formVisible }) {
       }
       fetchGenres();
     },
-    [limit, user.token, user, locale]
+    [limit, user.token, user, locale],
   );
 
   async function handleShowCategories(show) {
@@ -89,7 +86,7 @@ function Categories({ user, formVisible }) {
 
             Authorization: `Bearer ${user.token}`,
           },
-        }
+        },
       );
       if (response.status !== 200) {
         console.error("Error fetching categories:", response.statusText);

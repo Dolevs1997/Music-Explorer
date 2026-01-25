@@ -1,24 +1,21 @@
 import { useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 import Songs from "../../components/Songs/Songs";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
-import PropTypes from "prop-types";
-SongsPlaylistUser.propTypes = {
-  user: PropTypes.object,
-  playlist: PropTypes.object,
-};
+import UserContext from "../../Contexts/UserContext";
 
 function SongsPlaylistUser() {
+  const { user } = useContext(UserContext);
+
   const { playlistId } = useParams();
   const location = useLocation();
-  const user = location.state?.user || JSON.parse(localStorage.getItem("user"));
   let playlist =
     location.state?.playlist ||
-    user?.playlists?.find((p) => p.id === playlistId);
+    user?.playlists?.find((p) => p.id === playlistId || p._id === playlistId);
   const [songs, setSongs] = useState(location.state?.songs || []);
   console.log("SongsPlaylistUser render");
   if (!playlist) {
@@ -39,7 +36,7 @@ function SongsPlaylistUser() {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
-          }
+          },
         );
         if (!response.ok) {
           setSongs([]);
@@ -51,7 +48,7 @@ function SongsPlaylistUser() {
           data.songs.map((songObj) => {
             // console.log("songObj: ", songObj);
             return songObj.song;
-          })
+          }),
         );
 
         // setSongs(() => data.map((song) => song.song));
