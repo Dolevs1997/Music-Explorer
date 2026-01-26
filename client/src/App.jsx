@@ -23,6 +23,8 @@ function App() {
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
   const user = getStoredUser();
+  console.log("user at App: ", user);
+
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);

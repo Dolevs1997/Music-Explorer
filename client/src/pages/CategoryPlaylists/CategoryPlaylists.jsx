@@ -7,14 +7,14 @@ import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 // import UserContext from "../../Contexts/UserContext";
-import { getStoredUser } from "../../global/StoredUser";
+// import { getStoredUser } from "../../global/StoredUser";
 // import { SearchContext } from "../../Contexts/SearchContext";
 function CategoryPlaylists() {
   const navigate = useNavigate();
   const location = useLocation();
   const [playlistsCategory, setPlaylistsCategory] = useState([]);
   const [categoryName, setCategoryName] = useState("Category");
-  const user = getStoredUser();
+  // const user = getStoredUser();
   // const searchContext = useContext(SearchContext);
   console.log("Category Playlists Page");
   useEffect(() => {
@@ -33,7 +33,7 @@ function CategoryPlaylists() {
       <header className={styles.header}>
         <Logo />
         <Search />
-        <NavBar user={user} />
+        <NavBar />
       </header>
       <main className={styles.playlistsContainer}>
         <h1 className={styles.title}>{categoryName} Playlist</h1>

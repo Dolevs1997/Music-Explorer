@@ -86,9 +86,9 @@ function Song({
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   // console.log("videoId in Song component:", state.videoId);
-  // console.log("user:", user);
+  console.log("user:", user);
   if (!user.token) {
     navigate("/login");
   }
@@ -137,7 +137,11 @@ function Song({
         });
       }
 
-      localStorage.setItem("user", JSON.stringify(user));
+      const updatedUser = {
+        ...user,
+        playlists: [...user.playlists, data.playlist],
+      };
+      setUser(updatedUser);
     } catch (error) {
       console.error("Error adding song to playlist:", error);
     }

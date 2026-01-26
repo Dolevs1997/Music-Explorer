@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+// /* eslint-disable react/prop-types */
 import styles from "./NavBar.module.css";
 import { useNavigate } from "react-router";
 import axios from "axios";
@@ -9,23 +9,25 @@ import Button from "react-bootstrap/Button";
 import { useState, useContext } from "react";
 import { addSongToPlaylist } from "../../utils/playlist";
 import UserContext from "../../Contexts/UserContext";
-function NavBar({ user }) {
+function NavBar() {
   const [showModal, setShowModal] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   // console.log("user: ", user);
 
   async function handleAddPlaylist() {
     setShowModal(false);
     const result = await addSongToPlaylist("", "", playlistName, user);
+    console.log("user playlists: ", user.playlists);
     if (result.status == 200) {
       const updatedUser = {
         ...user,
         playlists: [...user.playlists, result.data.playlist],
       };
       setUser(updatedUser);
+      console.log("user playlists: ", user.playlists);
 
       toast.success(`${result.data.message}`);
     } else toast.error(`${result.data.message}`);

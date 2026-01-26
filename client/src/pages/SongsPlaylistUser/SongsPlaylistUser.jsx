@@ -73,7 +73,7 @@ function SongsPlaylistUser() {
         <header className="header">
           <Logo />
           <Search />
-          <NavBar user={user} />
+          <NavBar />
         </header>
         <main className="homeContainer">
           <div className="playlist-songs">

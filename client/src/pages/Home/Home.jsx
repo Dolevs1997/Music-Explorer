@@ -26,6 +26,8 @@ export default function Home({ user }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  console.log("home rendering");
+  console.log("user at home: ", user);
   // Add inactivity detection
   useInactivity(30 * 60 * 1000, () => {
     // 30 minutes
@@ -75,7 +77,7 @@ export default function Home({ user }) {
             isVoiceSearch={isVoiceSearch}
           />
         )}
-        <NavBar user={user} />
+        <NavBar />
       </header>
       <main className="home">
         <div className="homeContainer">

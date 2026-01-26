@@ -5,14 +5,14 @@ import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 import Song from "../../components/Song/Song";
-import { getStoredUser } from "../../global/StoredUser";
+// import { getStoredUser } from "../../global/StoredUser";
 // import { useNavigate } from "react-router-dom";
 function SongsPlaylist() {
   const { playlistId } = useParams();
   const location = useLocation();
   const { playlistName, token, country } = location.state || {};
   const [playlist, setPlaylist] = useState([]);
-  const user = getStoredUser();
+  // const user = getStoredUser();
   const [playingVideoId, setPlayingVideoId] = useState(null);
 
   // console.log("SongsPlaylist page");
@@ -51,7 +51,7 @@ function SongsPlaylist() {
       <header className="header">
         <Logo />
         <Search />
-        <NavBar user={user} />
+        <NavBar />
       </header>
       <main className="homeContainer">
         <div className="playlist-songs">
