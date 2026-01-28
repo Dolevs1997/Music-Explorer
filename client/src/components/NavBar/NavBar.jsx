@@ -4,34 +4,14 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import { useState, useContext } from "react";
-import { addSongToPlaylist } from "../../utils/playlist";
+
+import { useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
 function NavBar() {
-  const [showModal, setShowModal] = useState(false);
-  const [playlistName, setPlaylistName] = useState("");
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
   // console.log("user: ", user);
-
-  async function handleAddPlaylist() {
-    setShowModal(false);
-    const result = await addSongToPlaylist("", "", playlistName, user);
-    console.log("user playlists: ", user.playlists);
-    if (result.status == 200) {
-      const updatedUser = {
-        ...user,
-        playlists: [...user.playlists, result.data.playlist],
-      };
-      setUser(updatedUser);
-      console.log("user playlists: ", user.playlists);
-
-      toast.success(`${result.data.message}`);
-    } else toast.error(`${result.data.message}`);
-  }
 
   async function handleLogout() {
     try {
@@ -62,15 +42,13 @@ function NavBar() {
       <nav className={styles.navbar}>
         <Toaster />
         <NavDropdown title="Menu" menuVariant="dark">
-          {/* <NavDropdown.Item>Profile</NavDropdown.Item> */}
-          <NavDropdown
-            drop="start"
-            title="Playlists"
-            id="basic-nav-dropdown"
-            menuVariant="dark"
-            className={styles.playlistDropdown}
-          >
-            {user?.playlists && user.playlists.length > 0 ? (
+          <NavDropdown.Item>Profile</NavDropdown.Item>
+          <NavDropdown.Item onClick={() => navigate("/myplaylists")}>
+            Playlists
+          </NavDropdown.Item>
+          <NavDropdown.Divider />
+
+          {/* {user?.playlists && user.playlists.length > 0 ? (
               user.playlists.map((playlist, index) => (
                 <NavDropdown.Item
                   key={index}
@@ -88,54 +66,11 @@ function NavBar() {
               <NavDropdown.Item disabled>
                 No Playlists Available
               </NavDropdown.Item>
-            )}
-            <NavDropdown.Divider />
-            <NavDropdown.Item onClick={() => setShowModal(true)}>
-              Create Playlist
-            </NavDropdown.Item>
-          </NavDropdown>
+            )} */}
 
-          <NavDropdown.Divider />
           <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
         </NavDropdown>
       </nav>
-      <div
-        className="modal show"
-        style={{
-          display: showModal ? "block" : "none",
-          position: "fixed",
-          width: "20%",
-          height: "300px",
-          top: "50%",
-          left: "90%",
-          transform: "translate(-50%, -50%)",
-          opacity: 0.9,
-        }}
-      >
-        <Modal.Dialog>
-          <Modal.Header closeButton onHide={() => setShowModal(false)}>
-            <Modal.Title>Enter Playlist Name</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <input
-              type="text"
-              placeholder="Enter playlist name"
-              value={playlistName}
-              onChange={(e) => setPlaylistName(e.target.value)}
-            />
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button variant="dark" onClick={() => setShowModal(false)}>
-              Close
-            </Button>
-            <Button variant="dark" onClick={handleAddPlaylist}>
-              Save changes
-            </Button>
-          </Modal.Footer>
-        </Modal.Dialog>
-      </div>
     </div>
   );
 }

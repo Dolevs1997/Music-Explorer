@@ -14,6 +14,7 @@ import NavBar from "./components/NavBar/NavBar";
 import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
 import { UserProvider } from "./Contexts/UserContext";
+import PlaylistsUser from "./pages/PlaylistsUser/PlaylistsUser";
 
 function App() {
   const [songSuggestions, setSongSuggestions] = useState([]);
@@ -70,7 +71,7 @@ function App() {
               path="/category/playlists/:playlistId/songs"
               element={<SongsPlaylist />}
             />
-
+            <Route path="/myplaylists" element={<PlaylistsUser />} />
             <Route
               path="/myplaylists/:playlistId"
               element={<SongsPlaylistUser />}

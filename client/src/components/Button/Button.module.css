@@ -23,6 +23,9 @@ button[type="register"] {
 button[type="select"] {
   background-color: var(--color-background-app);
 }
+button[type="link"] {
+  background-color: var(--color-background-800);
+}
 .button:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: scale(1.1);
