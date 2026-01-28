@@ -8,14 +8,21 @@ router.post(
   "/create",
   authenticate,
   validateToken,
-  playlistController.createPlaylist
+  playlistController.createPlaylist,
 );
 router.get(
   "/",
   authenticate,
   validateToken,
-  playlistController.getPlaylistSongs
+  playlistController.getPlaylistSongs,
 );
+router.delete(
+  "/",
+  authenticate,
+  validateToken,
+  playlistController.deletePlaylist,
+);
+
 // router.get(
 //   "/:videoId",
 //   authenticate,

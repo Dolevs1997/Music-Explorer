@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState, useContext } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
@@ -11,12 +11,14 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import styles from "./SongsPlaylistUser.module.css";
 import Modal from "react-bootstrap/Modal";
 import Button from "../../components/Button/Button.jsx";
-
+import toast, { Toaster } from "react-hot-toast";
+import { removePlaylist } from "../../utils/playlist.js";
 function SongsPlaylistUser() {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [showModal, setShowModal] = useState(false);
   const { playlistId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   let playlist =
     location.state?.playlist ||
     user?.playlists?.find((p) => p.id === playlistId || p._id === playlistId);
@@ -68,7 +70,24 @@ function SongsPlaylistUser() {
     console.log("Removing song:", removedSong);
     setSongs((prevSongs) => prevSongs.filter((song) => song !== removedSong));
   }
-  async function handleRemovePlaylist() {}
+  async function handleRemovePlaylist() {
+    try {
+      const data = await removePlaylist(playlistId, user);
+
+      console.log("Delete playlist response data:", data);
+      const updatedPlaylists = user.playlists.filter(
+        (p) => p.id !== playlistId && p._id !== playlistId,
+      );
+      const updatedUser = { ...user, playlists: updatedPlaylists };
+      setUser(updatedUser);
+      toast.success("Playlist deleted successfully");
+      setShowModal(false);
+      navigate("/home");
+    } catch (error) {
+      console.error("Error deleting playlist:", error);
+      toast.error("Failed to delete playlist");
+    }
+  }
   return (
     <div className="app-container">
       <removeBtn.Provider
@@ -79,7 +98,9 @@ function SongsPlaylistUser() {
           <Search />
           <NavBar />
         </header>
+
         <main className="homeContainer">
+          <Toaster />
           <div className="playlist-songs">
             <div className={styles.playlistHeader}>
               <h1>{playlist.name} Playlist</h1>

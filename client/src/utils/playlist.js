@@ -49,4 +49,17 @@ async function removeSongFromPlaylist(videoId, user, playlistId) {
   return response.data;
 }
 
-export { addSongToPlaylist, removeSongFromPlaylist };
+async function removePlaylist(playlistId, user) {
+  const response = await axios.delete(
+    `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${playlistId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
+export { addSongToPlaylist, removeSongFromPlaylist, removePlaylist };

@@ -86,7 +86,8 @@ function Song({
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log("videoId in Song component:", state.videoId);
   console.log("user:", user);
   if (!user.token) {

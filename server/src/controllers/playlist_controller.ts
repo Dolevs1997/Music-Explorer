@@ -232,5 +232,34 @@ const getPlaylistSongs = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const deletePlaylist = async (req: Request, res: Response) => {
+  const playlistId = req.query.id;
+  console.log("Deleting playlist with ID:", playlistId);
+  try {
+    const playlist = await PlaylistSchema.findByIdAndDelete(playlistId);
+    if (!playlist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+    // Also remove the playlist reference from the user's playlists
+    const user = await UserModel.findById(playlist.user);
+    if (user) {
+      user.playlists = user.playlists.filter(
+        (id) => id.toString() !== playlistId,
+      );
+      await user.save();
+    }
+    const songs = await SongSchema.find({ playlists: playlist._id });
+    for (const song of songs) {
+      song.playlists = song.playlists.filter(
+        (id) => id.toString() !== playlistId,
+      );
+      await song.save();
+    }
+    return res.status(200).json({ message: "Playlist deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting playlist:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-export default { createPlaylist, getPlaylistSongs };
+export default { createPlaylist, getPlaylistSongs, deletePlaylist };
