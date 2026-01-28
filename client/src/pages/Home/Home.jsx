@@ -1,7 +1,7 @@
 import Categories from "../../components/Categories/Categories";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useContext } from "react";
 import Songs from "../../components/Songs/Songs";
 import NavBar from "../../components/NavBar/NavBar";
 import { useNavigate } from "react-router";
@@ -24,10 +24,9 @@ export default function Home({ user }) {
   const location = useLocation();
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   console.log("home rendering");
-  console.log("user at home: ", user);
+  // console.log("user at home: ", user);
   // Add inactivity detection
   useInactivity(30 * 60 * 1000, () => {
     // 30 minutes
@@ -40,19 +39,6 @@ export default function Home({ user }) {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-
-    if (!user) {
-      setIsLoading(false);
-      console.log("no user");
-      setError("User not authenticated. Please log in.");
-      navigate("/login");
-      return;
-    }
-    setIsLoading(false);
-  }, [navigate, user]);
-
-  useEffect(() => {
     if (isMapVisible) {
       navigate("/global");
     }
@@ -62,50 +48,46 @@ export default function Home({ user }) {
     <div className="app-container">
       <header className="header">
         <Logo />
-        {!isLoading && !error && (
-          <Search
-            setFormVisible={setFormVisible}
-            formVisible={formVisible}
-            isMapVisible={isMapVisible}
-            setIsMapVisible={setIsMapVisible}
-            isRecording={isRecording}
-            setIsRecording={setIsRecording}
-            userData={user}
-            setSongSuggestions={setSongSuggestions}
-            songSuggestions={songSuggestions}
-            setIsVoiceSearch={setIsVoiceSearch}
-            isVoiceSearch={isVoiceSearch}
-          />
-        )}
+
+        <Search
+          setFormVisible={setFormVisible}
+          formVisible={formVisible}
+          isMapVisible={isMapVisible}
+          setIsMapVisible={setIsMapVisible}
+          isRecording={isRecording}
+          setIsRecording={setIsRecording}
+          userData={user}
+          setSongSuggestions={setSongSuggestions}
+          songSuggestions={songSuggestions}
+          setIsVoiceSearch={setIsVoiceSearch}
+          isVoiceSearch={isVoiceSearch}
+        />
+
         <NavBar />
       </header>
       <main className="home">
         <div className="homeContainer">
-          {!isLoading && !error && (
-            <>
-              {/* {formVisible && !isMapVisible && (
+          {/* {formVisible && !isMapVisible && (
                 <Form
                   setSongSuggestions={setSongSuggestions}
                   setFormVisible={setFormVisible}
                   formVisible={formVisible}
                 />
               )} */}
-              {songSuggestions.length == 0 && !isMapVisible && (
-                <Categories formVisible={formVisible} user={user} />
-              )}
-              {songSuggestions.length > 0 &&
-                !isVoiceSearch &&
-                !isMapVisible &&
-                !isRecording && <Songs songSuggestions={songSuggestions} />}
-
-              {songSuggestions.length > 0 &&
-                !isMapVisible &&
-                !isRecording &&
-                isVoiceSearch && <Songs songSuggestions={songSuggestions} />}
-
-              {isMapVisible && <MapComponent />}
-            </>
+          {songSuggestions.length == 0 && !isMapVisible && (
+            <Categories formVisible={formVisible} user={user} />
           )}
+          {songSuggestions.length > 0 &&
+            !isVoiceSearch &&
+            !isMapVisible &&
+            !isRecording && <Songs songSuggestions={songSuggestions} />}
+
+          {songSuggestions.length > 0 &&
+            !isMapVisible &&
+            !isRecording &&
+            isVoiceSearch && <Songs songSuggestions={songSuggestions} />}
+
+          {isMapVisible && <MapComponent />}
         </div>
       </main>
     </div>

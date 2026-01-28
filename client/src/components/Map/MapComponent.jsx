@@ -24,12 +24,12 @@ function MapComponent() {
     setDialogLocation({ lat, lng });
     setSelectedLocation({ lat, lng });
     const result = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`,
     );
     const data = await result.json();
     console.log("Geocode data:", data);
     setCountryShortName(
-      data.results[data.results.length - 1].address_components[0].short_name
+      data.results[data.results.length - 1].address_components[0].short_name,
     );
     const formattedAddress =
       data.results[data.results.length - 1].formatted_address;
@@ -43,7 +43,7 @@ function MapComponent() {
   }
   async function geocode(address) {
     const result = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GOOGLE_MAPS_API_KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GOOGLE_MAPS_API_KEY}`,
     );
     const data = await result.json();
 
@@ -51,7 +51,7 @@ function MapComponent() {
       const location = data.results[0].geometry.location;
       setSelectedLocation(location);
       setCountryShortName(
-        data.results[data.results.length - 1].address_components[0].short_name
+        data.results[data.results.length - 1].address_components[0].short_name,
       );
       const formattedAddress = data.results[0].formatted_address;
       setShowDialog(true);
@@ -111,7 +111,10 @@ function MapComponent() {
             position={dialogLocation}
             onCloseClick={() => setShowDialog(false)}
           >
-            <Button onClick={() => handleLocationSelect(dialogLocation)}>
+            <Button
+              onClick={() => handleLocationSelect(dialogLocation)}
+              type="select"
+            >
               <p> Location selected: {locationName}</p>
             </Button>
           </InfoWindow>

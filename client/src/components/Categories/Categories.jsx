@@ -8,23 +8,25 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { countryToLocale } from "../../utils/countryLocalMap";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-function Categories({ formVisible, user }) {
+function Categories({ formVisible }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const params = useParams();
   const country = params.country || "US";
   const location = useLocation();
+  const userData = JSON.parse(localStorage.getItem("user"));
+
   const [currentLocation, setCurrentLocation] = useState(
     location.state?.locationName || "United States",
   );
   // Determine locale based on country code
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
-  // console.log("categories");
-  console.log("user token in Categories:", user);
+  //console.log("categories");
+  // console.log("user token in Categories:", user);
   useEffect(() => {
-    if (user == null) navigate("/login");
+    if (userData == null) navigate("/login");
   });
   useEffect(() => {
     if (location.state?.locationName) {
@@ -44,7 +46,7 @@ function Categories({ formVisible, user }) {
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${user.token}`,
+                Authorization: `Bearer ${userData.token}`,
               },
             },
           );
@@ -65,7 +67,7 @@ function Categories({ formVisible, user }) {
       }
       fetchGenres();
     },
-    [limit, user.token, user, locale],
+    [limit, locale, userData.token],
   );
 
   async function handleShowCategories(show) {
@@ -84,7 +86,7 @@ function Categories({ formVisible, user }) {
           headers: {
             "Content-Type": "application/json",
 
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${userData.token}`,
           },
         },
       );
@@ -126,7 +128,7 @@ function Categories({ formVisible, user }) {
             <Category
               key={category.id}
               category={category}
-              token={user.token}
+              token={userData.token}
               country={country}
               location={currentLocation}
             />

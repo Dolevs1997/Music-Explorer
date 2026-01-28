@@ -7,10 +7,14 @@ import Songs from "../../components/Songs/Songs";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
 import UserContext from "../../Contexts/UserContext";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import styles from "./SongsPlaylistUser.module.css";
+import Modal from "react-bootstrap/Modal";
+import Button from "../../components/Button/Button.jsx";
 
 function SongsPlaylistUser() {
   const { user } = useContext(UserContext);
-
+  const [showModal, setShowModal] = useState(false);
   const { playlistId } = useParams();
   const location = useLocation();
   let playlist =
@@ -64,7 +68,7 @@ function SongsPlaylistUser() {
     console.log("Removing song:", removedSong);
     setSongs((prevSongs) => prevSongs.filter((song) => song !== removedSong));
   }
-
+  async function handleRemovePlaylist() {}
   return (
     <div className="app-container">
       <removeBtn.Provider
@@ -77,7 +81,39 @@ function SongsPlaylistUser() {
         </header>
         <main className="homeContainer">
           <div className="playlist-songs">
-            <h1>{playlist.name} Playlist</h1>
+            <div className={styles.playlistHeader}>
+              <h1>{playlist.name} Playlist</h1>
+              <NavDropdown title="" menuVariant="dark">
+                <NavDropdown.Item>Edit Playlist</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => setShowModal(true)}>
+                  Delete Playlist
+                </NavDropdown.Item>
+              </NavDropdown>
+              {showModal && (
+                <div className={styles.modalContent}>
+                  <Modal.Dialog>
+                    <Modal.Header
+                      closeButton
+                      onClick={() => setShowModal(false)}
+                    >
+                      <Modal.Title>Delete Playlist</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      Are you sure you want to delete the playlist{" "}
+                      {playlist.name}?
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button onClick={() => setShowModal(false)} type="cancel">
+                        Cancel
+                      </Button>
+                      <Button onClick={handleRemovePlaylist} type="delete">
+                        Delete
+                      </Button>
+                    </Modal.Footer>
+                  </Modal.Dialog>
+                </div>
+              )}
+            </div>
             {songs.length === 0 && <p>No songs in this playlist.</p>}
             {songs.length > 0 && (
               <Songs

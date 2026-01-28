@@ -14,7 +14,6 @@ import NavBar from "./components/NavBar/NavBar";
 import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
 import { UserProvider } from "./Contexts/UserContext";
-import { getStoredUser } from "./global/StoredUser";
 
 function App() {
   const [songSuggestions, setSongSuggestions] = useState([]);
@@ -22,8 +21,8 @@ function App() {
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
-  const user = getStoredUser();
-  console.log("user at App: ", user);
+  const user = JSON.parse(localStorage.getItem("user"));
+  // console.log("user at App: ", user);
 
   useEffect(() => {
     document.title = "Moodiify | Home";
@@ -48,7 +47,7 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
-            <Route index element={<Home user={user} />} />
+            {/* <Route index element={<Home user={user} />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 

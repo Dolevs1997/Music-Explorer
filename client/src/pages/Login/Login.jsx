@@ -29,7 +29,7 @@ function Login() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       console.log("response", response);
       if (response.status === 200) {
@@ -75,7 +75,9 @@ function Login() {
         />
 
         <Link to="/home" className="link">
-          <Button onClick={(e) => handleLogin(e)}>Login</Button>
+          <Button onClick={(e) => handleLogin(e)} type="login">
+            Login
+          </Button>
         </Link>
 
         <p>

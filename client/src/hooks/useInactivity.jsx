@@ -10,7 +10,7 @@ export function useInactivity(timeoutMs, onInactive) {
   const handleActivity = () => resetTimer();
   useEffect(() => {
     resetTimer(); // Start timer
-    console.log("useInactivity hook");
+    // console.log("useInactivity hook");
     const events = ["mousemove", "keydown", "scroll", "click"];
     events.forEach((event) => window.addEventListener(event, handleActivity));
 

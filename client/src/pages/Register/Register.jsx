@@ -52,7 +52,7 @@ function Register() {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     console.log("response", response);
     if (response.status == 200) {
@@ -138,7 +138,9 @@ function Register() {
           </li>
         </ol>
         <Link to="/login">
-          <Button onClick={handleRegisteration}>Register</Button>
+          <Button onClick={handleRegisteration} type="register">
+            Register
+          </Button>
         </Link>
 
         <p>

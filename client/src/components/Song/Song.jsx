@@ -131,17 +131,12 @@ function Song({
             : playlist,
         );
       } else {
-        user.playlists.push({
-          id: data.playlist._id,
-          name: data.playlist.name,
-        });
+        const updatedUser = {
+          ...user,
+          playlists: [...user.playlists, data.playlist],
+        };
+        setUser(updatedUser);
       }
-
-      const updatedUser = {
-        ...user,
-        playlists: [...user.playlists, data.playlist],
-      };
-      setUser(updatedUser);
     } catch (error) {
       console.error("Error adding song to playlist:", error);
     }
