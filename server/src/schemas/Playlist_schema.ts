@@ -17,6 +17,10 @@ const PlaylistSchema = new mongoose.Schema({
       ref: "Song",
     },
   ],
+  imageUrl: {
+    type: String,
+    default: "",
+  },
 });
 
 export default mongoose.model("Playlist", PlaylistSchema);

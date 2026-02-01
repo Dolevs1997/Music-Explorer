@@ -6,6 +6,7 @@ import categoriesRouter from "./routes/Categories_routes";
 import recommendRouter from "./routes/Recommends_routes";
 import songRouter from "./routes/Song_routes";
 import openaiRouter from "./routes/OpenAI_routes";
+import uploadRouter from "./routes/upload_route";
 import authRouter from "./routes/Auth_routes";
 import playlistRouter from "./routes/playlist_routes";
 import cors from "cors";
@@ -36,6 +37,7 @@ const initApp = async () => {
     app.use("/moodiify/categories", categoriesRouter);
     app.use("/moodiify/videoSong", songRouter);
     app.use("/moodiify/playlist", playlistRouter);
+    app.use("/moodiify/upload", uploadRouter);
     app.use("/api", openaiRouter);
 
     return app;

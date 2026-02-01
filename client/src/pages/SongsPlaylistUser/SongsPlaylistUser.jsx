@@ -26,6 +26,7 @@ function SongsPlaylistUser() {
   let playlist =
     location.state?.playlist ||
     user?.playlists?.find((p) => p.id === playlistId || p._id === playlistId);
+  console.log(user.playlists);
   const [songs, setSongs] = useState(location.state?.songs || []);
   console.log("SongsPlaylistUser render");
   if (!playlist) {

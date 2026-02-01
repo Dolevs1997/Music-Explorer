@@ -89,7 +89,7 @@ function Song({
   const { setUser } = useContext(UserContext);
   const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log("videoId in Song component:", state.videoId);
-  console.log("user:", user);
+  // console.log("user:", user);
   if (!user.token) {
     navigate("/login");
   }
@@ -103,7 +103,6 @@ function Song({
   }
 
   async function handleAddSongToPlaylist(playlistName) {
-    console.log("user in handleAddSongToPlaylist:", user);
     const response = await addSongToPlaylist(song, state, playlistName, user);
     if (response.status == 200) toast.success(`${response.data.message}`);
     else if (response.status != 200) toast.error(`${response.data.message}`);
@@ -123,7 +122,6 @@ function Song({
       const existingPlaylist = user.playlists.find(
         (playlist) => playlist.name === data.playlist.name,
       );
-      console.log("existingPlaylist:", existingPlaylist);
       if (existingPlaylist) {
         // If it exists, update the playlist ID
         user.playlists = user.playlists.map((playlist) =>
@@ -131,6 +129,16 @@ function Song({
             ? { ...playlist, id: data.playlist._id }
             : playlist,
         );
+        const updatedUser = {
+          ...user,
+          playlists: user.playlists.map((playlist) =>
+            playlist.name === data.playlist.name
+              ? { ...playlist, songs: [...playlist.songs, data.song] }
+              : playlist,
+          ),
+        };
+        setUser(updatedUser);
+        console.log("Updated existing playlist in user.playlists");
       } else {
         const updatedUser = {
           ...user,
@@ -270,7 +278,7 @@ function Song({
             Create New Playlist
           </ListGroup.Item>
           {showModal && (
-            <div className={styles.modalOverlay}>
+            <div className="modalOverlay">
               <Modal.Dialog style={{ marginTop: "20px" }}>
                 <Modal.Body>Enter Playlist Name:</Modal.Body>
                 <Form.Control

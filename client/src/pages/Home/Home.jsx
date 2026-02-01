@@ -25,8 +25,7 @@ export default function Home({ user }) {
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
 
-  console.log("home rendering");
-  // console.log("user at home: ", user);
+  console.log("user at home: ", user);
   // Add inactivity detection
   useInactivity(30 * 60 * 1000, () => {
     // 30 minutes

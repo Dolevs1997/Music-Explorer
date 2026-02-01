@@ -18,11 +18,10 @@ function Category({ category, token, country, location }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     const data = await response.json();
     if (response.ok) {
-      console.log(data);
       setPlaylistsCategory(data);
       toast.success("Redirecting to playlists...");
       navigate("/category/playlists", {

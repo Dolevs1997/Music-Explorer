@@ -16,7 +16,6 @@ function CategoryPlaylists() {
   const [categoryName, setCategoryName] = useState("Category");
   // const user = getStoredUser();
   // const searchContext = useContext(SearchContext);
-  console.log("Category Playlists Page");
   useEffect(() => {
     document.title = "Moodiify | Category Playlists";
   }, []);

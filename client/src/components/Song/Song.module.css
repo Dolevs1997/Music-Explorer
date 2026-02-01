@@ -16,7 +16,9 @@
 .song:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   background-color: var(--color-background-900);
-  transition: background-color 0.4s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.4s ease,
+    box-shadow 0.3s ease;
   transform: scale(1.005);
 }
 
@@ -28,7 +30,9 @@
   color: white;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .addBtn:hover {
@@ -85,7 +89,7 @@
   cursor: pointer;
 }
 
-.modalOverlay {
+:global(.modalOverlay) {
   position: fixed;
   top: 0;
   left: 0;
