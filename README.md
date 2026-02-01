@@ -11,7 +11,7 @@ AI-Powered Music Recommendation Web App that lets users generate songs - voice, 
 - <mark> YouTube Data API: </mark> using YouTube API to retrieve playlists + songs
 - <mark>Authentication: </mark> Secure user login and registration powered by OAuth with firebase and JWT (JSON Web Tokens)
 - <mark> Databases + Cache: </mark> MongoDB + Firebase for storing users, playlists and songs and all history songs in firebase and using Redis for caching songs
-- <mark> Uploading files: </mark> Using Cloudniary for uploading images(playlist images)
+- <mark> Cloudinary API: </mark> Using Cloudniary for uploading images(playlist images)
 - <mark> Frontend: </mark> responsive UI built with React.js + Vite , using components libraries for UI and Module.CSS for every component
 - <mark> Backend API: </mark> Node.js + Express handles AI generation, authentication, and data management.
 
@@ -21,7 +21,7 @@ AI-Powered Music Recommendation Web App that lets users generate songs - voice, 
 - Backend: Node.js + Express.js.
 - Frontend: Vite + React.js.
 - Database & Auth & Cache: MongoDB + Firebase (Database, Authentication), Redis (Caching).
-- API Service: OpenAI API, Spotify, Google Maps, YouTube Data, ACRCloud, Web Speech, Cloudniary.
+- API Service: OpenAI API, Spotify, Google Maps, YouTube Data, ACRCloud, Web Speech, Cloudinary.
 - HTTP Client: Axios/Fetch API.
 
 ## Quick Start
