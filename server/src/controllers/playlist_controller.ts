@@ -6,6 +6,9 @@ import { Types } from "mongoose";
 
 // import { updateUser, getUser } from "../models/Firestore/user";
 // import { getPlaylistUser } from "../models/Firestore/playlistsUser";
+const updatePlaylist = async (req: Request, res: Response) => {
+  // Implementation for updating a playlist
+};
 
 const createPlaylist = async (req: Request, res: Response) => {
   const { song, playlistName, user, videoId } = req.body;
@@ -200,25 +203,7 @@ const getPlaylistSongs = async (req: Request, res: Response) => {
     if (!userObject) {
       return res.status(404).json({ message: "User not found" });
     }
-    // const userEmail = userObject.email;
-    // const playlistName = playlistObject.name;
-    // const userRef = await getUser(userEmail);
-    // if (!userRef || userRef.error) {
-    //   console.error("Error retrieving user from Firestore:", userRef.error);
-    //   return res.status(500).json({ message: "Error retrieving user data" });
-    // }
-    // // console.log("User reference from Firestore:", userRef);
-    // const firestorePlaylist = await getPlaylistUser(playlistName, userRef);
-    // if (!firestorePlaylist || firestorePlaylist.error) {
-    //   console.error(
-    //     "Error retrieving playlist from Firestore:",
-    //     firestorePlaylist.error
-    //   );
-    //   return res
-    //     .status(500)
-    //     .json({ message: "Error retrieving playlist data" });
-    // }
-    // console.log("Firestore playlist:", firestorePlaylist);
+
     const playlist =
       await PlaylistSchema.findById(playlistId).populate("songs");
     console.log("Playlist with populated songs:", playlist);

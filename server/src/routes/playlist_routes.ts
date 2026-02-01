@@ -23,6 +23,7 @@ router.delete(
   playlistController.deletePlaylist,
 );
 
+// router.put("/")
 // router.get(
 //   "/:videoId",
 //   authenticate,

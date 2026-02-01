@@ -11,16 +11,17 @@ AI-Powered Music Recommendation Web App that lets users generate songs - voice, 
 - <mark> YouTube Data API: </mark> using YouTube API to retrieve playlists + songs
 - <mark>Authentication: </mark> Secure user login and registration powered by OAuth with firebase and JWT (JSON Web Tokens)
 - <mark> Databases + Cache: </mark> MongoDB + Firebase for storing users, playlists and songs and all history songs in firebase and using Redis for caching songs
+- <mark> Uploading files: </mark> Using Cloudniary for uploading images(playlist images)
 - <mark> Frontend: </mark> responsive UI built with React.js + Vite , using components libraries for UI and Module.CSS for every component
 - <mark> Backend API: </mark> Node.js + Express handles AI generation, authentication, and data management.
 
 ## Tech Stack
 
-- Language: JavaScript.
+- Language: JavaScript + TypeScript.
 - Backend: Node.js + Express.js.
 - Frontend: Vite + React.js.
-- Database & Auth & Cache: MongoDB + Firebase (Database, Storage, Authentication), Redis (Caching).
-- API Service: OpenAI API, Spotify, Google Maps, YouTube Data, ACRCloud, Web Speech.
+- Database & Auth & Cache: MongoDB + Firebase (Database, Authentication), Redis (Caching).
+- API Service: OpenAI API, Spotify, Google Maps, YouTube Data, ACRCloud, Web Speech, Cloudniary.
 - HTTP Client: Axios/Fetch API.
 
 ## Quick Start
@@ -38,11 +39,11 @@ Follow these steps to get a local copy of Moodiify up and running.
 - OpenAI API (for API_KEY)
 - Google Services (For YouTube API Keys and Google Maps API)
 - ACR Cloud Account (For access + secret keys & Host)
+- Cloudniary (For uploading files to cloud)
 
 Installations
 
 <ol>
-
 
 <li>Clone the repository</li>
 
@@ -61,7 +62,7 @@ npm install
 
 ```
 cd client && npm install
-cd ../server && npm install
+cd ../server && npm install --save-dev typescript @types/node
 ```
 
 <li>Start Development Servers</li>
@@ -100,6 +101,7 @@ Update .env for server with the following configuration:
 - ACR Cloud (Tokens & Host)
 - Firebase (API key, Domain, Project-id, Storage_bucket, Messaging sender id, App id, MeasureMent Id)
 - Redis URL
+- Cloudniary API
 
 ```
 cp  client/.env
@@ -146,8 +148,9 @@ moodiify/
 │   │   ├── schemas/        # Database Schemas ( Song, User)
 |   |   ├── services/       # handling external APIs ( OpenAI, YouTube )
 |   |   ├── uploads/        # uploading all files with song recognition
-│   └── app.js              # Entry point
-|
+│   |   ├──  app.ts             # Entry point
+|   |   ├── server.ts           # Create server
+|   ├──tsconfig.json         # compile files to typescript
 └── README.md
 ```
 
