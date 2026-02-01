@@ -3,6 +3,7 @@
 AI-Powered Music Recommendation Web App that lets users generate songs - voice, recognize song, location point or text input. Integrated OpenAI for understanding user intent, YouTube Data API for song recommendations, and Spotify API for categorized playlists by genre.
 
 ## Features
+
 - <mark> audio recording:</mark> Using **MediaRecorder** for easily handling record media and sending it as **Blob()** file to the server + using **ACRCloud API** for music recognition and generate the recognized song.
 - <mark> Voice Intent:</mark> Using **Web Speech API** for voice speech and sending transcript to the server, **OpenAI API** handling the transcript and generate the songs based on transcript.
 - <mark> Google Maps API:</mark> **Using Google API** maps for user interaction to get exact location based on user pin point on the map to get personalized music based on location
@@ -10,21 +11,25 @@ AI-Powered Music Recommendation Web App that lets users generate songs - voice, 
 - <mark> YouTube Data API: </mark> using YouTube API to retrieve playlists + songs
 - <mark>Authentication: </mark> Secure user login and registration powered by OAuth with firebase and JWT (JSON Web Tokens)
 - <mark> Databases + Cache: </mark> MongoDB + Firebase for storing users, playlists and songs and all history songs in firebase and using Redis for caching songs
-- <mark> Frontend: </mark>   responsive UI built with React.js + Vite , using components libraries for UI and Module.CSS for every component
+- <mark> Uploading files: </mark> Using Cloudniary for uploading images(playlist images)
+- <mark> Frontend: </mark> responsive UI built with React.js + Vite , using components libraries for UI and Module.CSS for every component
 - <mark> Backend API: </mark> Node.js + Express handles AI generation, authentication, and data management.
 
 ## Tech Stack
-- Language: JavaScript.
+
+- Language: JavaScript + TypeScript.
 - Backend: Node.js + Express.js.
 - Frontend: Vite + React.js.
-- Database & Auth & Cache: MongoDB + Firebase (Database, Storage, Authentication), Redis (Caching).
-- API Service: OpenAI API, Spotify, Google Maps, YouTube Data, ACRCloud, Web Speech.
+- Database & Auth & Cache: MongoDB + Firebase (Database, Authentication), Redis (Caching).
+- API Service: OpenAI API, Spotify, Google Maps, YouTube Data, ACRCloud, Web Speech, Cloudniary.
 - HTTP Client: Axios/Fetch API.
 
 ## Quick Start
+
 Follow these steps to get a local copy of Moodiify up and running.
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - npm or yarn
 - MongoDB (Local or Atlas connection string)
@@ -34,11 +39,11 @@ Follow these steps to get a local copy of Moodiify up and running.
 - OpenAI API (for API_KEY)
 - Google Services (For YouTube API Keys and Google Maps API)
 - ACR Cloud Account (For access + secret keys & Host)
-
+- Cloudniary (For uploading files to cloud)
 
 Installations
+
 <ol>
-  
 
 <li>Clone the repository</li>
 
@@ -46,17 +51,20 @@ Installations
 git clone https://github.com/Dolevs1997/moodiify.git
 cd moodiify
 ```
+
 <li>Install Dependencies (Root)</li>
 
 ```
 npm install
 ```
+
 <li>Install Client & Server Dependencies</li>
 
 ```
 cd client && npm install
-cd ../server && npm install
+cd ../server && npm install --save-dev typescript @types/node
 ```
+
 <li>Start Development Servers</li>
 In terminal 1 (Server):
 
@@ -64,36 +72,43 @@ In terminal 1 (Server):
 cd server
 npm run dev
 ```
+
 In terminal 2 (Client):
+
 ```
 cd client
 npm run dev
 ```
+
 <li>Environment setup</li>
 
 ```
 cp  server/.env
 ```
- Update .env for server with the following configuration:
- - PORT
- - SPOTIFY_CLIENT_ID
- - SPOTIFY_CLIENT_SECRET
- - SPOTIFY_ACCESS_TOKEN
- - OPENAI_API_KEY
- - YOUTUBE_API_KEY
- - YOUTUBE_CLIENT_ID
- - DATABASE_URL
- - DATABASE_NAME
- - REFRESH AND ACCESS TOKENS
- - ACR Cloud (Tokens & Host)
- - Firebase (API key, Domain, Project-id, Storage_bucket, Messaging sender id, App id, MeasureMent Id)
- - Redis URL
 
+Update .env for server with the following configuration:
+
+- PORT
+- SPOTIFY_CLIENT_ID
+- SPOTIFY_CLIENT_SECRET
+- SPOTIFY_ACCESS_TOKEN
+- OPENAI_API_KEY
+- YOUTUBE_API_KEY
+- YOUTUBE_CLIENT_ID
+- DATABASE_URL
+- DATABASE_NAME
+- REFRESH AND ACCESS TOKENS
+- ACR Cloud (Tokens & Host)
+- Firebase (API key, Domain, Project-id, Storage_bucket, Messaging sender id, App id, MeasureMent Id)
+- Redis URL
+- Cloudniary API
 
 ```
 cp  client/.env
 ```
+
 Update .env for client with the following configuration:
+
 - Server URL
 - OpenAI API Key
 - Google Maps API Key
@@ -108,9 +123,11 @@ cd server && npm run dev
 # Run frontend
 cd server && npm run dev
 ```
+
 </ol>
 
 ### Repository Structure
+
 ```
 moodiify/
 ├── client/                 # React Frontend
@@ -130,12 +147,12 @@ moodiify/
 │   │   ├── middleware/     # Auth and error handling middleware
 │   │   ├── schemas/        # Database Schemas ( Song, User)
 |   |   ├── services/       # handling external APIs ( OpenAI, YouTube )
-|   |   ├── uploads/        # uploading all files with song recognition  
-│   └── app.js              # Entry point
-|
+|   |   ├── uploads/        # uploading all files with song recognition
+│   |   ├──  app.ts             # Entry point
+|   |   ├── server.ts           # Create server
+|   ├──tsconfig.json         # compile files to typescript
 └── README.md
 ```
-
 
 ## Moodiify Architecture
 
