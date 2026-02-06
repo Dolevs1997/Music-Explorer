@@ -100,6 +100,7 @@ const login = async (req: Request, res: Response) => {
     const user = await UserModel.findOne({ email: email }).populate(
       "playlists",
     );
+    // console.log("user found in database:", user);
     if (!user) return res.status(404).send("NOT FOUND: User does not exist");
     const auth = getAuth(app);
     signInWithEmailAndPassword(auth, email, password)

@@ -3,13 +3,45 @@ import { UserModel } from "../schemas/User_schema";
 import SongSchema from "../schemas/Song_schema";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-
+import { uploadToCloudinary } from "../services/Cloudniary_service";
 // import { updateUser, getUser } from "../models/Firestore/user";
 // import { getPlaylistUser } from "../models/Firestore/playlistsUser";
 const updatePlaylist = async (req: Request, res: Response) => {
   // Implementation for updating a playlist
-};
+  const { id } = req.query;
+  console.log("Updating playlist with ID:", id);
+  const playlist = await PlaylistSchema.findById(id);
+  if (!playlist) {
+    return res.status(404).json({ message: "Playlist not found" });
+  }
 
+  if (req.file) {
+    try {
+      console.log("Received file upload request");
+      // console.log(req);
+      const file = req.file;
+      console.log("filePath: ", file);
+      if (!file) {
+        return res
+          .status(400)
+          .json({ error: "filePath is required in the request body" });
+      }
+      const { data } = await uploadToCloudinary(file.buffer, file.originalname);
+      const imageUrl = data?.secure_url;
+      console.log("imageUrl: ", imageUrl);
+      if (!imageUrl) {
+        return res
+          .status(500)
+          .json({ error: "Failed to retrieve image URL from Cloudinary" });
+      }
+      playlist.imageUrl = imageUrl;
+      await playlist.save();
+      res.status(200).json({ playlist });
+    } catch (error: Error | any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
 const createPlaylist = async (req: Request, res: Response) => {
   const { song, playlistName, user, videoId } = req.body;
 
@@ -247,4 +279,9 @@ const deletePlaylist = async (req: Request, res: Response) => {
   }
 };
 
-export default { createPlaylist, getPlaylistSongs, deletePlaylist };
+export default {
+  createPlaylist,
+  getPlaylistSongs,
+  deletePlaylist,
+  updatePlaylist,
+};

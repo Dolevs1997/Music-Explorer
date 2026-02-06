@@ -5,7 +5,7 @@ export const uploadToCloudinary = async (
   originalname: string,
 ) => {
   try {
-    const publicId = `moodiify_images/${originalname}-${Date.now()}`;
+    const publicId = `moodiify_images/${originalname}`;
     const result = await new Promise<any>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {

@@ -62,4 +62,24 @@ async function removePlaylist(playlistId, user) {
   return response.data;
 }
 
-export { addSongToPlaylist, removeSongFromPlaylist, removePlaylist };
+async function updatePlaylist(playlistId, updatedData, user) {
+  // console.log("updatedData: ", updatedData.get("image"));
+  // console.log("user", user);
+  const response = await axios.put(
+    `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${playlistId}`,
+    updatedData,
+    {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    },
+  );
+  return response.data;
+}
+
+export {
+  addSongToPlaylist,
+  removeSongFromPlaylist,
+  removePlaylist,
+  updatePlaylist,
+};

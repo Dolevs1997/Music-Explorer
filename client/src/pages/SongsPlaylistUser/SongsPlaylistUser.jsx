@@ -193,12 +193,12 @@ function SongsPlaylistUser() {
 
                     <Modal.Footer>
                       <Button
-                        variant="dark"
                         onClick={() => setShowCreateModal(false)}
+                        type="cancel"
                       >
                         Close
                       </Button>
-                      <Button variant="dark" onClick={handleAddPlaylist}>
+                      <Button onClick={handleAddPlaylist} type="select">
                         Save changes
                       </Button>
                     </Modal.Footer>
@@ -207,6 +207,7 @@ function SongsPlaylistUser() {
               )}
             </div>
             {songs.length === 0 && <p>No songs in this playlist.</p>}
+
             {songs.length > 0 && (
               <Songs
                 songSuggestions={songs}

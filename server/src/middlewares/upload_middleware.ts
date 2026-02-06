@@ -1,3 +1,22 @@
+import express from "express";
+
+const uploadMiddleware = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  console.log("Upload middleware called");
+  // console.log("request body:", req.body);
+  console.log("File info:", req.file);
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  next();
+};
+
+export { uploadMiddleware };
+
 // import { getStorage, ref, uploadBytes } from "firebase/storage";
 // import { app } from "../config/firebase_config.js";
 

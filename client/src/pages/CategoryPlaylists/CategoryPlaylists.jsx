@@ -29,7 +29,7 @@ function CategoryPlaylists() {
 
   return (
     <div>
-      <header className={styles.header}>
+      <header className="header">
         <Logo />
         <Search />
         <NavBar />
