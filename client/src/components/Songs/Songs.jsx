@@ -12,13 +12,15 @@ function Songs({ songSuggestions, onRemoveSong }) {
         <div className="homeContainer">
           <ul>
             {songSuggestions.map((song) => (
-              <Song
-                key={song}
-                song={song}
-                playingVideoId={playingVideoId}
-                setPlayingVideoId={setPlayingVideoId}
-                onRemoveSong={onRemoveSong}
-              />
+              <li key={song}>
+                <Song
+                  key={song}
+                  song={song}
+                  playingVideoId={playingVideoId}
+                  setPlayingVideoId={setPlayingVideoId}
+                  onRemoveSong={onRemoveSong}
+                />
+              </li>
             ))}
           </ul>
         </div>

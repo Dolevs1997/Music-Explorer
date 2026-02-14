@@ -2,7 +2,7 @@ import express from "express";
 import playlistController from "../controllers/playlist_controller";
 import { authenticate } from "../middlewares/auth_middleware";
 import { validateToken } from "../middlewares/SpotifyTokens";
-import { uploadMiddleware } from "../middlewares/upload_middleware";
+// import { uploadMiddleware } from "../middlewares/upload_middleware";
 import multer from "multer";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -14,6 +14,12 @@ router.post(
   authenticate,
   validateToken,
   playlistController.createPlaylist,
+);
+router.post(
+  "/addSong",
+  authenticate,
+  validateToken,
+  playlistController.addSongToPlaylist,
 );
 router.get(
   "/",
@@ -33,7 +39,7 @@ router.put(
   authenticate,
   validateToken,
   upload.single("image"),
-  uploadMiddleware,
+
   playlistController.updatePlaylist,
 );
 // router.get(

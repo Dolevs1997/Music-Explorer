@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import OpenAI from "openai";
 import fs from "fs";
+import { uploadToCloudinary } from "../services/Cloudniary_service";
 dotenv.config();
 
 const openaiAPIKey = process.env.OPENAI_API_KEY as string;
@@ -68,4 +69,16 @@ const SongSuggestionsVoice = async () => {
   return songSuggestions;
 };
 
-export { SongSuggestions, SongSuggestionsVoice };
+const generatePlaylistPicture = async (prompt: string) => {
+  const result = await openai.images.generate({
+    model: "gpt-image-1",
+    prompt,
+  });
+  if (!result.data || result.data.length === 0) {
+    throw new Error("Image generation failed");
+  }
+
+  return result;
+};
+
+export { SongSuggestions, SongSuggestionsVoice, generatePlaylistPicture };

@@ -14,14 +14,15 @@ button[type="close"] {
   background-color: gray;
 }
 button[type="delete"] {
-  background-color: var(--destructive);
+  background-color: var(--color-button-delete);
 }
 button[type="login"],
 button[type="register"] {
   background-color: var(--color-button);
 }
-button[type="select"] {
-  background-color: var(--color-background-app);
+button[type="select"],
+button[type="submit"] {
+  background-color: var(--color-button-send);
 }
 button[type="link"] {
   background-color: var(--color-background-800);

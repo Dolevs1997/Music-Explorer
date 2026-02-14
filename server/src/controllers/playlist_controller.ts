@@ -4,28 +4,29 @@ import SongSchema from "../schemas/Song_schema";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { uploadToCloudinary } from "../services/Cloudniary_service";
+// import { generatePlaylistPicture } from "../services/OpenAI_service";
 // import { updateUser, getUser } from "../models/Firestore/user";
 // import { getPlaylistUser } from "../models/Firestore/playlistsUser";
 const updatePlaylist = async (req: Request, res: Response) => {
   // Implementation for updating a playlist
   const { id } = req.query;
-  console.log("Updating playlist with ID:", id);
+  // console.log("Updating playlist with ID:", id);
   const playlist = await PlaylistSchema.findById(id);
+
   if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
-
+  console.log("playlist: ", playlist);
+  if (!playlist) {
+    return res.status(404).json({ message: "Playlist not found" });
+  }
   if (req.file) {
     try {
       console.log("Received file upload request");
       // console.log(req);
       const file = req.file;
       console.log("filePath: ", file);
-      if (!file) {
-        return res
-          .status(400)
-          .json({ error: "filePath is required in the request body" });
-      }
+
       const { data } = await uploadToCloudinary(file.buffer, file.originalname);
       const imageUrl = data?.secure_url;
       console.log("imageUrl: ", imageUrl);
@@ -35,185 +36,144 @@ const updatePlaylist = async (req: Request, res: Response) => {
           .json({ error: "Failed to retrieve image URL from Cloudinary" });
       }
       playlist.imageUrl = imageUrl;
-      await playlist.save();
-      res.status(200).json({ playlist });
     } catch (error: Error | any) {
       res.status(500).json({ error: error.message });
     }
   }
+  const updates = req.body;
+  if (Object.keys(updates).length > 0) Object.assign(playlist, updates);
+  await playlist.save();
+  return res
+    .status(200)
+    .json({ message: "Playlist updated successfully", playlist });
+  // } else if (req.body.generateImage) {
+  //   try {
+  //     const description =
+  //       req.body.description ||
+  //       `Generate an image for playlist: ${playlist.name}`;
+  //     console.log("description: ", description);
+  //     const result = await generatePlaylistPicture(description);
+
+  //     // Save base64 to Cloudinary
+  //     const image_base64 = result.data[0].b64_json;
+  //     // console.log("result: ", result);
+  //     if (!result.data || result.data.length === 0 || !image_base64) {
+  //       throw new Error("Image generation failed");
+  //     }
+
+  //     const image_bytes = Buffer.from(image_base64, "base64");
+
+  //     const { data } = await uploadToCloudinary(
+  //       image_bytes,
+  //       `playlist-${id}-${Date.now()}.png`,
+  //     );
+
+  //     playlist.imageUrl = data?.secure_url;
+  //     console.log("playlist imageUrl: ", playlist.imageUrl);
+  //     await playlist.save();
+  //     res.status(200).json({ playlist });
+  //   } catch (error: Error | any) {
+  //     res.status(500).json({ error: error.message });
+  //   }
+  // }
 };
 const createPlaylist = async (req: Request, res: Response) => {
-  const { song, playlistName, user, videoId } = req.body;
+  const { playlistName, user } = req.body;
 
-  console.log("createPlaylist in playlist_controller called");
-  console.log("song", song);
-  console.log("song videoId:", videoId);
-  console.log("playlistName", playlistName);
-  console.log("user", user);
   if (!playlistName || !user) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  let newSong = null;
-  try {
-    if (user._id === undefined) {
-      return res.status(400).json({ message: "Invalid user data" });
-    }
-    const userId = user._id; // Assuming you have the user ID from the authentication middleware
-    let newPlaylist;
 
-    // Check if the user exists
-    const existingUser = await UserModel.findById(userId);
-    if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  const userId = user._id;
+  let newPlaylist;
 
-    // Check if the playlist already exists for the user
-    const existingPlaylist = await PlaylistSchema.findOne({
+  // Check if the user exists
+  const existingUser = await UserModel.findById(userId);
+  if (!existingUser) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // Check if the playlist already exists for the user
+  const existingPlaylist = await PlaylistSchema.findOne({
+    name: playlistName,
+    user: userId,
+  });
+
+  if (existingPlaylist) {
+    return res.status(400).json({
+      message: `playlist ${playlistName} already exists`,
+      playlist: existingPlaylist,
+    });
+  }
+
+  // If the playlist does not exist, create a new one
+  else {
+    console.log("Creating new playlist:", playlistName);
+    // //generate image for playlist: //
+    // const description = `generate an image for playlist ${playlistName} music, I want it to be match the playlist name`;
+
+    // const response = await generatePlaylistPicture(description);
+    // console.log("response: ", response);
+
+    newPlaylist = new PlaylistSchema({
       name: playlistName,
       user: userId,
+      songs: [],
     });
-    // Check if the song already exists
-    const existingSong = await SongSchema.findOne({
+    await newPlaylist.save();
+    // Add the playlist to the user's playlists
+    existingUser.playlists.push(newPlaylist._id);
+
+    await existingUser.save();
+    return res.status(200).json({
+      message: `playlist ${playlistName} created successfully`,
+      playlist: newPlaylist,
+    });
+  }
+};
+
+const addSongToPlaylist = async (req: Request, res: Response) => {
+  const { song, videoId } = req.body;
+  const playlistId = req.query.id;
+  console.log("addSongToPlaylist called with:", song, videoId, playlistId);
+  if (!song || !videoId || !playlistId) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+  try {
+    const playlist = await PlaylistSchema.findById(playlistId);
+    if (!playlist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+    let existingSong = await SongSchema.findOne({
       song: song,
       videoId: videoId,
     });
-    // If the playlist exists, add the song to it
-    if (existingPlaylist) {
-      if (videoId && song != "") {
-        console.log("Playlist exists:", playlistName);
-
-        console.log("existingSong in existingPlaylist:", existingSong);
-        if (existingSong) {
-          // If the song exists, add the playlist to the song's playlists if not already present
-          if (
-            !existingSong.playlists.some(
-              (playlistId) =>
-                playlistId.toString() === existingPlaylist._id.toString(),
-            )
-          ) {
-            existingSong.playlists.push(existingPlaylist._id);
-            await existingSong.save();
-            console.log(
-              "Added existingPlaylist to existingSong:",
-              song,
-              videoId,
-            );
-
-            existingPlaylist.songs.push(existingSong._id);
-            await existingPlaylist.save();
-            console.log(
-              "Added existingSong to existingPlaylist:",
-              song,
-              videoId,
-            );
-            return res.status(200).json({
-              message: "Song added to existing playlist successfully",
-              playlist: existingPlaylist,
-            });
-          } else {
-            console.log(
-              "existingPlaylist already in existingSong's playlists:",
-              song,
-              videoId,
-            );
-            return res.status(400).json({
-              message: "Song already exists in the playlist " + playlistName,
-              playlist: existingPlaylist,
-            });
-          }
-        }
-
-        // If the song does not exist, create a new one and add it to the playlist
-        else {
-          newSong = new SongSchema({
-            song: song,
-            videoId: videoId,
-            playlists: [existingPlaylist._id],
-          });
-          await newSong.save();
-
-          existingPlaylist.songs.push(newSong._id);
-          await existingPlaylist.save();
-          console.log("Creating new song in existingPlaylist:", song, videoId);
-        }
-        console.log("Playlist after update:", existingPlaylist);
-        return res.status(200).json({
-          message: `Song added to playlist ${playlistName} successfully`,
-          playlist: existingPlaylist,
-        });
-      } else {
-        return res.status(400).json({
-          message: `playlist ${playlistName} already exists`,
-          playlist: existingPlaylist,
-        });
+    if (existingSong) {
+      if (existingSong.playlists.some((id) => id.toString() === playlistId)) {
+        return res.status(400).json({ message: "Song already in playlist" });
       }
-    }
-    // If the playlist does not exist, create a new one
-    else if (!existingPlaylist) {
-      console.log("Creating new playlist:", playlistName);
-      newPlaylist = new PlaylistSchema({
-        name: playlistName,
-        user: userId,
-        songs: [],
+      existingSong.playlists.push(playlist._id);
+      await existingSong.save();
+      playlist.songs.push(existingSong._id);
+      await playlist.save();
+      return res
+        .status(200)
+        .json({ message: "Song added to playlist successfully", playlist });
+    } else {
+      const newSong = new SongSchema({
+        song: song,
+        videoId: videoId,
+        playlists: [playlist._id],
       });
-      await newPlaylist.save();
-
-      console.log("existingSong in newPlaylist:", existingSong);
-      if (videoId && song != "") {
-        if (!existingSong) {
-          // Create a new song if it doesn't exist
-          console.log("Creating new song in database:", song, videoId);
-          newSong = new SongSchema({
-            song: song,
-            videoId: videoId,
-            playlists: [newPlaylist._id],
-          });
-          await newSong.save();
-          console.log("New song created in newPlaylist:", newSong);
-          // Add the new song to the new playlist
-          newPlaylist.songs.push(newSong._id);
-          await newPlaylist.save();
-        } else {
-          console.log("Using existing song in newPlaylist:", existingSong);
-          // Add the existing song to the new playlist
-          newPlaylist.songs.push(existingSong._id);
-          await newPlaylist.save();
-
-          // Add the new playlist to the existing song's playlists
-          existingSong.playlists.push(newPlaylist._id);
-          await existingSong.save();
-          console.log(
-            "Added newPlaylist to existingSong's playlists:",
-            song,
-            videoId,
-          );
-        }
-      }
-
-      // console.log("New playlist created:", newPlaylist);
-      // Add the playlist to the user's playlists
-      existingUser.playlists.push(newPlaylist._id); // Add the new playlist to the user's playlists
-      console.log(
-        "User's playlists after adding new playlist:",
-        existingUser.playlists,
-      );
-      await existingUser.save();
-
-      console.log("Playlist after update:", newPlaylist);
-      if (videoId && song != "") {
-        return res.status(200).json({
-          message: `Song added to playlist ${playlistName} successfully`,
-          playlist: newPlaylist,
-        });
-      } else {
-        return res.status(200).json({
-          message: `playlist ${playlistName} created successfully`,
-          playlist: newPlaylist,
-        });
-      }
+      await newSong.save();
+      playlist.songs.push(newSong._id);
+      await playlist.save();
+      return res
+        .status(200)
+        .json({ message: "Song added to playlist successfully", playlist });
     }
   } catch (error) {
-    console.error("Error creating playlist in playlist_controller:", error);
+    console.error("Error adding song to playlist:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -284,4 +244,5 @@ export default {
   getPlaylistSongs,
   deletePlaylist,
   updatePlaylist,
+  addSongToPlaylist,
 };

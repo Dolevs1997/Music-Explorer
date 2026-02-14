@@ -1,6 +1,6 @@
 import axios from "axios";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const getSongSuggestions = async (payload, token) => {
+async function getSongSuggestions(payload, token) {
   try {
     const response = await axios.post(
       `http://${SERVER_URL}/api/openai`,
@@ -10,7 +10,7 @@ const getSongSuggestions = async (payload, token) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     // console.log("response: \n", response);
     return response.data;
@@ -18,6 +18,22 @@ const getSongSuggestions = async (payload, token) => {
     console.error("Error fetching song suggestions:", error);
     throw error;
   }
-};
+}
 
-export { getSongSuggestions };
+async function generateImagePlaylist(prompt, token) {
+  const response = await axios.post(
+    `http://${SERVER_URL}/api/openai/playlist/generate-image`,
+    { prompt },
+    {
+      headers: {
+        "Content-Type": "application/json",
+
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  // console.log("response: ", response);
+  return response.data;
+}
+
+export { getSongSuggestions, generateImagePlaylist };

@@ -7,14 +7,19 @@ import { fetchSongYT } from "../../services/YouTube_service";
 import {
   addSongToPlaylist,
   removeSongFromPlaylist,
+  createPlaylist,
+  updatePlaylist,
 } from "../../utils/playlist";
 import { removeBtn } from "../../Contexts/RemoveContext";
 import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import Button from "../Button/Button";
 import toast, { Toaster } from "react-hot-toast";
 import UserContext from "../../Contexts/UserContext";
+import { Spinner } from "../../components/ui/spinner";
+
+// import { generateImagePlaylist } from "../../services/OpenAI_service";
 const opts = {
   height: "300",
   width: "400",
@@ -88,6 +93,7 @@ function Song({
   const remove = useContext(removeBtn);
   const { setUser } = useContext(UserContext);
   const user = JSON.parse(localStorage.getItem("user")) || null;
+  const [loading, setLoading] = useState(false);
   // console.log("videoId in Song component:", state.videoId);
   // console.log("user:", user);
   if (!user.token) {
@@ -102,8 +108,8 @@ function Song({
     user.playlists = [];
   }
 
-  async function handleAddSongToPlaylist(playlistName) {
-    const response = await addSongToPlaylist(song, state, playlistName, user);
+  async function handleAddSongToPlaylist(playlist) {
+    const response = await addSongToPlaylist(song, state, user, playlist);
     if (response.status == 200) toast.success(`${response.data.message}`);
     else if (response.status != 200) toast.error(`${response.data.message}`);
     const data = response.data;
@@ -151,7 +157,7 @@ function Song({
     }
     setPlaylistName("");
   }
-  // console.log("playlistId: ", state.playlistId);
+
   useEffect(
     function () {
       async function fetchSong(song, user, country) {
@@ -226,7 +232,8 @@ function Song({
     <div className="homeContainer">
       <div>
         <Toaster />
-        <button
+        {loading && <Spinner />}
+        <span
           className={styles.optionsBtn}
           onClick={(e) => {
             e.stopPropagation();
@@ -237,8 +244,28 @@ function Song({
           }}
           aria-label="Options"
         >
-          &#x22EE;
-        </button>
+          {!remove ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="35px"
+              viewBox="0 -960 960 960"
+              width="35px"
+              fill="#e3e3e3"
+            >
+              <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z" />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="35px"
+              viewBox="0 -960 960 960"
+              width="35px"
+              fill="#e3e3e3"
+            >
+              <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z" />
+            </svg>
+          )}
+        </span>
       </div>
       {menuOpen && !remove && (
         <ListGroup defaultActiveKey>
@@ -269,7 +296,7 @@ function Song({
             <ListGroup.Item
               action
               key={playlist.name}
-              onClick={() => handleAddSongToPlaylist(playlist.name)}
+              onClick={() => handleAddSongToPlaylist(playlist)}
             >
               {playlist.name}
             </ListGroup.Item>
@@ -288,18 +315,57 @@ function Song({
                   onChange={(e) => setPlaylistName(e.target.value)}
                 />
                 <Modal.Footer>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setShowModal(false)}
-                  >
+                  <Button onClick={() => setShowModal(false)} type="close">
                     Close
                   </Button>
                   <Button
-                    onClick={() => {
-                      handleAddSongToPlaylist(playlistName);
+                    onClick={async () => {
+                      // Create the playlist first
+                      setLoading(true);
+                      const response = await createPlaylist(playlistName, user);
+
+                      if (response.status === 200) {
+                        const newPlaylist = response.data.playlist;
+
+                        toast.success(`${response.data.message}`);
+
+                        // IMMEDIATELY add the current song to the new playlist
+                        await handleAddSongToPlaylist(newPlaylist);
+
+                        // Update playlist with image generation
+                        const updatedPlaylist = await updatePlaylist(
+                          newPlaylist,
+                          false,
+                          null,
+                          user,
+                        );
+
+                        // Create updated user object with new playlist
+                        const updatedUser = {
+                          ...user,
+                          playlists: [
+                            ...(user.playlists || []),
+                            updatedPlaylist,
+                          ],
+                        };
+
+                        // Update both state and localStorage
+                        setUser(updatedUser);
+                        localStorage.setItem(
+                          "user",
+                          JSON.stringify(updatedUser),
+                        );
+                        setLoading(false);
+                      } else {
+                        toast.error(
+                          "Failed to create playlist. Please try again.",
+                        );
+                      }
+
                       setShowModal(false);
+                      setPlaylistName("");
                     }}
-                    variant="primary"
+                    type="submit"
                   >
                     Save changes
                   </Button>

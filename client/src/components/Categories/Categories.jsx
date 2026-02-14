@@ -20,6 +20,7 @@ function Categories({ formVisible }) {
   const [currentLocation, setCurrentLocation] = useState(
     location.state?.locationName || "United States",
   );
+  console.log("current location: ", currentLocation);
   // Determine locale based on country code
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
