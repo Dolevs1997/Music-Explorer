@@ -8,7 +8,6 @@ import {
   addSongToPlaylist,
   removeSongFromPlaylist,
   createPlaylist,
-  updatePlaylist,
 } from "../../utils/playlist";
 import { removeBtn } from "../../Contexts/RemoveContext";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -17,7 +16,7 @@ import Form from "react-bootstrap/Form";
 import Button from "../Button/Button";
 import toast, { Toaster } from "react-hot-toast";
 import UserContext from "../../Contexts/UserContext";
-import { Spinner } from "../../components/ui/spinner";
+// import { Spinner } from "../../components/ui/spinner";
 
 // import { generateImagePlaylist } from "../../services/OpenAI_service";
 const opts = {
@@ -91,9 +90,10 @@ function Song({
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
-  const { setUser } = useContext(UserContext);
-  const user = JSON.parse(localStorage.getItem("user")) || null;
-  const [loading, setLoading] = useState(false);
+  const { user, setUser } = useContext(UserContext);
+
+  // const { setUser } = useContext(UserContext);
+  // const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log("videoId in Song component:", state.videoId);
   // console.log("user:", user);
   if (!user.token) {
@@ -114,44 +114,43 @@ function Song({
     else if (response.status != 200) toast.error(`${response.data.message}`);
     const data = response.data;
     console.log("data: ", data);
-    // console.log("playlistName: ", data.playlist.name);
+
     try {
       dispatch({
         type: "SET_IN_PLAYLIST",
         payload: {
-          videoId: data.videoId,
-          song: data.song,
+          videoId: state.videoId,
+          song: state.song,
           playlists: [data.playlist.name],
         },
       });
-      // Check if the playlist already exists
-      const existingPlaylist = user.playlists.find(
-        (playlist) => playlist.name === data.playlist.name,
+
+      // updating user context with new song
+      const updatedUser = {
+        ...user,
+        playlists: user.playlists.map((p) =>
+          p._id == playlist._id
+            ? {
+                ...p,
+                songs: [
+                  ...(p.songs || []),
+                  data.playlist.songs[data.playlist.songs.length - 1],
+                ],
+              }
+            : p,
+        ),
+      };
+
+      //checking if playlist already exists
+      const playlistExists = user.playlists.some(
+        (p) => p._id === data.playlist._id || p.name === data.playlist.name,
       );
-      if (existingPlaylist) {
-        // If it exists, update the playlist ID
-        user.playlists = user.playlists.map((playlist) =>
-          playlist.name === data.playlist.name
-            ? { ...playlist, id: data.playlist._id }
-            : playlist,
-        );
-        const updatedUser = {
-          ...user,
-          playlists: user.playlists.map((playlist) =>
-            playlist.name === data.playlist.name
-              ? { ...playlist, songs: [...playlist.songs, data.song] }
-              : playlist,
-          ),
-        };
-        setUser(updatedUser);
-        console.log("Updated existing playlist in user.playlists");
-      } else {
-        const updatedUser = {
-          ...user,
-          playlists: [...user.playlists, data.playlist],
-        };
-        setUser(updatedUser);
+
+      if (!playlistExists) {
+        updatedUser.playlists = [...updatedUser.playlists, data.playlist];
       }
+
+      setUser(updatedUser);
     } catch (error) {
       console.error("Error adding song to playlist:", error);
     }
@@ -166,7 +165,7 @@ function Song({
         if (songRef.current && state.videoId === songRef.current.videoId) {
           return;
         }
-        if (songRef.current) {
+        if (songRef.current && songRef.current.videoId != undefined) {
           console.log("Using cached song data");
           dispatch({
             type: "SET_VIDEO_SONG",
@@ -183,16 +182,16 @@ function Song({
           try {
             const data = await fetchSongYT(song, country, user);
             songRef.current = data;
-
-            dispatch({
-              type: "SET_VIDEO_SONG",
-              payload: {
-                videoId: data.videoId,
-                regionCode: data.regionCode,
-                song: data.song,
-                playlists: songRef.current.playlists,
-              },
-            });
+            if (data.videoId != undefined)
+              dispatch({
+                type: "SET_VIDEO_SONG",
+                payload: {
+                  videoId: data.videoId,
+                  regionCode: data.regionCode,
+                  song: data.song,
+                  playlists: songRef.current.playlists,
+                },
+              });
           } catch (error) {
             console.error("Error fetching song recommendations:", error);
             dispatch({
@@ -213,9 +212,9 @@ function Song({
     console.log("Removed song from playlist:", data);
     try {
       if (onRemoveSong) {
-        console.log("song", song);
-        console.log("Calling onRemoveSong for videoId:", videoId);
-        onRemoveSong(song);
+        onRemoveSong(song, videoId);
+
+        toast.success("Song removed from playlist");
       } else {
         console.log("onRemoveSong:", onRemoveSong);
         console.warn("onRemoveSong is undefined!");
@@ -232,7 +231,6 @@ function Song({
     <div className="homeContainer">
       <div>
         <Toaster />
-        {loading && <Spinner />}
         <span
           className={styles.optionsBtn}
           onClick={(e) => {
@@ -321,41 +319,13 @@ function Song({
                   <Button
                     onClick={async () => {
                       // Create the playlist first
-                      setLoading(true);
                       const response = await createPlaylist(playlistName, user);
 
                       if (response.status === 200) {
                         const newPlaylist = response.data.playlist;
-
                         toast.success(`${response.data.message}`);
-
                         // IMMEDIATELY add the current song to the new playlist
                         await handleAddSongToPlaylist(newPlaylist);
-
-                        // Update playlist with image generation
-                        const updatedPlaylist = await updatePlaylist(
-                          newPlaylist,
-                          false,
-                          null,
-                          user,
-                        );
-
-                        // Create updated user object with new playlist
-                        const updatedUser = {
-                          ...user,
-                          playlists: [
-                            ...(user.playlists || []),
-                            updatedPlaylist,
-                          ],
-                        };
-
-                        // Update both state and localStorage
-                        setUser(updatedUser);
-                        localStorage.setItem(
-                          "user",
-                          JSON.stringify(updatedUser),
-                        );
-                        setLoading(false);
                       } else {
                         toast.error(
                           "Failed to create playlist. Please try again.",
@@ -375,11 +345,10 @@ function Song({
           )}
         </ListGroup>
       )}
-      <div className={styles.optionsMenu}></div>
       <span className={styles.songDetails}>{song}</span>
-      {state.videoId ? (
+      {state.videoId &&
         // lazy-mount player only for the active/playing song to avoid multiple iframe loads
-        playingVideoId === state.videoId ? (
+        (playingVideoId === state.videoId ? (
           <YouTube
             videoId={state.videoId}
             title={state.title}
@@ -405,12 +374,7 @@ function Song({
               }}
             />
           </div>
-        )
-      ) : (
-        <div className={styles.noVideo}>No Video Available</div>
-      )}
-      {/* {state.loading && <div className={styles.loading}>Loading...</div>} */}
-      {/* {state.error && <div className={styles.error}>{state.error}</div>} */}
+        ))}
     </div>
   );
 }

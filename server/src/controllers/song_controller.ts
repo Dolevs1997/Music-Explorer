@@ -76,7 +76,7 @@ const recognizeAudio = async (req: Request, res: Response) => {
         });
       }
       res.status(200).json(musicInfo);
-    }
+    },
   );
 };
 
@@ -113,24 +113,19 @@ const deletebyVideoId = async (req: Request, res: Response) => {
     const song = await SongSchema.findOne({ videoId: videoId });
     if (!song) {
       return res.status(404).json({ message: "Song not found" });
-    } else if (song.playlists.length > 1) {
-      // If the song is in multiple playlists, just remove it from this playlist
-      song.playlists = song.playlists.filter(
-        (pid) => pid.toString() !== playlistId.toString()
-      );
-      await song.save();
     }
-    console.log("handling Firestore deletion for song:", song);
+    // console.log("handling Firestore deletion for song:", song);
     // const deletedSong = await deleteSongUser(song, playlistRef, userRef);
     // if (!deletedSong) {
     //   return res.status(404).json({ message: "Song not found in user songs" });
     // }
+    // If the song is in multiple playlists, just remove it from this playlist
     song.playlists = song.playlists.filter(
-      (pid) => pid.toString() !== playlistId.toString()
+      (pid) => pid.toString() !== playlistId.toString(),
     );
     await song.save();
     playlist.songs = playlist.songs.filter(
-      (sid) => sid.toString() !== song._id.toString()
+      (sid) => sid.toString() !== song._id.toString(),
     );
     await playlist.save();
 

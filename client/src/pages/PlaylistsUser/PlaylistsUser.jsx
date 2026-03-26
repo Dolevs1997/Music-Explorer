@@ -18,7 +18,7 @@ import styles from "./PlaylistsUser.module.css";
 // Dropdown removed: using custom menu
 
 function PlaylistsUser() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
   const [modalOverlay, setModalOverlay] = useState(false);
   const [file, setFile] = useState(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -28,7 +28,7 @@ function PlaylistsUser() {
   // const [showForm, setShowForm] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   // const [loading, setLoading] = useState(false);
   // const [input, setInput] = useState("I want you to generate ");
   // stores the id of the playlist whose menu is open (or null)

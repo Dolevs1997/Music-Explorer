@@ -32,8 +32,8 @@ async function fetchSong(song: string, country = "US") {
   const controller = new AbortController();
   const signal = controller.signal;
   const cachedSong = await getCachedSong(song, country);
-  if (cachedSong) {
-    // console.log("Returning cached song:", cachedSong);
+  if (cachedSong && (cachedSong as any).videoId) {
+    console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
   // console.log("Fetching song from YouTube API:", song, country);
@@ -43,19 +43,28 @@ async function fetchSong(song: string, country = "US") {
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    // console.log("Video data:", data);
-    if (data.items.length === 0) {
+    if (!data || !data.items || data.items.length === 0) {
       throw new Error("No videos found for the given artist and songName");
     }
-    const videoId = data.items[0].id.videoId;
+
+    // Find first search result that actually contains a videoId
+    const itemWithVideo = data.items.find(
+      (it: any) => it && it.id && it.id.videoId,
+    );
+    if (!itemWithVideo) {
+      throw new Error("No videos with videoId found for the given query");
+    }
+
+    const videoId = itemWithVideo.id.videoId;
+    const title = itemWithVideo.snippet?.title ?? "";
+
+    // Only cache and return if we have a videoId
     await setCachedSong(song, country, {
-      title: data.items[0].snippet.title,
-      videoId: videoId,
+      title,
+      videoId,
     });
-    return {
-      title: data.items[0].snippet.title,
-      videoId: videoId,
-    };
+
+    return { title, videoId };
   } catch (error) {
     console.error(
       "YouTube_service file in fetchSong: Error fetching songs:",

@@ -144,6 +144,7 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
     }
+
     let existingSong = await SongSchema.findOne({
       song: song,
       videoId: videoId,
@@ -156,9 +157,12 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
       await existingSong.save();
       playlist.songs.push(existingSong._id);
       await playlist.save();
-      return res
-        .status(200)
-        .json({ message: "Song added to playlist successfully", playlist });
+      const populatedPlaylist =
+        await PlaylistSchema.findById(playlistId).populate("songs");
+      return res.status(200).json({
+        message: "Song added to playlist successfully",
+        playlist: populatedPlaylist,
+      });
     } else {
       const newSong = new SongSchema({
         song: song,
@@ -168,9 +172,12 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
       await newSong.save();
       playlist.songs.push(newSong._id);
       await playlist.save();
-      return res
-        .status(200)
-        .json({ message: "Song added to playlist successfully", playlist });
+      const populatedPlaylist =
+        await PlaylistSchema.findById(playlistId).populate("songs");
+      return res.status(200).json({
+        message: "Song added to playlist successfully",
+        playlist: populatedPlaylist,
+      });
     }
   } catch (error) {
     console.error("Error adding song to playlist:", error);
@@ -179,8 +186,8 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
 };
 
 const getPlaylistSongs = async (req: Request, res: Response) => {
-  console.log("Getting playlist songs");
-  console.log("Request query ID:", req.query.id);
+  // console.log("Getting playlist songs");
+  // console.log("Request query ID:", req.query.id);
 
   const playlistId = req.query.id;
   try {

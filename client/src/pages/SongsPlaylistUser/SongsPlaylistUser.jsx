@@ -16,12 +16,9 @@ function SongsPlaylistUser() {
 
   const { playlistId } = useParams();
   const location = useLocation();
-  let playlist =
-    location.state?.playlist ||
-    user?.playlists?.find((p) => p.id === playlistId || p._id === playlistId);
+  let playlist = location.state?.playlist;
   console.log(user.playlists);
   const [songs, setSongs] = useState(location.state?.songs || []);
-  console.log("SongsPlaylistUser render");
   if (!playlist) {
     console.error("Playlist not found for ID:", playlistId);
   }
@@ -29,16 +26,31 @@ function SongsPlaylistUser() {
     console.error("User not found in local storage or state.");
   }
   // console.log("playlist", playlist);
-  function handleRemoveSong(removedSong) {
-    console.log("Removing song:", removedSong);
-    setSongs((prevSongs) => prevSongs.filter((song) => song !== removedSong));
-    const updatedPlaylist = user.playlists.map((p) => p._id == playlistId);
-    updatedPlaylist.songs.filter((song) => song === removedSong);
+  function handleRemoveSong(removedSong, videoId) {
+    console.log("removedSong: ", removedSong);
+    console.log("videoId: ", videoId);
+    // Update local songs state
+    setSongs((prevSongs) =>
+      prevSongs.filter(
+        (song) => song !== removedSong && song.videoId !== videoId,
+      ),
+    );
     const updatedUser = {
       ...user,
-      playlist: [updatedPlaylist],
+      playlists: user.playlists.map((p) =>
+        p._id === playlistId
+          ? {
+              ...p,
+              songs: (p.songs || []).filter(
+                (s) => s.videoId !== videoId && s.song !== removedSong,
+              ),
+            }
+          : p,
+      ),
     };
+
     setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   }
   useEffect(() => {
     async function fetchPlaylistSongs() {
@@ -74,7 +86,7 @@ function SongsPlaylistUser() {
       }
     }
     fetchPlaylistSongs();
-  }, [playlistId, user.token, songs.length]);
+  }, [playlistId, user.token]);
 
   return (
     <div className="app-container">

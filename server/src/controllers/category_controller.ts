@@ -14,7 +14,7 @@ const getAll = async (req: Request, res: Response) => {
       headers: {
         Authorization: "Bearer " + token,
       },
-    }
+    },
   );
   const data = await result.json();
   // console.log("Categories data:", data.categories.items);
@@ -48,7 +48,7 @@ const getById = async (req: Request, res: Response) => {
   const result = await fetchPlaylists(
     name as string,
     country as string,
-    locationName as string
+    locationName as string,
   );
   if (!result) {
     return res.status(400).json({ error: "No playlists found" });
