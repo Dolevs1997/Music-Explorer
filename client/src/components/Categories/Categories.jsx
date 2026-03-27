@@ -24,7 +24,7 @@ function Categories({ formVisible }) {
   // Determine locale based on country code
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
-  //console.log("categories");
+  console.log("categories");
   // console.log("user token in Categories:", user);
   useEffect(() => {
     if (userData == null) navigate("/login");
@@ -34,13 +34,11 @@ function Categories({ formVisible }) {
       setCurrentLocation(location.state.locationName);
     }
   }, [location.state]);
-  useEffect(() => {
-    document.title = "Moodiify | Categories";
-  }, []);
 
   useEffect(
     function () {
       async function fetchGenres() {
+        // console.log("fetching generes");
         try {
           const response = await axios.get(
             `http://${SERVER_URL}/moodiify/categories/getAll?limit=${limit}&locale=${locale}`,
@@ -68,7 +66,7 @@ function Categories({ formVisible }) {
       }
       fetchGenres();
     },
-    [limit, locale, userData],
+    [limit, locale, userData.token],
   );
 
   async function handleShowCategories(show) {
