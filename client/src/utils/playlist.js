@@ -77,23 +77,53 @@ async function removePlaylist(playlistId, user) {
 }
 
 async function updatePlaylist(playlist, updatedData, user) {
-  // console.log("updatedData: ", updatedData.get("image"));
-  // console.log("user", user);
-  const isFormData = updatedData instanceof FormData;
-  const response = await axios.put(
-    `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${playlist._id || playlist.id}`,
+  console.log("updatedData: ", updatedData);
+  console.log("user", user);
 
-    updatedData,
-
-    {
-      headers: {
-        ...(isFormData ? {} : { "Content-Type": "application/json" }),
-        Authorization: `Bearer ${user.token}`,
+  if (updatedData instanceof FormData) {
+    const response = await axios.put(
+      `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${
+        playlist._id || playlist.id
+      }`,
+      updatedData,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       },
-    },
-  );
-  return response.data;
+    );
+    return response.data;
+  } else {
+    const response = await axios.put(
+      `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${
+        playlist._id || playlist.id
+      }`,
+      updatedData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      },
+    );
+    return response.data;
+  }
 }
+
+// const isFormData = updatedData instanceof FormData;
+// const response = await axios.put(
+//   `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${playlist._id || playlist.id}`,
+
+//   prompt ? { ...updatedData, prompt } : updatedData,
+
+//   {
+//     headers: {
+//       ...(isFormData ? {} : { "Content-Type": "application/json" }),
+//       Authorization: `Bearer ${user.token}`,
+//     },
+//   },
+// );
+// return response.data;
 
 export {
   addSongToPlaylist,

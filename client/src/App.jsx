@@ -22,7 +22,7 @@ function App() {
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log("user at App: ", user);
 
   useEffect(() => {

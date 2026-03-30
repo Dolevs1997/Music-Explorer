@@ -4,19 +4,17 @@ import SongSchema from "../schemas/Song_schema";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { uploadToCloudinary } from "../services/Cloudniary_service";
-// import { generatePlaylistPicture } from "../services/OpenAI_service";
+import { generatePlaylistPicture } from "../services/OpenAI_service";
 // import { updateUser, getUser } from "../models/Firestore/user";
 // import { getPlaylistUser } from "../models/Firestore/playlistsUser";
 const updatePlaylist = async (req: Request, res: Response) => {
   // Implementation for updating a playlist
   const { id } = req.query;
+  console.log("req.body: ", req.body);
+  // console.log("file: ", req.file);
   // console.log("Updating playlist with ID:", id);
   const playlist = await PlaylistSchema.findById(id);
 
-  if (!playlist) {
-    return res.status(404).json({ message: "Playlist not found" });
-  }
-  console.log("playlist: ", playlist);
   if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
@@ -39,6 +37,33 @@ const updatePlaylist = async (req: Request, res: Response) => {
     } catch (error: Error | any) {
       res.status(500).json({ error: error.message });
     }
+  } else if (req.body.prompt) {
+    try {
+      const prompt = req.body.prompt;
+      const result = await generatePlaylistPicture(prompt);
+
+      // Save base64 to Cloudinary
+      const image_base64 = result.data[0].b64_json;
+      // console.log("result: ", result);
+      if (!result.data || result.data.length === 0 || !image_base64) {
+        throw new Error("Image generation failed");
+      }
+
+      const image_bytes = Buffer.from(image_base64, "base64");
+
+      const { data } = await uploadToCloudinary(
+        image_bytes,
+        `playlist-${id}-${Date.now()}.png`,
+      );
+      playlist.imageUrl = data?.secure_url;
+      console.log("playlist imageUrl: ", playlist.imageUrl);
+      await playlist.save();
+      return res
+        .status(200)
+        .json({ message: "playlist image generated successfully", playlist });
+    } catch (error: Error | any) {
+      return res.status(500).json({ error: error.message });
+    }
   }
   const updates = req.body;
   if (Object.keys(updates).length > 0) Object.assign(playlist, updates);
@@ -46,36 +71,6 @@ const updatePlaylist = async (req: Request, res: Response) => {
   return res
     .status(200)
     .json({ message: "Playlist updated successfully", playlist });
-  // } else if (req.body.generateImage) {
-  //   try {
-  //     const description =
-  //       req.body.description ||
-  //       `Generate an image for playlist: ${playlist.name}`;
-  //     console.log("description: ", description);
-  //     const result = await generatePlaylistPicture(description);
-
-  //     // Save base64 to Cloudinary
-  //     const image_base64 = result.data[0].b64_json;
-  //     // console.log("result: ", result);
-  //     if (!result.data || result.data.length === 0 || !image_base64) {
-  //       throw new Error("Image generation failed");
-  //     }
-
-  //     const image_bytes = Buffer.from(image_base64, "base64");
-
-  //     const { data } = await uploadToCloudinary(
-  //       image_bytes,
-  //       `playlist-${id}-${Date.now()}.png`,
-  //     );
-
-  //     playlist.imageUrl = data?.secure_url;
-  //     console.log("playlist imageUrl: ", playlist.imageUrl);
-  //     await playlist.save();
-  //     res.status(200).json({ playlist });
-  //   } catch (error: Error | any) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
 };
 const createPlaylist = async (req: Request, res: Response) => {
   const { playlistName, user } = req.body;
@@ -119,6 +114,8 @@ const createPlaylist = async (req: Request, res: Response) => {
       name: playlistName,
       user: userId,
       songs: [],
+      imageUrl:
+        "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2",
     });
     await newPlaylist.save();
     // Add the playlist to the user's playlists

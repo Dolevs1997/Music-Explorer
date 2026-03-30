@@ -6,6 +6,7 @@ import ButtonComponent from "../../components/Button/Button.jsx";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import { Spinner } from "../../components/ui/spinner";
 
 import Button from "../../components/Button/Button.jsx";
 import { Card, CardBody, CardHeader } from "@heroui/card";
@@ -25,12 +26,12 @@ function PlaylistsUser() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  // const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-  // const [loading, setLoading] = useState(false);
-  // const [input, setInput] = useState("I want you to generate ");
+  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState("");
   // stores the id of the playlist whose menu is open (or null)
   const [playlistMenu, setPlaylistMenu] = useState(null);
   console.log("user playlists: ", user.playlists);
@@ -117,18 +118,17 @@ function PlaylistsUser() {
     formData.append("image", file);
     // console.log(formData.get("image"));
     try {
-      const response = await updatePlaylist(selectedPlaylist, formData, user);
-      console.log("Playlist updated with new image:", response.playlist);
+      const data = await updatePlaylist(selectedPlaylist, formData, user);
+      console.log("Playlist updated with new image:", data.playlist);
       // Update the user state with the new playlist data
       const updatedUser = {
         ...user,
         playlists: user.playlists.map((p) =>
-          p._id == response.playlist._id ? response.playlist : p,
+          p._id == data.playlist._id ? (p = data.playlist) : p,
         ),
       };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
       toast.success("Playlist image updated successfully!");
-
+      setUser(updatedUser);
       setModalOverlay(false);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -312,16 +312,18 @@ function PlaylistsUser() {
                         >
                           Edit Playlist Image
                         </div>
-                        {/* <div
-                          className={styles.menuItem}
-                          onClick={() => {
-                            setSelectedPlaylist(playlist);
-                            setShowForm(true);
-                            setPlaylistMenu(null);
-                          }}
-                        >
-                          Generate Playlist Image
-                        </div> */}
+                        {
+                          <div
+                            className={styles.menuItem}
+                            onClick={() => {
+                              setSelectedPlaylist(playlist);
+                              setShowForm(true);
+                              setPlaylistMenu(null);
+                            }}
+                          >
+                            Generate Playlist Image
+                          </div>
+                        }
                       </div>
                     )}
                   </div>
@@ -347,19 +349,11 @@ function PlaylistsUser() {
                         );
                       }}
                     >
-                      {playlist.imageUrl ? (
+                      {playlist.imageUrl && (
                         <img
                           alt="Playlist"
                           className="object-cover rounded-xl"
                           src={playlist.imageUrl}
-                          height={160}
-                          width={270}
-                        />
-                      ) : (
-                        <img
-                          alt="Playlist"
-                          className="object-cover rounded-xl"
-                          src="https://heroui.com/images/hero-card-complete.jpeg"
                           height={160}
                           width={270}
                         />
@@ -391,16 +385,20 @@ function PlaylistsUser() {
                       </Modal.Dialog>
                     </div>
                   )}
-                  {/* <ButtonComponent
-                    onClick={() =>
-                      navigate(`/myplaylists/${playlist._id || playlist.id}`, {
-                        state: { playlist, user },
-                      })
-                    }
-                    type="link"
-                  >
-                  </ButtonComponent> */}
-                  {/* {showForm && (
+                  {/* {
+                    <ButtonComponent
+                      onClick={() =>
+                        navigate(
+                          `/myplaylists/${playlist._id || playlist.id}`,
+                          {
+                            state: { playlist, user },
+                          },
+                        )
+                      }
+                      type="link"
+                    ></ButtonComponent>
+                  } */}
+                  {showForm && (
                     <div className="modalOverlay">
                       <form className="formVisible">
                         <label htmlFor="text">
@@ -408,13 +406,43 @@ function PlaylistsUser() {
                         </label>
                         <textarea
                           value={input}
-                          onChange={(e) => setInput(e.target.value)}
+                          maxLength={50}
+                          onChange={(e) => {
+                            setInput(e.target.value);
+                          }}
                         ></textarea>
                         <Button
-                          onClick={() => {
+                          disabled={loading}
+                          onClick={async () => {
                             setLoading(true);
-                            updatePlaylist(playlist, true, input, null, user);
-                            setLoading(false);
+                            try {
+                              const data = await updatePlaylist(
+                                playlist,
+                                { prompt: input },
+                                user,
+                              );
+                              console.log("data: ", data);
+                              // update user/playlist in context
+                              const updatedUser = {
+                                ...user,
+                                playlists: user.playlists.map((p) =>
+                                  p._id == data.playlist._id
+                                    ? (p = data.playlist)
+                                    : p,
+                                ),
+                              };
+                              setUser(updatedUser);
+                              // localStorage.setItem(
+                              //   "user",
+                              //   JSON.stringify(user),
+                              // );
+                              toast.success("Playlist image generated!");
+                              setShowForm(false);
+                            } catch (err) {
+                              toast.error("Image generation failed.", err);
+                            } finally {
+                              setLoading(false);
+                            }
                           }}
                           type="submit"
                           loading={loading ? true : false}
@@ -422,14 +450,18 @@ function PlaylistsUser() {
                           Send
                         </Button>
                         <Button
-                          onClick={(prev) => setShowForm(!prev)}
+                          onClick={(prev) => {
+                            setShowForm(!prev);
+                            setInput("");
+                          }}
                           type="cancel"
                         >
                           Cancel
                         </Button>
+                        {loading && <Spinner />}
                       </form>
                     </div>
-                  )} */}
+                  )}
                 </li>
               ))}
             </ul>

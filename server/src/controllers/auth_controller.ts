@@ -43,7 +43,7 @@ const register = async (req: Request, res: Response) => {
         // Signed up
         const userAuth: User = userCredential.user;
         // console.log("User created in Firebase Auth:", user);
-        console.log("Firebase Auth user creation successful:", userAuth.uid);
+        // console.log("Firebase Auth user creation successful:", userAuth.uid);
 
         const user = new UserModel({
           uid: userAuth.uid,

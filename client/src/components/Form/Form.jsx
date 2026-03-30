@@ -24,15 +24,21 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
       content: text,
       role: "user",
     };
-    const response = await getSongSuggestions(payload, user.token);
-    setSongSuggestions(response);
-    setFormVisible(!formVisible);
-    setIsLoading(false);
-    setText("");
-    if (response.length === 0) {
-      alert("No song suggestions found. Please try again.");
-    } else {
-      navigate("/home/songSuggestions");
+    try {
+      const response = await getSongSuggestions(payload, user.token);
+      setSongSuggestions(response);
+      setFormVisible(!formVisible);
+      setText("");
+      if (response.length === 0) {
+        alert("No song suggestions found. Please try again.");
+      } else {
+        navigate("/home/songSuggestions");
+      }
+    } catch (err) {
+      console.error("error fetching song suggestions: ", err);
+      toast.error("Error getting song suggestions...");
+    } finally {
+      setIsLoading(false);
     }
   }
 
