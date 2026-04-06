@@ -21,13 +21,12 @@ export default function Search() {
     setIsMapVisible,
     isRecording,
     setIsRecording,
-    userData,
     setSongSuggestions,
     setIsVoiceSearch,
     isVoiceSearch,
   } = useContext(SearchContext);
   const navigate = useNavigate();
-  // const userData = JSON.parse(localStorage.getItem("user"));
+  const userData = JSON.parse(localStorage.getItem("user"));
   const [secondsLeft, setSecondsLeft] = useState(10);
   const [proccessRecording, setProccessRecording] = useState(false);
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);

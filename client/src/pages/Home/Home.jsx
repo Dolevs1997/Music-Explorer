@@ -55,7 +55,6 @@ export default function Home({ user }) {
           setIsMapVisible={setIsMapVisible}
           isRecording={isRecording}
           setIsRecording={setIsRecording}
-          userData={user}
           setSongSuggestions={setSongSuggestions}
           songSuggestions={songSuggestions}
           setIsVoiceSearch={setIsVoiceSearch}

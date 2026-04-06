@@ -107,7 +107,6 @@ const login = async (req: Request, res: Response) => {
       .then(async (userCredential) => {
         // Signed in
         const userAuth = userCredential.user;
-        console.log("userAuth:", userAuth);
         // console.log("User signed in to Firebase Auth:", user);
         const isEmailValid = userSchemaZod.safeParse({
           email: userAuth.email,

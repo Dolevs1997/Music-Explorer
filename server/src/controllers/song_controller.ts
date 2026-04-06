@@ -4,12 +4,10 @@ import defaultOptions from "../config/acr_config";
 import { fetchPlaylistSongs } from "../services/YouTube_service";
 import SongSchema from "../schemas/Song_schema"; // Import the Song schema
 import PlaylistSchema from "../schemas/Playlist_schema";
-import fs from "fs";
 import { Request, Response } from "express";
 import { Options } from "../services/MusicRecognition_service";
-// import { deleteSongUser } from "../models/Firestore/songsUser";
-// import { getUser } from "../models/Firestore/user";
-// import { getPlaylistUser } from "../models/Firestore/playlistsUser";
+import { uploadAudioToCloudinary } from "../services/Cloudniary_service";
+
 dotenv.config();
 
 const getById = async (req: Request, res: Response) => {
@@ -28,53 +26,35 @@ const getById = async (req: Request, res: Response) => {
   }
 };
 
-// const getVideo = async (req, res) => {
-//   const controller = new AbortController();
-//   const signal = controller.signal;
-//   const { videoId, regionCode } = req.query;
-//   if (!videoId) {
-//     return res
-//       .status(400)
-//       .json({ error: "Please provide videoId in query params" });
-//   }
-//   const result = await fetch(
-//     `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&regionCode=${regionCode}&key=${API_KEY}`,
-//     { signal }
-//   );
-//   const data = await result.json();
-//   res.status(200).json(data);
-// };
-
 const recognizeAudio = async (req: Request, res: Response) => {
+  console.log("request body: ", req.body);
+  console.log("request file: ", req.file);
   if (!req.file) {
     return res.status(400).json({ error: "Audio file missing" });
   }
-
-  console.log("options:", defaultOptions);
-  let data: Buffer = fs.readFileSync(req.file.path);
+  await uploadAudioToCloudinary(req.file.buffer, req.file.originalname);
+  const data: Buffer = req.file.buffer;
+  // console.log("options:", defaultOptions);
+  // console.log(req.file);
+  // let data: Buffer = fs.readFileSync(req.file.path);
   if (!data) {
-    return res.status(400).json({ error: "Audio file missing" });
+    return res.status(400).json({ error: "Audio file location missing" });
   }
   identify(
     data,
     defaultOptions as Options,
     async function (err: Error, body: any) {
-      if (err) console.log(err);
-      console.log("ACRCloud response body:", body);
+      if (err) {
+        console.error("ACRCloud error:", err);
+        return res.status(500).json({ error: "Audio recognition failed" });
+      }
+
       if (!body || !body.metadata || !body.metadata.music) {
         return res.status(400).json({ error: "Unable to recognize audio" });
       }
       // Process the recognized music data
       const musicInfo = body.metadata.music[0];
       console.log("Recognized music info:", musicInfo);
-      // Clean up the uploaded file
-      if (req.file && req.file.path) {
-        fs.unlink(req.file.path, (err) => {
-          if (err) {
-            console.error("Error deleting temporary audio file:", err);
-          }
-        });
-      }
       res.status(200).json(musicInfo);
     },
   );

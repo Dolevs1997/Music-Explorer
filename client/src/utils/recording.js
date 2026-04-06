@@ -16,7 +16,7 @@ export async function handleStopRecording(
   userData,
   setSongSuggestions,
   setProccessRecording,
-  setResultRecord
+  setResultRecord,
 ) {
   audioChunks = [];
   let songRecognized = "";
@@ -28,19 +28,15 @@ export async function handleStopRecording(
     const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
     const formData = new FormData();
     formData.append("audioFile", audioBlob, "sample.wav");
-    console.log("Audio blob created:", audioBlob);
-    console.log("FormData prepared:", formData.file);
     const res = await fetch(
-      `http://${
-        import.meta.env.VITE_SERVER_URL
-      }/moodiify/videoSong/recognize-audio`,
+      `http://${import.meta.env.VITE_SERVER_URL}/moodiify/videoSong/recognize-audio`,
       {
+        body: formData,
         method: "POST",
         headers: {
           Authorization: `Bearer ${userData.token}`,
         },
-        body: formData,
-      }
+      },
     );
 
     const data = await res.json();
