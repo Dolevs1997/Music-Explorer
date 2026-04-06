@@ -38,7 +38,7 @@ function SongsPlaylistUser() {
     const updatedUser = {
       ...user,
       playlists: user.playlists.map((p) =>
-        p._id === playlistId
+        p._id === playlistId || p.id === playlistId
           ? {
               ...p,
               songs: (p.songs || []).filter(
@@ -50,7 +50,6 @@ function SongsPlaylistUser() {
     };
 
     setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
   }
   useEffect(() => {
     async function fetchPlaylistSongs() {

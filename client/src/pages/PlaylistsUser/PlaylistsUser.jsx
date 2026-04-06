@@ -2,7 +2,6 @@ import Logo from "../../components/Logo/Logo.jsx";
 import Search from "../../components/Search/Search.jsx";
 import NavBar from "../../components/NavBar/NavBar.jsx";
 import { useNavigate } from "react-router";
-import ButtonComponent from "../../components/Button/Button.jsx";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -160,7 +159,38 @@ function PlaylistsUser() {
               </NavDropdown.Item>
             </NavDropdown>
           </div>
+          {showCreateModal && (
+            <div className="modalOverlay">
+              <Modal.Dialog>
+                <Modal.Header
+                  closeButton
+                  onHide={() => setShowCreateModal(false)}
+                ></Modal.Header>
+                <Form.Group controlId="exampleForm.ControlTextarea1">
+                  <Form.Label>Enter Playlist Name</Form.Label>
 
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter playlist name"
+                    value={playlistName}
+                    onChange={(e) => setPlaylistName(e.target.value)}
+                  ></Form.Control>
+                </Form.Group>
+
+                <Modal.Footer>
+                  <Button
+                    onClick={() => setShowCreateModal(false)}
+                    type="cancel"
+                  >
+                    Close
+                  </Button>
+                  <Button onClick={handleAddPlaylist} type="select">
+                    Save changes
+                  </Button>
+                </Modal.Footer>
+              </Modal.Dialog>
+            </div>
+          )}
           {user.playlists.length > 0 ? (
             <ul>
               {user.playlists.map((playlist) => (
@@ -205,51 +235,7 @@ function PlaylistsUser() {
                         </Modal.Dialog>
                       </div>
                     )}
-                  {showCreateModal && (
-                    <div
-                      className="modal show"
-                      style={{
-                        display: showCreateModal ? "block" : "none",
-                        position: "fixed",
-                        width: "100%",
-                        height: "300px",
-                        top: "20%",
-                        left: "70%",
-                        transform: "translate(-50%, -50%)",
-                        opacity: 0.9,
-                      }}
-                    >
-                      <Modal.Dialog>
-                        <Modal.Header
-                          closeButton
-                          onHide={() => setShowCreateModal(false)}
-                        >
-                          <Modal.Title>Enter Playlist Name</Modal.Title>
-                        </Modal.Header>
 
-                        <Modal.Body>
-                          <input
-                            type="text"
-                            placeholder="Enter playlist name"
-                            value={playlistName}
-                            onChange={(e) => setPlaylistName(e.target.value)}
-                          />
-                        </Modal.Body>
-
-                        <Modal.Footer>
-                          <Button
-                            onClick={() => setShowCreateModal(false)}
-                            type="cancel"
-                          >
-                            Close
-                          </Button>
-                          <Button onClick={handleAddPlaylist} type="select">
-                            Save changes
-                          </Button>
-                        </Modal.Footer>
-                      </Modal.Dialog>
-                    </div>
-                  )}
                   <div className={styles.playlistMenu}>
                     <span
                       onClick={() => {
@@ -483,15 +469,12 @@ function PlaylistsUser() {
                   />
                 </Form.Group>
                 <Modal.Footer>
-                  <ButtonComponent
-                    onClick={() => setModalOverlay(false)}
-                    type="close"
-                  >
+                  <Button onClick={() => setModalOverlay(false)} type="close">
                     Close
-                  </ButtonComponent>
-                  <ButtonComponent onClick={handleUploadImage} type="select">
+                  </Button>
+                  <Button onClick={handleUploadImage} type="submit">
                     Save changes
-                  </ButtonComponent>
+                  </Button>
                 </Modal.Footer>
               </Modal.Dialog>
             </div>
