@@ -4,7 +4,7 @@ import Login from "./pages/Login/Login";
 import CategoryPlaylists from "./pages/CategoryPlaylists/CategoryPlaylists";
 import { useEffect, useState } from "react";
 import Register from "./pages/Register/Register";
-import SongsPlaylist from "./pages/SongsPlaylist/SongsPlaylist";
+import CategorySongsPlaylist from "./pages/CategorySongsPlaylist/CategorySongsPlaylist";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import SongsPlaylistUser from "./pages/SongsPlaylistUser/SongsPlaylistUser";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -69,7 +69,7 @@ function App() {
             ></Route>
             <Route
               path="/category/playlists/:playlistId/songs"
-              element={<SongsPlaylist />}
+              element={<CategorySongsPlaylist />}
             />
             <Route path="/myplaylists" element={<PlaylistsUser />} />
             <Route

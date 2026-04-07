@@ -8,14 +8,19 @@ CategoryRouter.get(
   "/getAll",
   authenticate,
   validateToken,
-  category_controller.getAll
+  category_controller.getAll,
 );
 
 CategoryRouter.get(
   "/category",
   authenticate,
   validateToken,
-  category_controller.getById
+  category_controller.getById,
+);
+CategoryRouter.get(
+  "/category/playlist-songs",
+  authenticate,
+  category_controller.getPlaylistSongs,
 );
 
 export default CategoryRouter;

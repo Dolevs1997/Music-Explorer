@@ -29,6 +29,4 @@ router.post(
   songController.recognizeAudio,
 );
 
-router.get("/playlist", authenticate, songController.getAll);
-
 export default router;

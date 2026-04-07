@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import identify from "../services/MusicRecognition_service";
 import defaultOptions from "../config/acr_config";
-import { fetchPlaylistSongs } from "../services/YouTube_service";
 import SongSchema from "../schemas/Song_schema"; // Import the Song schema
 import PlaylistSchema from "../schemas/Playlist_schema";
 import { Request, Response } from "express";
@@ -60,17 +59,6 @@ const recognizeAudio = async (req: Request, res: Response) => {
   );
 };
 
-const getAll = async (req: Request, res: Response) => {
-  // console.log("song_controller for fetching song playlists");
-  const playlistId = req.query.id as string;
-  const country = req.query.country as string;
-  const result = await fetchPlaylistSongs(playlistId, country);
-  if (!result) {
-    return res.status(400).json({ error: "No playlist songs found" });
-  }
-  res.status(200).json(result);
-};
-
 const deletebyVideoId = async (req: Request, res: Response) => {
   console.log("DeletebyVideoId called with params:", req.params);
   const { videoId } = req.params;
@@ -123,6 +111,5 @@ const deletebyVideoId = async (req: Request, res: Response) => {
 export default {
   getById,
   recognizeAudio,
-  getAll,
   deletebyVideoId,
 };

@@ -24,7 +24,7 @@ function SongsPlaylist() {
         const response = await fetch(
           `http://${
             import.meta.env.VITE_SERVER_URL
-          }/moodiify/videoSong/playlist/?id=${playlistId}&country=${country}`,
+          }/moodiify/categories/category/playlist-songs/?id=${playlistId}&country=${country}`,
           {
             method: "GET",
             headers: {

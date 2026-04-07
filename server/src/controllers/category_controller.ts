@@ -1,4 +1,7 @@
-import { fetchPlaylists } from "../services/YouTube_service";
+import {
+  fetchPlaylists,
+  fetchPlaylistSongs,
+} from "../services/YouTube_service";
 import { Request, Response } from "express";
 const getAll = async (req: Request, res: Response) => {
   const token = req.headers["spotify-token"];
@@ -40,4 +43,15 @@ const getById = async (req: Request, res: Response) => {
   res.status(200).json(result);
 };
 
-export default { getAll, getById };
+const getPlaylistSongs = async (req: Request, res: Response) => {
+  console.log("category_controller for fetching song playlists");
+  const playlistId = req.query.id as string;
+  const country = req.query.country as string;
+  const result = await fetchPlaylistSongs(playlistId, country);
+  if (!result) {
+    return res.status(400).json({ error: "No playlist songs found" });
+  }
+  res.status(200).json(result);
+};
+
+export default { getAll, getById, getPlaylistSongs };
