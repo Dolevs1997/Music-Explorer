@@ -14,9 +14,9 @@ async function getCachedSong(song: string, country: string) {
 }
 async function setCachedSong(song: string, country: string, data: SongVideo) {
   const redis = new Redis(process.env.REDIS_URL || "string");
-  console.log("song title: ", song);
-  console.log("country: ", country);
-  console.log("Setting cache for song:", data);
+  // console.log("song title: ", song);
+  // console.log("country: ", country);
+  // console.log("Setting cache for song:", data);
 
   const key = cacheKey(song, country);
   await redis.set(key, JSON.stringify(data), "EX", 3600); // Cache for 1 hour
@@ -38,7 +38,7 @@ function cachePlaylistKey(playlistId: string, country: string) {
 async function setCachedPlaylistSongs(
   playlistId: string,
   country: string,
-  data: YouTubePlaylistItem
+  data: YouTubePlaylistItem,
 ) {
   const redis = new Redis(process.env.REDIS_URL || "string");
   const key = cachePlaylistKey(playlistId, country);

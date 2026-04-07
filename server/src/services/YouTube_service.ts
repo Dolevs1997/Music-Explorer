@@ -33,7 +33,7 @@ async function fetchSong(song: string, country = "US") {
   const signal = controller.signal;
   const cachedSong = await getCachedSong(song, country);
   if (cachedSong && (cachedSong as any).videoId) {
-    console.log("Returning cached song:", cachedSong);
+    // console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
   // console.log("Fetching song from YouTube API:", song, country);
@@ -89,43 +89,19 @@ async function fetchPlaylists(
   );
   const controller = new AbortController();
   const signal = controller.signal;
-  const queryStr = `${playlistName} top music playlists ${location}`;
+  const queryStr = `top ${playlistName} music playlists for ${location}`;
 
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${queryStr}&regionCode=${country}&type=playlist&key=${API_KEY}`;
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    return data.items
-      .sort((item1: YouTubePlaylistItem, item2: YouTubePlaylistItem) => {
-        const titleItem1 = item1.snippet.title.toLowerCase();
-        const descriptionItem1 = item1.snippet.description.toLowerCase();
-        const categoryLower = playlistName.toLowerCase();
-        const titleItem2 = item2.snippet.title.toLowerCase();
-        const descriptionItem2 = item2.snippet.description.toLowerCase();
-
-        if (
-          titleItem1.includes(categoryLower) ||
-          (descriptionItem1.includes(categoryLower) &&
-            !titleItem2.includes(categoryLower)) ||
-          descriptionItem2.includes(categoryLower)
-        )
-          return -1;
-        if (
-          titleItem2.includes(categoryLower) ||
-          (descriptionItem2.includes(categoryLower) &&
-            !titleItem1.includes(categoryLower)) ||
-          !descriptionItem1.includes(categoryLower)
-        )
-          return 1;
-      })
-
-      .map((item: YouTubePlaylistItem) => ({
-        id: item.id.playlistId,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        thumbnail: item.snippet.thumbnails.default.url,
-        publishedAt: item.snippet.publishedAt,
-      }));
+    return data.items.map((item: YouTubePlaylistItem) => ({
+      id: item.id.playlistId,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      thumbnail: item.snippet.thumbnails.default.url,
+      publishedAt: item.snippet.publishedAt,
+    }));
   } catch (error) {
     console.error(
       "YouTube_service file in fetchPlaylists: Error fetching playlists:",
@@ -166,11 +142,12 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
   const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${playlistId}&key=${API_KEY}`;
   const response = await fetch(url, { signal });
   if (!response.ok) {
+    console.log(response.json());
     console.error(
       "YouTube_service file in fetchPlaylistSongs: Error fetching playlist songs:",
       response.statusText,
     );
-    throw new Error(`Error fetching playlist songs: ${response.statusText}`);
+    // throw new Error(`Error fetching playlist songs: ${response.statusText}`);
   }
   const data = await response.json();
   // console.log("Playlist songs data:", data);
@@ -183,7 +160,13 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
     data.items
       .filter((item: YouTubePlaylistItem) => {
         // Must be a video
-        if (item.snippet.resourceId.kind !== "youtube#video") return false;
+        if (
+          item.snippet.resourceId.kind !== "youtube#video" ||
+          !item.snippet.resourceId.videoId
+        ) {
+          console.log("item: ", item);
+          return false;
+        }
 
         // Exclude private/deleted videos
         if (
@@ -197,8 +180,6 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
         const excludePatterns = [
           "trailer",
           "teaser",
-          "official video",
-          "lyric video",
           "review",
           "reaction",
           "tutorial",
