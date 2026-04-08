@@ -44,7 +44,6 @@ const getById = async (req: Request, res: Response) => {
 };
 
 const getPlaylistSongs = async (req: Request, res: Response) => {
-  console.log("category_controller for fetching song playlists");
   const playlistId = req.query.id as string;
   const country = req.query.country as string;
   const result = await fetchPlaylistSongs(playlistId, country);

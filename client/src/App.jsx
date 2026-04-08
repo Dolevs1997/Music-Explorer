@@ -15,6 +15,8 @@ import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
 import { UserProvider } from "./Contexts/UserContext";
 import PlaylistsUser from "./pages/PlaylistsUser/PlaylistsUser";
+import Profile from "./pages/Profile/Profile";
+import "@heroui/react/styles";
 
 function App() {
   const [songSuggestions, setSongSuggestions] = useState([]);
@@ -62,6 +64,7 @@ function App() {
                 element={<Navigate to="/home" replace />}
               />
             </Route>
+            <Route path="/profile" element={<Profile />} />
 
             <Route
               path="/category/playlists"

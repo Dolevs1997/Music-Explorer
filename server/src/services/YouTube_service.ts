@@ -43,28 +43,29 @@ async function fetchSong(song: string, country = "US") {
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    if (!data || !data.items || data.items.length === 0) {
-      throw new Error("No videos found for the given artist and songName");
-    }
+    // if (!data || !data.items || data.items.length === 0) {
+    //   throw new Error("No videos found for the given artist and songName");
+    // }
 
     // Find first search result that actually contains a videoId
     const itemWithVideo = data.items.find(
       (it: any) => it && it.id && it.id.videoId,
     );
-    if (!itemWithVideo) {
-      throw new Error("No videos with videoId found for the given query");
+    // if (!itemWithVideo) {
+    //   throw new Error("No videos with videoId found for the given query");
+    // }
+    if (itemWithVideo) {
+      const videoId = itemWithVideo.id.videoId;
+      const title = itemWithVideo.snippet?.title ?? "";
+
+      // Only cache and return if we have a videoId
+      await setCachedSong(song, country, {
+        title,
+        videoId,
+      });
+
+      return { title, videoId };
     }
-
-    const videoId = itemWithVideo.id.videoId;
-    const title = itemWithVideo.snippet?.title ?? "";
-
-    // Only cache and return if we have a videoId
-    await setCachedSong(song, country, {
-      title,
-      videoId,
-    });
-
-    return { title, videoId };
   } catch (error) {
     console.error(
       "YouTube_service file in fetchSong: Error fetching songs:",
@@ -154,20 +155,23 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
   if (!data || !data.items) {
     throw new Error("No playlist songs found");
   }
-  setCachedPlaylistSongs(
+  const videoIds: string[] = [];
+  await setCachedPlaylistSongs(
     playlistId,
     country,
     data.items
       .filter((item: YouTubePlaylistItem) => {
+        console.log("item: ", item);
+        if (videoIds.includes(item.snippet.resourceId.videoId)) {
+          return false;
+        }
         // Must be a video
         if (
           item.snippet.resourceId.kind !== "youtube#video" ||
           !item.snippet.resourceId.videoId
         ) {
-          console.log("item: ", item);
           return false;
         }
-
         // Exclude private/deleted videos
         if (
           item.snippet.title === "Deleted video" ||
@@ -175,6 +179,7 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
         )
           return false;
 
+        // console.log("videoIds in playlist: ", videoIds);
         // Exclude videos with unwanted content in title (trailers, clips, reviews, etc.)
         const title = item.snippet.title.toLowerCase();
         const excludePatterns = [
@@ -193,6 +198,7 @@ async function fetchPlaylistSongs(playlistId: string, country: string = "") {
           return false;
         }
 
+        videoIds.push(item.snippet.resourceId.videoId);
         return true;
       })
       .map((item: YouTubePlaylistItem) => ({

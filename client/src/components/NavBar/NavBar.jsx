@@ -42,7 +42,9 @@ function NavBar() {
       <nav className={styles.navbar}>
         <Toaster />
         <NavDropdown title="Menu" menuVariant="dark">
-          <NavDropdown.Item>Profile</NavDropdown.Item>
+          <NavDropdown.Item onClick={() => navigate("/profile")}>
+            Profile
+          </NavDropdown.Item>
           <NavDropdown.Item onClick={() => navigate("/myplaylists")}>
             Playlists
           </NavDropdown.Item>

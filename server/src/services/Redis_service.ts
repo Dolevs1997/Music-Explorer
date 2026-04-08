@@ -7,17 +7,12 @@ function cacheKey(song: string, country: string) {
 }
 async function getCachedSong(song: string, country: string) {
   const redis = new Redis(process.env.REDIS_URL || "string");
-
   const key = cacheKey(song, country);
   const cachedData = await redis.get(key);
   return cachedData ? JSON.parse(cachedData) : null;
 }
 async function setCachedSong(song: string, country: string, data: SongVideo) {
   const redis = new Redis(process.env.REDIS_URL || "string");
-  // console.log("song title: ", song);
-  // console.log("country: ", country);
-  // console.log("Setting cache for song:", data);
-
   const key = cacheKey(song, country);
   await redis.set(key, JSON.stringify(data), "EX", 3600); // Cache for 1 hour
 }
@@ -26,7 +21,6 @@ async function getCachedSongPlaylist(playlistId: string, country: string) {
   const redis = new Redis(process.env.REDIS_URL || "string");
 
   const key = cachePlaylistKey(playlistId, country);
-  // await redis.del(key);
   const cachedData = await redis.get(key);
   return cachedData ? [...JSON.parse(cachedData)] : null;
 }

@@ -94,7 +94,7 @@ function Song({
 
   // const { setUser } = useContext(UserContext);
   // const user = JSON.parse(localStorage.getItem("user")) || null;
-  // console.log("videoId in Song component:", state.videoId);
+  console.log("videoId in Song component:", state.videoId);
   // console.log("user:", user);
   if (!user.token) {
     navigate("/login");
@@ -180,6 +180,7 @@ function Song({
         }
         if (!state.error) {
           try {
+            console.log("fetching song video id");
             const data = await fetchSongYT(song, country, user);
             songRef.current = data;
             if (data.videoId != undefined)
@@ -192,6 +193,7 @@ function Song({
                   playlists: songRef.current.playlists,
                 },
               });
+              
           } catch (error) {
             console.error("Error fetching song recommendations:", error);
             dispatch({
