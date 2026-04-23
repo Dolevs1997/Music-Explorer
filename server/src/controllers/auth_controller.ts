@@ -3,6 +3,8 @@ import { userSchemaZod, UserModel } from "../schemas/User_schema";
 import { Request, Response } from "express";
 // const { addUser, getUser } = require("../models/Firestore/user");
 import { app } from "../config/firebase_config";
+import fs from "fs";
+import path from "path";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -48,16 +50,10 @@ const register = async (req: Request, res: Response) => {
         const user = new UserModel({
           uid: userAuth.uid,
           email: email,
+          avatar: "",
           playlists: [],
           refreshTokens: [],
         });
-        // Add user to Firestore
-        // const firestoreUser = await addUser(email);
-        // if (firestoreUser.error) {
-        //   return res
-        //     .status(409)
-        //     .send("CONFLICT: firestore error " + firestoreUser.error);
-        // }
         const newUser = await user.save();
         res.status(200).send(newUser);
       })
@@ -124,6 +120,7 @@ const login = async (req: Request, res: Response) => {
           email: user.email,
           _id: user._id,
           playlists: user.playlists,
+          avatar: user.avatar,
           ...tokens,
         });
       })

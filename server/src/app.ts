@@ -8,11 +8,13 @@ import songRouter from "./routes/Song_routes";
 import openaiRouter from "./routes/OpenAI_routes";
 import uploadRouter from "./routes/upload_route";
 import authRouter from "./routes/Auth_routes";
+import userActivityRouter from "./routes/UserActivity_routes";
 import playlistRouter from "./routes/playlist_routes";
 import cors from "cors";
 import { json, urlencoded } from "body-parser";
 import { connectRedis } from "./services/Redis_service";
 import dotenv from "dotenv";
+import path from "path";
 dotenv.config();
 
 const initApp = async () => {
@@ -32,6 +34,7 @@ const initApp = async () => {
     app.use(cors()); // Enable CORS for all routes
     app.use(json());
     app.use(urlencoded({ extended: true }));
+    app.use(express.static(path.join(__dirname, "public")));
     app.use("/auth", authRouter);
     app.use("/moodiify/recommends", recommendRouter);
     app.use("/moodiify/categories", categoriesRouter);
@@ -39,6 +42,7 @@ const initApp = async () => {
     app.use("/moodiify/playlist", playlistRouter);
     app.use("/moodiify/upload", uploadRouter);
     app.use("/api", openaiRouter);
+    app.use("/moodiify/userActivity", userActivityRouter);
 
     return app;
   } catch (e: unknown) {

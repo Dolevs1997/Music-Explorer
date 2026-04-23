@@ -1,14 +1,16 @@
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
+import UserContext from "../../Contexts/UserContext";
 import BackgroundMusic from "../../components/BackgroundMusic";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -34,7 +36,7 @@ function Login() {
       console.log("response", response);
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
-        localStorage.setItem("user", JSON.stringify(response.data));
+        setUser(response.data);
         setTimeout(() => {
           navigate("/home");
         }, 2000); // Redirect after 2 seconds

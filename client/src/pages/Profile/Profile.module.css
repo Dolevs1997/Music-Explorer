@@ -1,53 +1,145 @@
 .profilePageContainer {
-  max-width: 800px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
-  margin-top: 100px;
+  padding: 2rem 2rem 4rem;
 }
+
+/* ── Profile Header ── */
 .profileHeader {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 2.5rem;
+  margin-top: 5rem;
+  margin-bottom: 3rem;
 }
-.profileAvatar {
-  width: 100px;
-  height: 100px;
+
+.avatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatarImage {
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  display: block;
 }
-.editAvatarButton {
-  background-color: var(--color-button);
+
+.changeAvatarBtn {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-button, #6246ea);
+  border: 2px solid #111;
   color: white;
-  border: none;
-  padding: 8px 16px;
   cursor: pointer;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
-.editAvatarButton:hover {
-  background-color: var(--color-button-hover);
+.changeAvatarBtn:hover {
+  transform: scale(1.1);
+  background: var(--color-button-hover, #4f37c8);
 }
-.profileInfo {
-  flex: 1;
+
+.profileMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
+
+.displayName {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
 .userEmail {
-  font-size: 18px;
-  color: var(--color-text-secondary);
+  color: #888;
+  font-size: 0.95rem;
+  margin: 0;
 }
-.profileTabs {
+
+.pendingBadge {
+  font-size: 0.8rem;
+  color: #f0a500;
+  background: rgba(240, 165, 0, 0.12);
+  border-radius: 20px;
+  padding: 3px 12px;
+  width: fit-content;
+}
+
+.saveBtn {
+  margin-top: 0.5rem;
+  padding: 8px 22px;
+  border-radius: 6px;
+  border: none;
+  background: var(--color-button, #6246ea);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+.saveBtn:hover:not(:disabled) {
+  background: var(--color-button-hover, #4f37c8);
+  transform: scale(1.03);
+}
+.saveBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.statsDashboard {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  justify-content: center;
+}
+
+.stat {
+  text-align: center;
+  padding: 1.5rem;
+  background: #1a1a1a;
+  border-radius: 12px;
+  min-width: 150px;
+}
+.stat h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.stat p {
+  color: #888;
+  font-size: 0.9rem;
+}
+.tabsContainer {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
+  max-width: 1200px;
 }
+
 .activeTab {
   font-weight: bold;
   color: white;
   padding: 8px 16px;
 }
+
 .playlistGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 .playlistCard {
   background-color: var(--color-background-app);
