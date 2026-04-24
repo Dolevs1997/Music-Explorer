@@ -13,7 +13,7 @@ const addSongVideo = async (songVideo: SongVideo) => {
     const songVideoQuery = query(
       collection(db, "song-video"),
       where("song", "==", songVideo.title),
-      where("videoId", "==", songVideo.videoId)
+      where("videoId", "==", songVideo.videoId),
     );
     const querySnapshot = await getDocs(songVideoQuery);
     if (!querySnapshot.empty) {
@@ -29,7 +29,10 @@ const addSongVideo = async (songVideo: SongVideo) => {
     console.error("Error adding song video:", error);
   }
 };
-
+// const getRecentSongVideos = async (limit: number) => {
+//   try {
+// }
+// };
 // const updateSongVideo = async (songVideoId, updatedData) => {
 //   try {
 //     const docRef = doc(db, "song-video", songVideoId);

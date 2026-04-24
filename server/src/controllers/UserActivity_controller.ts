@@ -15,7 +15,7 @@ const update = async (req: Request, res: Response) => {
   try {
     const user = await UserModel.findByIdAndUpdate(
       userId,
-      { activity },
+      { $set: activity },
       { new: true },
     );
     console.log("user: ", user);
@@ -31,4 +31,22 @@ const update = async (req: Request, res: Response) => {
   }
 };
 
-export default { update };
+const getHistorySongs = async (req: Request, res: Response) => {
+  const userId = req.query.id as string;
+  console.log("user id: ", userId);
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  try {
+    const user = await UserModel.findById(userId);
+    console.log("user: ", user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error retrieving user activity:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export default { update, getHistorySongs };
