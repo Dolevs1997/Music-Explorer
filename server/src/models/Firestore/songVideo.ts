@@ -23,16 +23,33 @@ const addSongVideo = async (songVideo: SongVideo) => {
     const docRef = await addDoc(collection(db, "song-video"), {
       song: songVideo.title,
       videoId: songVideo.videoId,
+      createdAt: new Date(),
     });
     console.log("Song video added with ID: ", docRef.id);
   } catch (error) {
     console.error("Error adding song video:", error);
   }
 };
-// const getRecentSongVideos = async (limit: number) => {
-//   try {
-// }
-// };
+const getRecentSongVideos = async (limit: number) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "song-video"));
+    const allSongs: SongVideo[] = querySnapshot.docs.map((doc) => ({
+      title: doc.data().song,
+      videoId: doc.data().videoId,
+    }));
+    // Fisher-Yates shuffle — different result on every call
+    for (let i = allSongs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allSongs[i], allSongs[j]] = [allSongs[j], allSongs[i]];
+    }
+
+    return allSongs.slice(0, limit);
+  } catch (error) {
+    console.error("Error retrieving recent song videos:", error);
+    return [];
+  }
+};
+
 // const updateSongVideo = async (songVideoId, updatedData) => {
 //   try {
 //     const docRef = doc(db, "song-video", songVideoId);
@@ -43,4 +60,4 @@ const addSongVideo = async (songVideo: SongVideo) => {
 //   }
 // };
 
-export { addSongVideo };
+export { addSongVideo, getRecentSongVideos };

@@ -12,16 +12,25 @@ import { useNavigate } from "react-router";
 import updateUserActivity from "../../utils/userActivity";
 import { uploadImageToCloudinary } from "../../services/Cloudinary_service";
 import toast from "react-hot-toast";
+import Song from "../../components/Song/Song";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
 
   const [activeTab, setActiveTab] = useState("playlists");
 
-  //Avatar
+  //Avatar states
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef(null);
+
+  //History states
+  const [recentSongs, setRecentSongs] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyFetched, setHistoryFetched] = useState(false);
+  const [playingVideoId, setPlayingVideoId] = useState(null);
+  // const [isSongPlayed, setIsSongPlayed] = useState(false);
+  const [songTitle, setSongTitle] = useState(null);
   const navigate = useNavigate();
 
   // Redirect if not logged in
@@ -36,14 +45,32 @@ function Profile() {
     };
   }, [avatarPreview]);
 
+  useEffect(() => {
+    if (activeTab !== "history" || historyFetched || !user) return;
+
+    async function fetchHistory() {
+      setHistoryLoading(true);
+      try {
+        const response = await fetch(
+          `http://${import.meta.env.VITE_SERVER_URL}/moodiify/userActivity/history?id=${user._id}`,
+          { headers: { Authorization: `Bearer ${user.token}` } },
+        );
+        if (!response.ok) throw new Error("Failed to fetch history");
+        const data = await response.json();
+        setRecentSongs(data.recentSongs || []);
+        setHistoryFetched(true);
+      } catch (error) {
+        console.error("Error fetching history:", error);
+        toast.error("Could not load history.");
+      } finally {
+        setHistoryLoading(false);
+      }
+    }
+
+    fetchHistory();
+  }, [activeTab, historyFetched, user]);
+
   if (!user) return null;
-
-  // ── Derived ──────────────────────────────────────────────────────────────
-  const totalSongs =
-    user.playlists?.reduce((acc, p) => acc + (p.songs?.length || 0), 0) ?? 0;
-
-  const currentAvatar =
-    avatarPreview || user.avatar || "public/default-avatar-user.jpg";
 
   // ── Avatar ───────────────────────────────────────────────────────────────
   function handlePickFile(e) {
@@ -53,42 +80,6 @@ function Profile() {
     setAvatarPreview(URL.createObjectURL(file));
     setAvatarFile(file);
   }
-
-  // History tab state
-  // const [recentSongs, setRecentSongs] = useState([]);
-  // const [historyLoading, setHistoryLoading] = useState(false);
-  // Settings tab state
-  // const [displayName, setDisplayName] = useState(user?.displayName || "");
-  // const [currentPassword, setCurrentPassword] = useState("");
-  // const [newPassword, setNewPassword] = useState("");
-  // const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  // const [settingsLoading, setSettingsLoading] = useState(false);
-
-  // useEffect(() => {
-  //   async function fetchRecentSongs() {
-  //     setHistoryLoading(true);
-  //     try {
-  //       const response = await fetch(
-  //         `http://${import.meta.env.VITE_SERVER_URL}/moodiify/userActivity/history?id=${user.id}`,
-  //         {
-  //           method: "GET",
-  //           headers: { Authorization: `Bearer ${user.token}` },
-  //         },
-  //       );
-  //       if (!response.ok) throw new Error("Failed to fetch history");
-  //       const data = await response.json();
-  //       setRecentSongs(data.recentSongs || []);
-  //     } catch (error) {
-  //       console.error("Error fetching recent songs:", error);
-  //       toast.error("Could not load history.");
-  //     } finally {
-  //       setHistoryLoading(false);
-  //     }
-  //   }
-  //   if (activeTab === "history" && user) {
-  //     fetchRecentSongs();
-  //   }
-  // }, [activeTab, user]);
 
   async function handleSaveChanges() {
     if (!avatarFile) return;
@@ -118,6 +109,26 @@ function Profile() {
       setIsSaving(false);
     }
   }
+  // ── History
+  function handlePlaySong(song) {
+    console.log({ ...song });
+    // Reset first so Song unmounts and remounts fresh for the new song
+    setPlayingVideoId(null);
+    setSongTitle(null);
+
+    // Small timeout lets React unmount the old Song before mounting the new one
+    setTimeout(() => {
+      setSongTitle(song.title);
+      setPlayingVideoId(song.videoId);
+    }, 50);
+  }
+
+  // ── Derived ──────────────────────────────────────────────────────────────
+  const totalSongs =
+    user.playlists?.reduce((acc, p) => acc + (p.songs?.length || 0), 0) ?? 0;
+
+  const currentAvatar =
+    avatarPreview || user.avatar || "public/default-avatar-user.jpg";
 
   return (
     <div className="app-container">
@@ -229,7 +240,7 @@ function Profile() {
               </Tabs.Tab>
             </Tabs.List>
           </Tabs.ListContainer>
-          {/* Tab Content */}
+          {/* Tab Playlists*/}
           <Tabs.Panel className="pt-4" id="playlists">
             <div>
               <h2>My Playlists</h2>
@@ -261,8 +272,52 @@ function Profile() {
               </div>
             </div>
           </Tabs.Panel>
+          {/* History Tab */}
           <Tabs.Panel className="pt-4" id="history">
-            <p>history</p>
+            {activeTab === "history" && (
+              <div>
+                <h2 className={styles.panelTitle}>Recently Played</h2>
+                {historyLoading && (
+                  <p className={styles.emptyState}>Loading songs...</p>
+                )}
+                {!historyLoading && recentSongs.length === 0 && (
+                  <p className={styles.emptyState}>
+                    No songs found. Start listening to see your history!
+                  </p>
+                )}
+                {!historyLoading && recentSongs.length > 0 && (
+                  <ul className={styles.historyList}>
+                    {recentSongs.map((song, index) => (
+                      <li
+                        key={song.videoId || index}
+                        className={styles.historyItem}
+                        onClick={() => {
+                          handlePlaySong(song);
+                        }}
+                      >
+                        <img
+                          className={styles.historyThumb}
+                          src={`https://img.youtube.com/vi/${song.videoId}/default.jpg`}
+                          alt={song.title}
+                        />
+                        <div className={styles.historyInfo}>
+                          <p className={styles.historySongName}>{song.title}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {playingVideoId && songTitle && (
+                  <Song
+                    key={playingVideoId} // ← forces remount on every new song
+                    song={songTitle}
+                    videoId={playingVideoId} // ← new prop
+                    playingVideoId={playingVideoId}
+                    setPlayingVideoId={setPlayingVideoId}
+                  />
+                )}
+              </div>
+            )}
           </Tabs.Panel>
           <Tabs.Panel className="pt-4" id="settings">
             <p>settings</p>

@@ -122,6 +122,19 @@
   color: #888;
   font-size: 0.9rem;
 }
+/* Tabs */
+.panelTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 1.5rem;
+}
+.emptyState {
+  color: #555;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
 .tabsContainer {
   display: flex;
   gap: 20px;
@@ -135,6 +148,7 @@
   padding: 8px 16px;
 }
 
+/* Playlist Tab */
 .playlistGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -152,4 +166,50 @@
   transform: scale(1.05);
   transition: transform 0.3s ease;
   cursor: pointer;
+}
+
+/* History Tab */
+.historyList {
+  grid-template-columns: repeat(auto-fill, minmax(400px, 5fr));
+
+  padding: 0;
+  margin: 0;
+  gap: 0.5rem;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 10px 14px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+.historyItem:hover {
+  background: #222;
+}
+
+.historyThumb {
+  width: 48px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.historyInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.historySongName {
+  font-size: 0.9rem;
+  color: #ddd;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

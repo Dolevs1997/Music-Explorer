@@ -81,6 +81,7 @@ function Song({
   setPlayingVideoId,
   playlistId,
   onRemoveSong,
+  videoId: videoIdProp,
 }) {
   const navigate = useNavigate();
   const [playlistName, setPlaylistName] = useState("");
@@ -94,7 +95,7 @@ function Song({
 
   // const { setUser } = useContext(UserContext);
   // const user = JSON.parse(localStorage.getItem("user")) || null;
-  console.log("videoId in Song component:", state.videoId);
+
   // console.log("user:", user);
   if (!user.token) {
     navigate("/login");
@@ -161,6 +162,21 @@ function Song({
     function () {
       async function fetchSong(song, user, country) {
         if (!song || !user.token) return;
+
+        // If videoId was passed directly (e.g. from history), use it immediately
+        // and skip the backend fetch entirely
+        if (videoIdProp) {
+          dispatch({
+            type: "SET_VIDEO_SONG",
+            payload: {
+              videoId: videoIdProp,
+              song: song,
+              regionCode: country,
+            },
+          });
+          return;
+        }
+
         // if we already cached the resolved song and state already set -> do nothing
         if (songRef.current && state.videoId === songRef.current.videoId) {
           return;
@@ -193,7 +209,6 @@ function Song({
                   playlists: songRef.current.playlists,
                 },
               });
-              
           } catch (error) {
             console.error("Error fetching song recommendations:", error);
             dispatch({
@@ -206,7 +221,7 @@ function Song({
 
       fetchSong(song, user, country);
     },
-    [song, user, country, state, playlistId],
+    [song, user, country, state, playlistId, videoIdProp],
   );
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
@@ -388,6 +403,7 @@ Song.propTypes = {
   setPlayingVideoId: propTypes.func,
   playlistId: propTypes.string,
   onRemoveSong: propTypes.func,
+  videoId: propTypes.string,
 };
 
 export default Song;
