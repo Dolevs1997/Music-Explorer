@@ -9,10 +9,11 @@ import { Tabs } from "@heroui/react";
 import "@heroui/react/styles";
 import { Card } from "@heroui/react";
 import { useNavigate } from "react-router";
-import updateUserActivity from "../../utils/userActivity";
+import { updateUserActivity } from "../../utils/userActivity";
 import { uploadImageToCloudinary } from "../../services/Cloudinary_service";
 import toast from "react-hot-toast";
 import Song from "../../components/Song/Song";
+import AccountEdit from "../../components/Settings/AccountEdit/AccountEdit";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
 
@@ -29,8 +30,12 @@ function Profile() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyFetched, setHistoryFetched] = useState(false);
   const [playingVideoId, setPlayingVideoId] = useState(null);
-  // const [isSongPlayed, setIsSongPlayed] = useState(false);
   const [songTitle, setSongTitle] = useState(null);
+
+  //Settings states
+
+  const [settingsView, setSettingsView] = useState("main"); // "main" | "account" | "preferences" | "privacy"
+
   const navigate = useNavigate();
 
   // Redirect if not logged in
@@ -248,7 +253,7 @@ function Profile() {
                 {user.playlists?.map((playlist) => (
                   <Card
                     key={playlist._id}
-                    className={`${styles.playlistCard} w-[200px] gap-2`}
+                    className={`${styles.card} w-[200px] gap-2`}
                     onClick={() =>
                       navigate(`/myplaylists/${playlist._id}`, {
                         state: { playlist: playlist },
@@ -319,11 +324,74 @@ function Profile() {
               </div>
             )}
           </Tabs.Panel>
+          {/* Settings Tab */}
           <Tabs.Panel className="pt-4" id="settings">
-            <p>settings</p>
+            {activeTab === "settings" && (
+              <>
+                {/* ── Main Settings View ── */}
+                {settingsView === "main" && (
+                  <div>
+                    <h2 className={styles.panelTitle}>Settings</h2>
+
+                    <section className={styles.settingsSection}>
+                      <Card
+                        className={`${styles.card} w-[200px] gap-2`}
+                        onClick={() => setSettingsView("account")}
+                      >
+                        <Card.Title className={styles.settingsSectionTitle}>
+                          Account
+                        </Card.Title>
+                        <Card.Content>
+                          <div className={styles.settingsCardIcon}>👤</div>
+                        </Card.Content>
+                        <Card.Description className={styles.settingsCardSub}>
+                          Password, display name, delete account
+                        </Card.Description>
+                      </Card>
+                      <Card
+                        className={`${styles.card} w-[200px] gap-2`}
+                        onClick={() => setSettingsView("preferences")}
+                      >
+                        <Card.Title className={styles.settingsSectionTitle}>
+                          Preferences
+                        </Card.Title>
+                        <Card.Content>
+                          <div className={styles.settingsCardIcon}>🎵</div>
+                        </Card.Content>
+                        <Card.Description className={styles.settingsCardSub}>
+                          Default region, language
+                        </Card.Description>
+                      </Card>
+                      <Card
+                        className={`${styles.card} w-[200px] gap-2`}
+                        onClick={() => setSettingsView("privacy")}
+                      >
+                        <Card.Title className={styles.settingsSectionTitle}>
+                          Privacy
+                        </Card.Title>
+                        <Card.Content>
+                          <div className={styles.settingsCardIcon}>🔒</div>
+                        </Card.Content>
+                        <Card.Description className={styles.settingsCardSub}>
+                          Clear history, logout all devices
+                        </Card.Description>
+                      </Card>
+                    </section>
+                  </div>
+                )}
+              </>
+            )}
           </Tabs.Panel>
         </Tabs>
-        {/* Edit Profile Modal */}
+        {/* ── Account View ── */}
+        <div>
+          {settingsView === "account" && (
+            <AccountEdit setSettingsView={setSettingsView} />
+          )}
+          {/*  
+          {settingsView === "preferences" && <PreferencesEdit />}
+          {settingsView === "privacy" && <PrivacyEdit />}*/}
+        </div>
       </div>
     </div>
   );

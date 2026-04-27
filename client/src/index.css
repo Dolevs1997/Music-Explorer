@@ -94,10 +94,14 @@ form input {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: white;
+  background: var(--color-background-100);
+  color: var(--color-text);
   font-size: 1.2rem;
   max-width: 80%;
-  color: #151416;
+}
+
+form input:focus {
+  border-color: var(--color-button, #6246ea);
 }
 textarea {
   resize: none;

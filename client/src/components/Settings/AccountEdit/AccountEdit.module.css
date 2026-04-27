@@ -1,0 +1,61 @@
+/* ── Danger Button ── */
+.settingsBtnDanger {
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid rgba(220, 50, 50, 0.4);
+  background: rgba(220, 50, 50, 0.1);
+  color: #e05555;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+.settingsBtnDanger:hover:not(:disabled) {
+  background: rgba(220, 50, 50, 0.2);
+  border-color: rgba(220, 50, 50, 0.7);
+}
+.settingsBtnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* ── Delete Confirmation Modal ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 2rem;
+  max-width: 420px;
+  width: 90%;
+}
+
+.modalTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.75rem;
+}
+
+.modalText {
+  font-size: 0.9rem;
+  color: #888;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}

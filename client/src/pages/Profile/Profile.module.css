@@ -123,7 +123,7 @@
   font-size: 0.9rem;
 }
 /* Tabs */
-.panelTitle {
+:global(.panelTitle) {
   font-size: 1.2rem;
   font-weight: 600;
   color: #fff;
@@ -147,25 +147,26 @@
   color: white;
   padding: 8px 16px;
 }
-
-/* Playlist Tab */
-.playlistGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-.playlistCard {
+.card {
   background-color: var(--color-background-app);
   border-radius: 8px;
   padding: 10px;
   text-align: center;
 }
-.playlistCard:hover {
+.card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: scale(1.05);
   transition: transform 0.3s ease;
   cursor: pointer;
+  border-color: var(--color-button, #6246ea);
+}
+/* Playlist Tab */
+
+.playlistGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 /* History Tab */
@@ -212,4 +213,118 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Settings Tab */
+.accountContainer {
+  max-width: 500px;
+  margin-top: 2rem;
+}
+.settingsSection {
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+:global(.settingsSectionTitle) {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 0.5rem;
+}
+:global(.settingsSectionTitle):hover {
+  color: var(--color-button, #6246ea);
+  cursor: pointer;
+}
+
+.settingsCardIcon {
+  font-size: 1.4rem;
+}
+.settingsCardSub {
+  font-size: 0.78rem;
+  color: #666;
+  margin: 0;
+}
+.settingsSectionNote {
+  font-size: 0.82rem;
+  color: #555;
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+:global(.settingsForm) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+/* ── Back Button ── */
+:global(.backBtn) {
+  background: none;
+  border: none;
+  color: var(--color-button, #6246ea);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s ease;
+}
+:global(.backBtn):hover {
+  opacity: 0.75;
+}
+:global(.settingsInput) {
+  padding: 10px 14px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1a1a1a;
+  color: #eee;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+:global(.settingsInput)::placeholder {
+  color: #555;
+}
+:global(.settingsInput):focus {
+  border-color: var(--color-button, #6246ea);
+}
+:global(.settingsBtn) {
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: none;
+  background: var(--color-button, #6246ea);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+:global(.settingsBtn):hover:not(:disabled) {
+  background: var(--color-button-hover, #4f37c8);
+  transform: scale(1.02);
+}
+:global(.settingsBtn):disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (max-width: 600px) {
+  .profileHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .statsDashboard {
+    gap: 1rem;
+  }
+  .tabBtn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
 }
