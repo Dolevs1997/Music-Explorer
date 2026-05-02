@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { UserModel } from "../schemas/User_schema";
 import { getRecentSongVideos } from "../models/Firestore/songVideo";
-import { updatePasswordForUser } from "../models/Firestore/userAuth";
 const update = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
   const { activity } = req.body;
@@ -47,32 +46,5 @@ const getHistorySongs = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-const changePassword = async (req: Request, res: Response) => {
-  const userId = req.query.id as string;
-  const { currentPassword, newPassword } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
-  if (!currentPassword || !newPassword) {
-    return res
-      .status(400)
-      .json({ message: "Current and new passwords are required" });
-  }
-
-  try {
-    await updatePasswordForUser(currentPassword, newPassword);
-    return res.status(200).json({ message: "Password changed successfully" });
-  } catch (error: Error | any) {
-    const msg =
-      error.code === "auth/wrong-password" ||
-      error.code === "auth/invalid-credential"
-        ? "Current password is incorrect."
-        : error.code === "auth/weak-password"
-          ? "New password is too weak."
-          : "Failed to change password. Please try again.";
-    throw new Error(msg);
-  }
-};
-export default { update, getHistorySongs, changePassword };
+export default { update, getHistorySongs };

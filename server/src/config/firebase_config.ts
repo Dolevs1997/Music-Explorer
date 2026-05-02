@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import * as admin from "firebase-admin";
 
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file

@@ -13,15 +13,17 @@ function Categories({ formVisible }) {
   const [categories, setCategories] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const params = useParams();
-  const country = params.country || "US";
   const location = useLocation();
+
   const userData = JSON.parse(localStorage.getItem("user"));
+  const country = params.country || userData?.country?.shortName || "US";
 
   const [currentLocation, setCurrentLocation] = useState(
-    location.state?.locationName || "United States",
+    location.state?.locationName || userData?.country?.fullName  || "United States",
   );
   // console.log("current location: ", currentLocation);
   // Determine locale based on country code
+  console.log("user: ", userData);
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
   // console.log("user token in Categories:", user);

@@ -1,10 +1,8 @@
 import jwt, { PrivateKey, PublicKey } from "jsonwebtoken";
 import { userSchemaZod, UserModel } from "../schemas/User_schema";
 import { Request, Response } from "express";
-// const { addUser, getUser } = require("../models/Firestore/user");
 import { app } from "../config/firebase_config";
-import fs from "fs";
-import path from "path";
+import { updatePasswordForUser } from "../models/Firestore/userAuth";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -13,12 +11,17 @@ import {
   signOut,
   User,
 } from "firebase/auth";
+import * as admin from "firebase-admin";
+import PlaylistSchema from "../schemas/Playlist_schema";
+import Song_schema from "../schemas/Song_schema";
 const register = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password, country } = req.body;
   console.log("Registering user with email:", email);
+  console.log("user country:", country);
   try {
     userSchemaZod.parse({
       email: email,
+      country: country,
     });
 
     const existedUser = await UserModel.findOne({ email: email });
@@ -51,6 +54,7 @@ const register = async (req: Request, res: Response) => {
           uid: userAuth.uid,
           email: email,
           avatar: "",
+          country: country,
           playlists: [],
           refreshTokens: [],
         });
@@ -118,6 +122,7 @@ const login = async (req: Request, res: Response) => {
         const tokens = await generateTokens(user);
         res.status(200).json({
           email: user.email,
+          country: user.country,
           _id: user._id,
           playlists: user.playlists,
           avatar: user.avatar,
@@ -202,4 +207,78 @@ const refreshToken = async (req: Request, res: Response) => {
   );
 };
 
-export default { register, login, refreshToken, logout };
+const deleteAccount = async (req: Request, res: Response) => {
+  // Uses the regular access token (not refresh token)
+  const token = req.headers["authorization"]?.split(" ")[1];
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(
+    token,
+    process.env.ACCESS_TOKEN_SECRET as PublicKey,
+    async (err, decoded) => {
+      if (!decoded || typeof decoded === "string")
+        return res.status(401).send("UNAUTHORIZED: Invalid token");
+      if (err) return res.sendStatus(403);
+
+      try {
+        const foundUser = await UserModel.findById(decoded.id);
+        if (!foundUser) return res.sendStatus(404);
+
+        // Delete from Firebase Auth using Admin SDK — no re-auth needed
+        if (foundUser.uid) {
+          await admin.auth().deleteUser(foundUser.uid);
+        }
+
+        // Delete all user's playlists from MongoDB
+        await PlaylistSchema.deleteMany({ user: foundUser._id });
+        // Delete all songs in those playlists from MongoDB
+        await Song_schema.deleteMany({
+          playlist: { $in: foundUser.playlists },
+        });
+        // Delete the user from MongoDB
+        await foundUser.deleteOne();
+
+        res.sendStatus(204);
+      } catch (error: any) {
+        console.error("Error deleting account:", error);
+        res.status(500).json({ message: "Failed to delete account" });
+      }
+    },
+  );
+};
+const changePassword = async (req: Request, res: Response) => {
+  const userId = req.query.id as string;
+  const { currentPassword, newPassword } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  if (!currentPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Current and new passwords are required" });
+  }
+
+  try {
+    await updatePasswordForUser(currentPassword, newPassword);
+    return res.status(200).json({ message: "Password changed successfully" });
+  } catch (error: Error | any) {
+    const msg =
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
+        ? "Current password is incorrect."
+        : error.code === "auth/weak-password"
+          ? "New password is too weak."
+          : "Failed to change password. Please try again.";
+    throw new Error(msg);
+  }
+};
+export default {
+  register,
+  login,
+  refreshToken,
+  logout,
+  deleteAccount,
+  changePassword,
+};

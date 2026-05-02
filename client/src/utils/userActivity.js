@@ -22,7 +22,7 @@ const updateUserActivity = async (user, fields) => {
 const changeUserPassword = async (user, currentPassword, newPassword) => {
   try {
     const response = await axios.put(
-      `http://${SERVER_URL}/moodiify/userActivity/changePassword?id=${user._id}`,
+      `http://${SERVER_URL}/auth/changePassword?id=${user._id}`,
       { currentPassword, newPassword },
       {
         headers: {

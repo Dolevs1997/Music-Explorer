@@ -5,10 +5,18 @@ const z = zod;
 // Zod schema for user validation
 const userSchemaZod = z.object({
   email: z.string().email("Invalid email address"),
+  country: z.object({
+    shortName: z.string(),  
+    fullName: z.string(),
+  }).optional(),
   refreshTokens: z.array(z.string()).optional(),
 });
 
 const userSchema = new mongoose.Schema({
+  uid: {
+    type: String,
+    required: false,
+  },
   email: {
     type: String,
     required: true,
@@ -16,6 +24,20 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: false,
+  },
+  country: {
+    type: Object,
+    required: false,
+    properties: {
+      shortName: {
+        type: String,
+        required: false,
+      },
+      fullName: {
+        type: String,
+        required: false,
+      }
+    }
   },
   refreshTokens: {
     type: [String],

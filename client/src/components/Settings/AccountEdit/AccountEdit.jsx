@@ -1,9 +1,5 @@
 import { useState, useContext } from "react";
-import {
-  updateUserActivity,
-  changeUserPassword,
-  deleteAccount,
-} from "../../../utils/userActivity";
+import { changeUserPassword, deleteAccount } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
 import styles from "./AccountEdit.module.css";
@@ -11,8 +7,6 @@ import propTypes from "prop-types";
 
 function AccountEdit({ setSettingsView }) {
   const { user, setUser } = useContext(UserContext);
-  const [selectedDisplayName, setSelectedDisplayName] = useState(false);
-  const [displayName, setDisplayName] = useState(user?.displayName || "");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -25,20 +19,20 @@ function AccountEdit({ setSettingsView }) {
   const [pwLoading, setPwLoading] = useState(false);
   const [selectedPassword, setSelectedPassword] = useState(false);
 
-  async function handleUpdateDisplayName(e) {
-    e.preventDefault();
-    if (!displayName.trim()) {
-      toast.error("Display name cannot be empty.");
-      return;
-    }
-    try {
-      await updateUserActivity(user, { displayName: displayName.trim() });
-      setUser({ ...user, displayName: displayName.trim() });
-      toast.success("Display name updated!");
-    } catch {
-      toast.error("Failed to update display name.");
-    }
-  }
+  // async function handleUpdateDisplayName(e) {
+  //   e.preventDefault();
+  //   if (!displayName.trim()) {
+  //     toast.error("Display name cannot be empty.");
+  //     return;
+  //   }
+  //   try {
+  //     await updateUserActivity(user, { displayName: displayName.trim() });
+  //     setUser({ ...user, displayName: displayName.trim() });
+  //     toast.success("Display name updated!");
+  //   } catch {
+  //     toast.error("Failed to update display name.");
+  //   }
+  // }
   async function handleChangePassword(e) {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmNewPassword) {
@@ -78,8 +72,7 @@ function AccountEdit({ setSettingsView }) {
         ‹ Back
       </button>
       <h2 className="panelTitle">Account</h2>
-
-      {/* Display Name */}
+      {/* Display Name
       <section className="settingsSection">
         <h3
           className="settingsSectionTitle"
@@ -101,8 +94,7 @@ function AccountEdit({ setSettingsView }) {
             </button>
           </form>
         )}
-      </section>
-
+      </section> */}
       {/* Change Password */}
       <section className="settingsSection}">
         <h3
@@ -111,7 +103,7 @@ function AccountEdit({ setSettingsView }) {
         >
           Change Password
         </h3>
-        {selectedPassword && !selectedDisplayName && !showDeleteModal && (
+        {selectedPassword && !showDeleteModal && (
           <form onSubmit={handleChangePassword} className="settingsForm">
             <input
               className="settingsInput"
@@ -143,7 +135,6 @@ function AccountEdit({ setSettingsView }) {
           </form>
         )}
       </section>
-
       {/* Delete Account */}
       <section className="settingsSection">
         <p className="settingsSectionNote">
@@ -157,9 +148,8 @@ function AccountEdit({ setSettingsView }) {
           Delete Account
         </button>
       </section>
-
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && !selectedDisplayName && !selectedPassword && (
+      {showDeleteModal && !selectedPassword && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <h3 className={styles.modalTitle}>Delete Account</h3>

@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import BackgroundMusic from "../../components/BackgroundMusic";
 import mySound from "../../assets/sounds/Rockstar_Singer_Sings_Welcome_to_Moodiify_.mp4";
+import countryList from 'react-select-country-list'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Register() {
@@ -12,15 +13,17 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  // const [showPassword, setShowPassword] = useState(false);
-  // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [specialChar, setSpecialChar] = useState(false);
   const [numberChar, setNumberChar] = useState(false);
   const [upperChar, setUpperChar] = useState(false);
   const [lowerChar, setLowerChar] = useState(false);
   const [minLength, setMinLength] = useState(false);
   const audioRef = useRef(null);
-  console.log("Login page rendered");
+  const [options, setOptions] = useState(countryList().getData());
+  const [countryShortName, setCountryShortName] = useState("");
+  const [countryFullName, setCountryFullName] = useState("");
+  console.log("country Short Name: ", countryShortName);
+  console.log("country Full Name: ", countryFullName);
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.play().catch((error) => {
@@ -29,8 +32,10 @@ function Register() {
     }
   }, []);
   const handleRegisteration = async (e) => {
+    console.log(countryShortName);
+
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !countryShortName) {
       toast.error("Please fill in all fields");
       return;
     } else if (password.length < 6) {
@@ -43,6 +48,10 @@ function Register() {
     const payload = {
       email: email,
       password: password,
+      country: {
+        shortName: countryShortName,
+        fullName: countryFullName,
+      },
     };
 
     const response = await axios.post(
@@ -70,10 +79,10 @@ function Register() {
   };
   return (
     <>
-      <audio ref={audioRef} src={mySound} autoPlay />
+      {/* <audio ref={audioRef} src={mySound} autoPlay /> */}
 
       <BackgroundMusic />
-      <form style={{ marginTop: "100px" }}>
+      <form>
         <h2>Register</h2>
         <Toaster />
 
@@ -86,6 +95,25 @@ function Register() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+        <label htmlFor="country">Country</label>
+        <select 
+          value={countryShortName} 
+          onChange={(e) => {
+            setCountryShortName(e.target.value);
+            const selectedName = options.find((opt) => opt.value === e.target.value)?.label || "";
+            setCountryFullName(selectedName);
+          }} 
+          style={{backgroundColor:"var(--color-background-100)"}}
+        >
+          <option value="" disabled selected>
+            Select your country
+          </option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>  
+              {option.label}
+            </option>
+          ))}
+        </select>
         <label htmlFor="password">Password:</label>
         <input
           type="password"
