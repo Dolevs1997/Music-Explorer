@@ -6,13 +6,15 @@ import toast, { Toaster } from "react-hot-toast";
 import BackgroundMusic from "../../components/BackgroundMusic";
 import mySound from "../../assets/sounds/Rockstar_Singer_Sings_Welcome_to_Moodiify_.mp4";
 import countryList from 'react-select-country-list'
-
+import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Register() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [specialChar, setSpecialChar] = useState(false);
   const [numberChar, setNumberChar] = useState(false);
   const [upperChar, setUpperChar] = useState(false);
@@ -115,8 +117,9 @@ function Register() {
           ))}
         </select>
         <label htmlFor="password">Password:</label>
+        <div className="passwordInputContainer">
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           id="password"
           name="password"
           value={password}
@@ -131,16 +134,21 @@ function Register() {
           }}
           required
         />
-
+        <EyeIconPassword size={20} showPassword={showPassword} setShowPassword={setShowPassword}/>
+    </div>
         <label htmlFor="confirm-password">Confirm Password:</label>
+          <div className="passwordInputContainer">
+
         <input
-          type="password"
+          type={showConfirmNewPassword ? "text" : "password"}
           id="confirm-password"
           name="confirm-password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
-        />
+          />
+          <EyeIconPassword size={20} showPassword={showConfirmNewPassword} setShowPassword={setShowConfirmNewPassword}/>
+          </div>
         <span> Password Requirements:</span>
         <ol>
           <li>
@@ -172,9 +180,8 @@ function Register() {
         </Link>
 
         <p>
-          Already have an account?
+          Already have an account?{" "}
           <Link to="/login" className="link">
-            {" "}
             Login here
           </Link>
         </p>

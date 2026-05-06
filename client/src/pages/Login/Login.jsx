@@ -5,13 +5,14 @@ import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 import UserContext from "../../Contexts/UserContext";
 import BackgroundMusic from "../../components/BackgroundMusic";
+import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
-
+  const [showPassword, setShowPassword] = useState(false);
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -67,14 +68,17 @@ function Login() {
           required
         />
         <label htmlFor="password">Password:</label>
+        <div className="passwordInputContainer">
+
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           id="password"
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-        />
+          /><EyeIconPassword size={20} showPassword={showPassword} setShowPassword={setShowPassword}/>
+          </div>
 
         <Link to="/home" className="link">
           <Button onClick={(e) => handleLogin(e)} type="login">
@@ -83,9 +87,8 @@ function Login() {
         </Link>
 
         <p>
-          Don&apos;t have an account?
+          Don&apos;t have an account? {""}
           <Link to="/register" className="link">
-            {" "}
             Register here
           </Link>
         </p>

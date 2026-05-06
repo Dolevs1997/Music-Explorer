@@ -4,7 +4,8 @@ import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
 import styles from "./AccountEdit.module.css";
 import propTypes from "prop-types";
-
+import ButtonComponent from "../../Button/Button"
+import EyeIconPassword from "../../EyeIconPassword/EyeIconPassword"
 function AccountEdit({ setSettingsView }) {
   const { user, setUser } = useContext(UserContext);
 
@@ -18,7 +19,9 @@ function AccountEdit({ setSettingsView }) {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [pwLoading, setPwLoading] = useState(false);
   const [selectedPassword, setSelectedPassword] = useState(false);
-
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   // async function handleUpdateDisplayName(e) {
   //   e.preventDefault();
   //   if (!displayName.trim()) {
@@ -48,9 +51,18 @@ function AccountEdit({ setSettingsView }) {
       return;
     }
     setPwLoading(true);
-
-    const data = await changeUserPassword(user, currentPassword, newPassword);
-    console.log("data: ", data);
+    try{
+      const data = await changeUserPassword(user, currentPassword, newPassword);
+      console.log("data: ", data);
+      toast.success(data.message);
+    }catch(error){
+      toast.error(error.message);
+    }
+    setSelectedPassword(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setPwLoading(false);
   }
   async function handleDeleteAccount() {
     setDeleteLoading(true);
@@ -104,34 +116,51 @@ function AccountEdit({ setSettingsView }) {
           Change Password
         </h3>
         {selectedPassword && !showDeleteModal && (
-          <form onSubmit={handleChangePassword} className="settingsForm">
+          <form className="settingsForm">
+            <div className="passwordInputContainer">
             <input
               className="settingsInput"
-              type="password"
+              type={showCurrentPassword ? "text" : "password"}
               placeholder="Current password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               autoComplete="current-password"
-            />
+              />
+              <EyeIconPassword size={20} showPassword={showCurrentPassword} setShowPassword={setShowCurrentPassword}/>
+              </div>
+            <div className="passwordInputContainer">
             <input
               className="settingsInput"
-              type="password"
-              placeholder="New password (min 6 characters)"
+              type={showNewPassword ? "text" : "password"}
+              placeholder="New password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               autoComplete="new-password"
-            />
+              />
+              <EyeIconPassword size={20} showPassword={showNewPassword} setShowPassword={setShowNewPassword}/>
+              </div>
+            <div className="passwordInputContainer">
             <input
               className="settingsInput"
-              type="password"
+              type={showConfirmNewPassword ? "text" : "password"}
               placeholder="Confirm new password"
               value={confirmNewPassword}
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               autoComplete="new-password"
-            />
-            <button className="settingsBtn" type="submit" disabled={pwLoading}>
+              />
+              <EyeIconPassword size={20} showPassword={showConfirmNewPassword} setShowPassword={setShowConfirmNewPassword}/>
+              </div>
+            <button className="settingsBtn" type="button" disabled={pwLoading} onClick={handleChangePassword}>
               {pwLoading ? "Saving..." : "Change Password"}
             </button>
+            <ButtonComponent type="cancel" onClick={() => {
+              setSelectedPassword(false)
+              setCurrentPassword("");
+              setNewPassword("");
+              setConfirmNewPassword("");
+              }}>
+              Cancel
+            </ButtonComponent>
           </form>
         )}
       </section>

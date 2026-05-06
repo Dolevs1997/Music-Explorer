@@ -36,7 +36,7 @@ export default function Home({ user }) {
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);
-
+  
   useEffect(() => {
     if (isMapVisible) {
       navigate("/global");

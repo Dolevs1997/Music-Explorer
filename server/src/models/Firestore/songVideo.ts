@@ -1,4 +1,4 @@
-import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../config/firebase_config";
 
 export type SongVideo = {
@@ -50,14 +50,12 @@ const getRecentSongVideos = async (limit: number) => {
   }
 };
 
-// const updateSongVideo = async (songVideoId, updatedData) => {
-//   try {
-//     const docRef = doc(db, "song-video", songVideoId);
-//     await updateDoc(docRef, updatedData);
-//     console.log("Song video updated with ID: ", songVideoId);
-//   } catch (error) {
-//     console.error("Error updating song video:", error);
-//   }
-// };
+const deleteAllSongs= async() => {
+  const querySnapshot = await getDocs(collection(db, "song-video"));
+    for(const song of querySnapshot.docs){
+        await deleteDoc(doc(db, "song-video", song.id));
+    }
+    
+}
 
-export { addSongVideo, getRecentSongVideos };
+export { addSongVideo, getRecentSongVideos,deleteAllSongs };

@@ -45,7 +45,7 @@ const deleteAccount = async (user) => {
         headers: { Authorization: `Bearer ${user.token}` },
       },
     );
-    if (!response.ok) throw new Error();
+    return response.data;
   } catch (error) {
     console.error("Error deleting account:", error);
     throw error;

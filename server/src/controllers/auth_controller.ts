@@ -1,8 +1,9 @@
 import jwt, { PrivateKey, PublicKey } from "jsonwebtoken";
 import { userSchemaZod, UserModel } from "../schemas/User_schema";
 import { Request, Response } from "express";
-import { app } from "../config/firebase_config";
+import { app,admin } from "../config/firebase_config";
 import { updatePasswordForUser } from "../models/Firestore/userAuth";
+import { deleteAllSongs } from "../models/Firestore/songVideo";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -11,9 +12,9 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import * as admin from "firebase-admin";
 import PlaylistSchema from "../schemas/Playlist_schema";
 import Song_schema from "../schemas/Song_schema";
+import { error } from "node:console";
 const register = async (req: Request, res: Response) => {
   const { email, password, country } = req.body;
   console.log("Registering user with email:", email);
@@ -210,8 +211,9 @@ const refreshToken = async (req: Request, res: Response) => {
 const deleteAccount = async (req: Request, res: Response) => {
   // Uses the regular access token (not refresh token)
   const token = req.headers["authorization"]?.split(" ")[1];
+  
   if (!token) return res.sendStatus(401);
-
+  
   jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET as PublicKey,
@@ -228,7 +230,7 @@ const deleteAccount = async (req: Request, res: Response) => {
         if (foundUser.uid) {
           await admin.auth().deleteUser(foundUser.uid);
         }
-
+        await deleteAllSongs();
         // Delete all user's playlists from MongoDB
         await PlaylistSchema.deleteMany({ user: foundUser._id });
         // Delete all songs in those playlists from MongoDB
@@ -237,7 +239,7 @@ const deleteAccount = async (req: Request, res: Response) => {
         });
         // Delete the user from MongoDB
         await foundUser.deleteOne();
-
+        console.log("Account deleted successfully");
         res.sendStatus(204);
       } catch (error: any) {
         console.error("Error deleting account:", error);
@@ -251,17 +253,31 @@ const changePassword = async (req: Request, res: Response) => {
   const { currentPassword, newPassword } = req.body;
 
   if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
+    return res.status(400).json({ error: "User ID is required" });
   }
 
   if (!currentPassword || !newPassword) {
     return res
       .status(400)
-      .json({ message: "Current and new passwords are required" });
+      .json({ error: "Current and new passwords are required" });
   }
-
+  
   try {
-    await updatePasswordForUser(currentPassword, newPassword);
+    const auth = getAuth(app);
+    const validationPassword = await validatePassword(auth, newPassword);
+     if (!validationPassword.isValid) {
+      if (
+        !validationPassword.containsLowercaseLetter ||
+        !validationPassword.containsUppercaseLetter ||
+        !validationPassword.containsNumericCharacter ||
+        !validationPassword.containsNonAlphanumericCharacter
+      ) {
+        return res
+          .status(400)
+          .json({error:"New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."});
+      }
+    }
+    await updatePasswordForUser(userId,currentPassword, newPassword);
     return res.status(200).json({ message: "Password changed successfully" });
   } catch (error: Error | any) {
     const msg =
@@ -270,8 +286,8 @@ const changePassword = async (req: Request, res: Response) => {
         ? "Current password is incorrect."
         : error.code === "auth/weak-password"
           ? "New password is too weak."
-          : "Failed to change password. Please try again.";
-    throw new Error(msg);
+          : error.message;
+    res.status(400).json({ error: msg });
   }
 };
 export default {
