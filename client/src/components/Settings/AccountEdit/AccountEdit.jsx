@@ -50,12 +50,17 @@ function AccountEdit({ setSettingsView }) {
       toast.error("New password must be at least 6 characters.");
       return;
     }
+    if(currentPassword === newPassword){
+      toast.error("New password must be different from current password.");
+      return;
+    }
     setPwLoading(true);
     try{
       const data = await changeUserPassword(user, currentPassword, newPassword);
       console.log("data: ", data);
       toast.success(data.message);
     }catch(error){
+      console.error("Error changing user password:", error);
       toast.error(error.message);
     }
     setSelectedPassword(false);

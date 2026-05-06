@@ -10,22 +10,26 @@ const updatePasswordForUser = async (
   try {
     const foundUser = await UserModel.findById(userId);
     if (!foundUser) {
-      return { message: "User not found" };
+      throw new Error("User not found");
     }
 
     const auth = getAuth(app);
     // Verify current password
-    await signInWithEmailAndPassword(auth, foundUser.email, currentPassword);
-
+    console.log("foundUser.email: ", foundUser.email);
+    console.log("currentPassword: ", currentPassword);
+    const userCredential = await signInWithEmailAndPassword(auth, foundUser.email, currentPassword);
+    const userAuth = userCredential.user;
+    console.log("userAuth: ", userAuth);
+    
     // Update password using admin SDK
     if (foundUser.uid) {
       await admin.auth().updateUser(foundUser.uid, { password: newPassword });
     } else {
-      return { message: "User has no Firebase UID" };
+      throw new Error("User has no Firebase UID");
     }
     return { message: "Password updated successfully" };
   } catch (error: Error | any) {
-    return { message: error.message };
+    throw error;
   }
 };
 

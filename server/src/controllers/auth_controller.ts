@@ -14,7 +14,6 @@ import {
 } from "firebase/auth";
 import PlaylistSchema from "../schemas/Playlist_schema";
 import Song_schema from "../schemas/Song_schema";
-import { error } from "node:console";
 const register = async (req: Request, res: Response) => {
   const { email, password, country } = req.body;
   console.log("Registering user with email:", email);
@@ -31,17 +30,19 @@ const register = async (req: Request, res: Response) => {
     const auth = getAuth(app);
     const status = await validatePassword(auth, password);
     if (!status.isValid) {
-      if (
-        status.containsLowercaseLetter === false ||
-        status.containsUppercaseLetter === false ||
-        status.containsNumericCharacter === false ||
-        status.containsNonAlphanumericCharacter === false
-      ) {
+      const missingRequirements = [];
+      if (status.containsLowercaseLetter === false) missingRequirements.push("a lowercase letter");
+      if (status.containsUppercaseLetter === false) missingRequirements.push("an uppercase letter");
+      if (status.containsNumericCharacter === false) missingRequirements.push("a number");
+      if (status.containsNonAlphanumericCharacter === false) missingRequirements.push("a special character");
+      if (status.meetsMinPasswordLength === false) missingRequirements.push("minimum length");
+
+      if (missingRequirements.length > 0) {
         return res
           .status(400)
-          .send(
-            "BAD REQUEST: Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character.",
-          );
+          .send(`BAD REQUEST: Password must contain: ${missingRequirements.join(", ")}.`);
+      } else {
+        return res.status(400).send("BAD REQUEST: Password does not meet the requirements.");
       }
     }
     createUserWithEmailAndPassword(auth, email, password)
@@ -266,15 +267,19 @@ const changePassword = async (req: Request, res: Response) => {
     const auth = getAuth(app);
     const validationPassword = await validatePassword(auth, newPassword);
      if (!validationPassword.isValid) {
-      if (
-        !validationPassword.containsLowercaseLetter ||
-        !validationPassword.containsUppercaseLetter ||
-        !validationPassword.containsNumericCharacter ||
-        !validationPassword.containsNonAlphanumericCharacter
-      ) {
+      const missingRequirements = [];
+      if (validationPassword.containsLowercaseLetter === false) missingRequirements.push("a lowercase letter");
+      if (validationPassword.containsUppercaseLetter === false) missingRequirements.push("an uppercase letter");
+      if (validationPassword.containsNumericCharacter === false) missingRequirements.push("a number");
+      if (validationPassword.containsNonAlphanumericCharacter === false) missingRequirements.push("a special character");
+      if (validationPassword.meetsMinPasswordLength === false) missingRequirements.push("minimum length");
+
+      if (missingRequirements.length > 0) {
         return res
           .status(400)
-          .json({error:"New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."});
+          .json({error: `Password must contain: ${missingRequirements.join(", ")}.`});
+      } else {
+        return res.status(400).json({error: "Password does not meet the requirements."});
       }
     }
     await updatePasswordForUser(userId,currentPassword, newPassword);
