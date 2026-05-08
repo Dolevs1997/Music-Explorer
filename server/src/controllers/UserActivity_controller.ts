@@ -4,6 +4,7 @@ import { getRecentSongVideos } from "../models/Firestore/songVideo";
 const update = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
   const { activity } = req.body;
+  console.log("activity: ", activity);
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }

@@ -26,8 +26,8 @@ const getById = async (req: Request, res: Response) => {
 };
 
 const recognizeAudio = async (req: Request, res: Response) => {
-  console.log("request body: ", req.body);
-  console.log("request file: ", req.file);
+  // console.log("request body: ", req.body);
+  // console.log("request file: ", req.file);
   if (!req.file) {
     return res.status(400).json({ error: "Audio file missing" });
   }
@@ -60,7 +60,7 @@ const recognizeAudio = async (req: Request, res: Response) => {
 };
 
 const deletebyVideoId = async (req: Request, res: Response) => {
-  console.log("DeletebyVideoId called with params:", req.params);
+  // console.log("DeletebyVideoId called with params:", req.params);
   const { videoId } = req.params;
   const user = req.body.user;
   const playlistId = req.body.playlistId;

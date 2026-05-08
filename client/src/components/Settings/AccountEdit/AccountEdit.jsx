@@ -113,7 +113,7 @@ function AccountEdit({ setSettingsView }) {
         )}
       </section> */}
       {/* Change Password */}
-      <section className="settingsSection}">
+      <section className="settingsSection">
         <h3
           className="settingsSectionTitle"
           onClick={() => setSelectedPassword((prev) => !prev)}

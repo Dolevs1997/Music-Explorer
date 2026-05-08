@@ -14,6 +14,7 @@ import { uploadImageToCloudinary } from "../../services/Cloudinary_service";
 import toast from "react-hot-toast";
 import Song from "../../components/Song/Song";
 import AccountEdit from "../../components/Settings/AccountEdit/AccountEdit";
+import Preferences from "../../components/Settings/Preferences/Preferences";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
 
@@ -388,9 +389,8 @@ function Profile() {
           {settingsView === "account" && (
             <AccountEdit setSettingsView={setSettingsView} />
           )}
-          {/*  
-          {settingsView === "preferences" && <PreferencesEdit />}
-          {settingsView === "privacy" && <PrivacyEdit />}*/}
+          {settingsView === "preferences" && <Preferences setSettingsView={setSettingsView} />}
+          {/* {settingsView === "privacy" && <PrivacyEdit />} */}
         </div>
       </div>
     </div>

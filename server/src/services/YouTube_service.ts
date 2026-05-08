@@ -80,14 +80,14 @@ async function fetchPlaylists(
   country: string = "US",
   location: string = "United States",
 ) {
-  console.log(
-    "Fetching playlists for:",
-    playlistName,
-    "in",
-    location,
-    "and country",
-    country,
-  );
+  // console.log(
+  //   "Fetching playlists for:",
+  //   playlistName,
+  //   "in",
+  //   location,
+  //   "and country",
+  //   country,
+  // );
   const controller = new AbortController();
   const signal = controller.signal;
   const queryStr = `top ${playlistName} music playlists for ${location}`;
