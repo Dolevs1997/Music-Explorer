@@ -10,8 +10,8 @@ function Preferences({ setSettingsView }) {
     const [loading, setLoading] = useState(false);
     const options = countryList().getData();
     const { user, setUser } = useContext(UserContext);
-    const [countryShortName, setCountryShortName] = useState("");
-    const [countryFullName, setCountryFullName] = useState("");
+    const [countryShortName, setCountryShortName] = useState(user?.country?.shortName || "");
+    const [countryFullName, setCountryFullName] = useState(user?.country?.fullName || "");
     const country = {
         shortName: countryShortName,
         fullName: countryFullName,
@@ -19,13 +19,13 @@ function Preferences({ setSettingsView }) {
     console.log("country short name before: ", countryShortName);
     async function handleUserPreferences(){
     console.log("country full name before: ", countryFullName);
-    if(!countryShortName || countryShortName === user.country || !countryFullName || countryFullName === user.countryFullName){ 
+    if(!countryShortName || countryShortName === user.country?.shortName || !countryFullName || countryFullName === user.country?.fullName){ 
         toast.error("Please select a country");
         return;
     }
     setLoading(true);
     try{
-      const data = await updateUserActivity(user, country);
+      const data = await updateUserActivity(user, {country});
       console.log("user updated: ", data);
       setUser({ ...user, country });
       setCountryOptionSelected(false);
@@ -49,14 +49,14 @@ function Preferences({ setSettingsView }) {
                     Change Country
                 </h3>
                 {countryOptionSelected && (
-                    <select value={countryShortName}className="settingsInput"
+                    <select value={countryShortName} className="settingsInput"
                         onChange={(e) => {
                             setCountryShortName(e.target.value);
                             const selectedName = options.find((opt) => opt.value === e.target.value)?.label || "";
                             setCountryFullName(selectedName);
                         }}
                     >
-                        <option>Select Country</option>
+                        <option value="" disabled>Select Country</option>
                         {options.map((option) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}

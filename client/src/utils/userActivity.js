@@ -1,6 +1,7 @@
 import axios from "axios";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const updateUserActivity = async (user, fields) => {
+  console.log("fields: ", fields);
   try {
     const response = await axios.put(
       `http://${SERVER_URL}/moodiify/userActivity/update?id=${user._id}`,

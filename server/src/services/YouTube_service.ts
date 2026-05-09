@@ -90,19 +90,42 @@ async function fetchPlaylists(
   // );
   const controller = new AbortController();
   const signal = controller.signal;
-  const queryStr = `top ${playlistName} music playlists for ${location}`;
 
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${queryStr}&regionCode=${country}&type=playlist&key=${API_KEY}`;
+  // Use multiple search queries to maximize the number and variety of playlists found
+  const queries = [
+    `top ${playlistName} music playlists for ${location}`,
+    `best ${playlistName} music ${location}`,
+    `popular ${playlistName} hits ${location}`,
+  ];
+
   try {
-    const response = await fetch(url, { signal });
-    const data = await response.json();
-    return data.items.map((item: YouTubePlaylistItem) => ({
-      id: item.id.playlistId,
-      title: item.snippet.title,
-      description: item.snippet.description,
-      thumbnail: item.snippet.thumbnails.default.url,
-      publishedAt: item.snippet.publishedAt,
-    }));
+    const fetchPromises = queries.map((queryStr) => {
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${encodeURIComponent(
+        queryStr,
+      )}&regionCode=${country}&type=playlist&key=${API_KEY}`;
+      return fetch(url, { signal }).then((res) => res.json());
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const uniquePlaylists = new Map();
+
+    results.forEach((data) => {
+      if (data.items) {
+        data.items.forEach((item: YouTubePlaylistItem) => {
+          if (!uniquePlaylists.has(item.id.playlistId)) {
+            uniquePlaylists.set(item.id.playlistId, {
+              id: item.id.playlistId,
+              title: item.snippet.title,
+              description: item.snippet.description,
+              thumbnail: item.snippet.thumbnails.default.url,
+              publishedAt: item.snippet.publishedAt,
+            });
+          }
+        });
+      }
+    });
+
+    return Array.from(uniquePlaylists.values());
   } catch (error) {
     console.error(
       "YouTube_service file in fetchPlaylists: Error fetching playlists:",
@@ -110,9 +133,6 @@ async function fetchPlaylists(
     );
     throw new Error("Failed to fetch playlists");
   }
-  // if (!response.ok) {
-  //   throw new Error(`Error fetching playlists: ${response.statusText}`);
-  // }
 }
 
 async function fetchPlaylistSongs(playlistId: string, country: string = "") {

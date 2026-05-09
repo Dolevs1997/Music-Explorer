@@ -1,8 +1,10 @@
 import { APIProvider, Map, InfoWindow } from "@vis.gl/react-google-maps";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import Button from "../Button/Button";
 import { useNavigate } from "react-router";
 import PoiMarker from "./Marker";
+import countryList from 'react-select-country-list'
+import UserContext from "../../Contexts/UserContext";
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;
 function MapComponent() {
@@ -14,8 +16,10 @@ function MapComponent() {
   const [dialogLocation, setDialogLocation] = useState("");
   const [locationName, setLocationName] = useState("United States");
   const [countryShortName, setCountryShortName] = useState("US");
-
+    const options = countryList().getData();
+  const {user} = useContext(UserContext);
   const navigate = useNavigate();
+  console.log("user: ", user.country.fullName);
   async function handleMapClick(mapProps) {
     console.log("Map clicked:", mapProps);
     const lat = mapProps.detail.latLng.lat;
@@ -79,21 +83,29 @@ function MapComponent() {
         <p>use pins to mark your location to get personalized music</p>
       </div>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-        <input
-          type="text"
-          value={locationName}
-          onChange={(e) => setLocationName(e.target.value)}
-          placeholder="Enter location name"
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <select
+          value={user?.country?.fullName}
+          className="settingsInput"
+          onChange={(e) => {
+            const selectedName = options.find((opt) => opt.value === e.target.value)?.label || "";
+            setLocationName(selectedName);
+            geocode(selectedName);
+          }}
+        
           style={{
             width: "300px",
             height: "30px",
           }}
-          onKeyUp={(e) => {
-            if (e.key === "Enter") {
-              geocode(locationName);
-            }
-          }}
-        />
+          >
+              <option>Select Country</option>
+                        {options.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+        </select>
+        </div>
         <Map
           mapId={MAP_ID}
           style={{ width: "100vh", height: "50vh" }}
