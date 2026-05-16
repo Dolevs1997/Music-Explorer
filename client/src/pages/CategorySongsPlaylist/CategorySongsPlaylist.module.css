@@ -1,0 +1,4 @@
+:global(.playlist-songs) {
+  margin-top: 100px;
+  justify-items: center;
+}

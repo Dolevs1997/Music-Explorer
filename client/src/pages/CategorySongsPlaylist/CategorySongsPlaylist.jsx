@@ -1,4 +1,4 @@
-// import styles from "./SongsPlaylist.module.css";
+import styles from "./CategorySongsPlaylist.module.css";
 import { useParams, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
@@ -57,7 +57,7 @@ function SongsPlaylist() {
         <div className="playlist-songs">
           <h2>{playlistName}</h2>
           {playlist.length > 0 ? (
-            <ul className="songsContainer">
+            <ul>
               {playlist.map((song, index) => (
                 <Song
                   key={index}

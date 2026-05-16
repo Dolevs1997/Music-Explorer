@@ -118,7 +118,7 @@ function Categories({ formVisible }) {
 
   return (
     <div className={formVisible ? "homeContainerWithForm" : "homeContainer"}>
-      <h1>Categories</h1>
+      <h1 className="pageTitle">Categories</h1>
 
       <ToastContainer />
       <div className={styles.categories}>

@@ -142,7 +142,7 @@ function PlaylistsUser() {
         <NavBar />
       </header>
       <main className="homeContainer">
-        <div className="playlist-songs">
+        <div className="playlistSongs">
           <div className={styles.playlistHeader}>
             <h1>Your Playlists</h1>
             <NavDropdown

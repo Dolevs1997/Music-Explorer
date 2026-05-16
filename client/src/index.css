@@ -152,6 +152,9 @@ h2 {
 h2:hover {
   cursor: pointer;
 }
+.pageTitle{
+  margin-bottom: 50px;
+}
 ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -205,10 +208,7 @@ ul {
   width: 100%;
   padding-top: 150px;
 }
-.playlist-songs {
-  margin-top: 100px;
-  justify-items: center;
-}
+
 .settingsSection{
   display: flex;
   flex-direction: column;

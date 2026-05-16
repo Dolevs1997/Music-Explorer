@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
   width: 200px;
   height: 200px;
 
@@ -10,8 +9,8 @@
 }
 .category img {
   margin-bottom: 10px;
-  width: 150px;
-  height: 150px;
+  width: 125px;
+  height: 125px;
   border-radius: 50%;
 }
 .category p {
