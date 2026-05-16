@@ -142,7 +142,7 @@ function PlaylistsUser() {
         <NavBar />
       </header>
       <main className="homeContainer">
-        <div className="playlistSongs">
+        <div className="playlist-songs">
           <div className={styles.playlistHeader}>
             <h1>Your Playlists</h1>
             <NavDropdown
@@ -160,36 +160,27 @@ function PlaylistsUser() {
             </NavDropdown>
           </div>
           {showCreateModal && (
-            <div className="modalOverlay">
-              <Modal.Dialog>
-                <Modal.Header
-                  closeButton
-                  onHide={() => setShowCreateModal(false)}
-                ></Modal.Header>
-                <Form.Group controlId="exampleForm.ControlTextarea1">
-                  <Form.Label>Enter Playlist Name</Form.Label>
-
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter playlist name"
-                    value={playlistName}
-                    onChange={(e) => setPlaylistName(e.target.value)}
-                  ></Form.Control>
-                </Form.Group>
-
-                <Modal.Footer>
-                  <Button
+       
+                <form>
+                  <label htmlFor="create">Playlist Name:</label>
+                    <input
+                      id="create"
+                      type="text"
+                      placeholder="Enter playlist name"
+                      value={playlistName}
+                      onChange={(e) => setPlaylistName(e.target.value)}
+                    />
+                    <Button
                     onClick={() => setShowCreateModal(false)}
                     type="cancel"
-                  >
-                    Close
-                  </Button>
-                  <Button onClick={handleAddPlaylist} type="select">
-                    Save changes
-                  </Button>
-                </Modal.Footer>
-              </Modal.Dialog>
-            </div>
+                    >
+                      Close
+                    </Button>
+                    <Button onClick={handleAddPlaylist} type="select">
+                      Save changes
+                    </Button>
+                  </form>
+            
           )}
           {user.playlists.length > 0 ? (
             <ul>
@@ -340,8 +331,8 @@ function PlaylistsUser() {
                           alt="Playlist"
                           className="object-cover rounded-xl"
                           src={playlist.imageUrl}
-                          height={160}
-                          width={270}
+                          height={130}
+                          width={200}
                         />
                       )}
                     </CardBody>

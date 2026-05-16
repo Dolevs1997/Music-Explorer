@@ -163,6 +163,11 @@ ul {
   gap: 30px;
   align-items: center;
 }
+@media screen and (max-width: 1000px) {
+  ul {
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  }
+}
 .background {
   position: relative;
   width: 100%;

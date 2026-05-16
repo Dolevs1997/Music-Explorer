@@ -28,6 +28,194 @@ export type YouTubePlaylistItem = {
   };
 };
 
+const SPOTIFY_GENRE_PLAYLISTS: Record<string, string[]> = {
+  rock: [
+    "37i9dQZF1DWXRqgorJj26U", // Rock Classics
+    "37i9dQZF1DX1rVvRgjX59F", // Rock This
+    "37i9dQZF1DX4vth7idTQch", // Rock Hard
+  ],
+  pop: [
+    "37i9dQZF1DXcBWIGoYBM5M", // Today's Top Hits
+    "37i9dQZF1DX0kbJZpiYdZl", // Hot Hits
+    "37i9dQZF1DXbLMw3sSML5k", // Pop Right Now
+  ],
+  "hip hop": [
+    "37i9dQZF1DX0XUsuxWHRQd", // RapCaviar
+    "37i9dQZF1DX2RxBh64BHjQ", // Most Necessary
+    "37i9dQZF1DXdBHPWfUtAou", // Hip Hop Central
+  ],
+  jazz: [
+    "37i9dQZF1DX7YCknf2jT6s", // Jazz Classics
+    "37i9dQZF1DXbITWG1ZJKYt", // Jazz Vibes
+    "37i9dQZF1DX4WYpdgoIcn6", // Peaceful Jazz
+  ],
+  classical: [
+    "37i9dQZF1DWWEJlAGA9gs0", // Classical Essentials
+    "37i9dQZF1DX7K31D69s4M1", // Classical Focus
+    "37i9dQZF1DXd0MaPlace7mQ", // Classical Mood
+  ],
+  electronic: [
+    "37i9dQZF1DX4dyzvuaRJ0n", // mint
+    "37i9dQZF1DXa8NOjJkHPKA", // Electronic Rising
+    "37i9dQZF1DX6J75NktzAJR", // Dance Hits
+  ],
+  metal: [
+    "37i9dQZF1DWWOaP4H0w5b0", // Metal Essentials
+    "37i9dQZF1DX9qNs32fujYe", // Headbangers
+    "37i9dQZF1DX1VCSCQKcbZJ", // Heavy Queens
+  ],
+  country: [
+    "37i9dQZF1DX1lVhptIYRda", // Hot Country
+    "37i9dQZF1DX13ZzXoot6Jc", // Country Classics
+    "37i9dQZF1DX5gQonLbZD9s", // Country Gold
+  ],
+  latin: [
+    "37i9dQZF1DX10zKzsJ2jva", // Viva Latino
+    "37i9dQZF1DX4bLzbFx2KND", // Latin Pop Rising
+    "37i9dQZF1DXbmD8tFKnAUq", // Latin Hits
+  ],
+  reggae: [
+    "37i9dQZF1DXan38dNVDdl4", // Reggae Classics
+    "37i9dQZF1DX2Nc3B70tvx0", // Reggae Hits
+  ],
+  blues: [
+    "37i9dQZF1DXd9rSDyQguIk", // Blues Classics
+    "37i9dQZF1DXbDqXaMdIgS0", // Blues Rock
+  ],
+  soul: [
+    "37i9dQZF1DWTx0xog3gB3q", // Soul Classics
+    "37i9dQZF1DX2yvmlOdMYzV", // Soul Coffee
+  ],
+  funk: [
+    "37i9dQZF1DX1N1dODjkxCw", // Funk Classics
+    "37i9dQZF1DWWvhKV4FBciw", // Funk & Soul
+  ],
+  "r&b": [
+    "37i9dQZF1DX4SBhb3fqCJd", // Are & Be
+    "37i9dQZF1DX0h0QhwldIlP", // R&B Hits
+  ],
+
+};
+
+// Resolve which genre keywords match a given category name
+function resolveGenreIds(categoryName: string): string[] | null {
+  const lower = categoryName.toLowerCase();
+
+  // Exact match first
+  if (SPOTIFY_GENRE_PLAYLISTS[lower]) return SPOTIFY_GENRE_PLAYLISTS[lower];
+
+  // Partial match — e.g. "hard rock" matches "rock"
+  for (const [key, ids] of Object.entries(SPOTIFY_GENRE_PLAYLISTS)) {
+    if (lower.includes(key) || key.includes(lower)) return ids;
+  }
+
+  return null; // No match — will fall back to search
+}
+
+async function fetchPlaylists(
+  playlistName: string,
+  country: string = "US",
+  location: string = "United States",
+  spotifyToken: string,
+): Promise<any[]> {
+  const genreIds = resolveGenreIds(playlistName);
+
+  if (genreIds) {
+    // ── Option 2: hardcoded editorial playlists ────────────────────────────
+    // Genre is known — fetch the exact Spotify editorial playlists directly.
+    // These are always genre-accurate with no search ambiguity.
+    console.log(`Using hardcoded Spotify playlists for genre: ${playlistName}`);
+    const results = await fetchSpotifyPlaylistsByIds(genreIds, country, spotifyToken);
+
+    // If we got results, return them
+    if (results.length > 0) return results;
+
+    // If all IDs failed (e.g. removed by Spotify), fall through to search
+    console.warn(`Hardcoded IDs failed for "${playlistName}", falling back to search`);
+  }
+
+  // ── Option 1: Spotify search fallback ─────────────────────────────────────
+  // Genre not in map, or hardcoded IDs failed — search Spotify instead.
+  console.log(`Using Spotify search fallback for genre: ${playlistName}`);
+  return fetchSpotifyPlaylistsBySearch(playlistName, country, spotifyToken);
+}
+
+// Fetch specific playlists by their Spotify IDs
+async function fetchSpotifyPlaylistsByIds(
+  ids: string[],
+  country: string,
+  token: string,
+): Promise<any[]> {
+  const fetchPromises = ids.map((id) =>
+    fetch(
+      `https://api.spotify.com/v1/playlists/${id}?market=${country}&fields=id,name,description,images,owner,tracks.total`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
+      .then((res) => res.json())
+      .catch(() => null),
+  );
+
+  const results = await Promise.all(fetchPromises);
+
+  return results
+    .filter((p) => p && !p.error && p.id)
+    .map((p) => ({
+      id: p.id,
+      title: p.name,
+      description: p.description || "",
+      thumbnail: p.images?.[0]?.url || "",
+      owner: p.owner?.display_name || "Spotify",
+      totalTracks: p.tracks?.total || 0,
+    }));
+}
+
+// Search Spotify for playlists matching the genre name
+async function fetchSpotifyPlaylistsBySearch(
+  genre: string,
+  country: string,
+  token: string,
+): Promise<any[]> {
+  const queries = [
+    `${genre} music`,
+    `best ${genre} hits`,
+    `${genre} playlist ${new Date().getFullYear()}`,
+  ];
+
+  const fetchPromises = queries.map((q) =>
+    fetch(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=playlist&market=${country}&limit=50`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
+      .then((res) => res.json())
+      .catch(() => ({ playlists: { items: [] } })),
+  );
+
+  const results = await Promise.all(fetchPromises);
+  const unique = new Map<string, any>();
+  const genreLower = genre.toLowerCase();
+
+  results.forEach((data) => {
+    data?.playlists?.items?.forEach((playlist: any) => {
+      if (!playlist?.id || unique.has(playlist.id)) return;
+
+      // Basic relevance filter — skip if genre not mentioned anywhere
+      const title = (playlist.name || "").toLowerCase();
+      const description = (playlist.description || "").toLowerCase();
+      if (!title.includes(genreLower) && !description.includes(genreLower)) return;
+
+      unique.set(playlist.id, {
+        id: playlist.id,
+        title: playlist.name,
+        description: playlist.description || "",
+        thumbnail: playlist.images?.[0]?.url || "",
+        owner: playlist.owner?.display_name || "",
+        totalTracks: playlist.tracks?.total || 0,
+      });
+    });
+  });
+
+  return Array.from(unique.values());
+}
 async function fetchSong(song: string, country = "US") {
   const controller = new AbortController();
   const signal = controller.signal;
@@ -43,6 +231,7 @@ async function fetchSong(song: string, country = "US") {
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
+    console.log("data", data);
     // if (!data || !data.items || data.items.length === 0) {
     //   throw new Error("No videos found for the given artist and songName");
     // }
@@ -75,198 +264,81 @@ async function fetchSong(song: string, country = "US") {
   }
 }
 
-async function fetchPlaylists(
-  playlistName: string,
+async function fetchPlaylistSongs(
+  playlistId: string,
   country: string = "US",
-  location: string = "United States",
-) {
-  // console.log(
-  //   "Fetching playlists for:",
-  //   playlistName,
-  //   "in",
-  //   location,
-  //   "and country",
-  //   country,
-  // );
-  const controller = new AbortController();
-  const signal = controller.signal;
+  spotifyToken: string,
+): Promise<any[]> {
+  if (!playlistId) throw new Error("Playlist ID is required");
+  if (!spotifyToken) throw new Error("Spotify token is required");
 
-  // Use multiple search queries to maximize the number and variety of playlists found
-  const queries = [
-    `top ${playlistName} music playlists for ${location}`,
-    `best ${playlistName} music ${location}`,
-    `popular ${playlistName} hits ${location}`,
-  ];
+  // Check cache first
+  const cached = await getCachedSongPlaylist(playlistId, country);
+  if (cached) return cached;
+
+  console.log("Fetching Spotify playlist tracks for:", playlistId);
 
   try {
-    const fetchPromises = queries.map((queryStr) => {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${encodeURIComponent(
-        queryStr,
-      )}&regionCode=${country}&type=playlist&key=${API_KEY}`;
-      return fetch(url, { signal }).then((res) => res.json());
-    });
+    // Spotify returns max 100 tracks per request
+    // We use offset pagination to get all tracks
+    let tracks: any[] = [];
+    let offset = 0;
+    const limit = 100;
+    let total = Infinity;
 
-    const results = await Promise.all(fetchPromises);
-    const uniquePlaylists = new Map();
+    while (tracks.length < total) {
+      const response = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=${country}&limit=${limit}&offset=${offset}&fields=total,items(track(id,name,artists,album(name,images),duration_ms,preview_url,external_urls))`,
+        { headers: { Authorization: `Bearer ${spotifyToken}` } },
+      );
 
-    results.forEach((data) => {
-      if (data.items) {
-        data.items.forEach((item: YouTubePlaylistItem) => {
-          if (!uniquePlaylists.has(item.id.playlistId)) {
-            uniquePlaylists.set(item.id.playlistId, {
-              id: item.id.playlistId,
-              title: item.snippet.title,
-              description: item.snippet.description,
-              thumbnail: item.snippet.thumbnails.default.url,
-              publishedAt: item.snippet.publishedAt,
-            });
-          }
-        });
+      if (!response.ok) {
+        console.error("Error fetching Spotify playlist tracks:", response.statusText);
+        throw new Error(`Failed to fetch playlist tracks: ${response.statusText}`);
       }
-    });
 
-    return Array.from(uniquePlaylists.values());
+      const data = await response.json();
+      console.log("data", data);
+      total = data.total;
+      console.log("total", total);
+      const pageTracks = data.items
+        .filter((item: any) => {
+          // Skip null tracks (can happen with local files or removed tracks)
+          if (!item?.track) return false;
+          if (!item.track.id) return false;
+          // Skip tracks with no name
+          if (!item.track.name?.trim()) return false;
+
+          return true;
+        })
+        .map((item: any) => ({
+          id: item.track.id,
+          title: item.track.name,
+          artist: item.track.artists?.[0]?.name || "Unknown Artist",
+          artists: item.track.artists?.map((a: any) => a.name).join(", "),
+          album: item.track.album?.name || "",
+          thumbnail: item.track.album?.images?.[0]?.url || "",
+          duration: item.track.duration_ms,
+          previewUrl: item.track.preview_url,
+          spotifyUrl: item.track.external_urls?.spotify || "",
+          // This is what Song.jsx will use to search YouTube for playback
+          searchQuery: `${item.track.artists?.[0]?.name} - ${item.track.name}`,
+        }));
+
+      tracks = [...tracks, ...pageTracks];
+      offset += limit;
+
+      // Stop if we've fetched everything or reached 200 tracks max
+      if (pageTracks.length < limit || tracks.length >= 200) break;
+    }
+
+    // Cache the result
+    await setCachedPlaylistSongs(playlistId, country, tracks);
+
+    return tracks;
   } catch (error) {
-    console.error(
-      "YouTube_service file in fetchPlaylists: Error fetching playlists:",
-      error,
-    );
-    throw new Error("Failed to fetch playlists");
+    console.error("fetchPlaylistSongs error:", error);
+    throw new Error("Failed to fetch playlist songs");
   }
 }
-
-async function fetchPlaylistSongs(playlistId: string, country: string = "") {
-  if (!playlistId) {
-    throw new Error("Playlist ID is required");
-  } else if (country == "") {
-    throw new Error("country is required");
-  }
-  const cachedPlaylistSong = await getCachedSongPlaylist(playlistId, country);
-  if (cachedPlaylistSong) {
-    // console.log(
-    //   "Returning playlist song from CachedSongPlaylist: ",
-    //   cachedPlaylistSong
-    // );
-    return cachedPlaylistSong;
-    // return cachedPlaylistSong[0].map((item: YouTubePlaylistItem) => ({
-    //   id: item.snippet.resourceId.videoId,
-    //   title: item.snippet.title,
-    //   publishedAt: item.snippet.publishedAt,
-    // }));
-    // return;
-  }
-  console.log("Fetching songs for playlist ID:", playlistId);
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  // Fetch playlist items with contentDetails to check video duration
-  const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${playlistId}&key=${API_KEY}`;
-  const response = await fetch(url, { signal });
-  if (!response.ok) {
-    console.log(response.json());
-    console.error(
-      "YouTube_service file in fetchPlaylistSongs: Error fetching playlist songs:",
-      response.statusText,
-    );
-    // throw new Error(`Error fetching playlist songs: ${response.statusText}`);
-  }
-  const data = await response.json();
-  // console.log("Playlist songs data:", data);
-  if (!data || !data.items) {
-    throw new Error("No playlist songs found");
-  }
-  const videoIds: string[] = [];
-  await setCachedPlaylistSongs(
-    playlistId,
-    country,
-    data.items
-      .filter((item: YouTubePlaylistItem) => {
-        console.log("item: ", item);
-        if (videoIds.includes(item.snippet.resourceId.videoId)) {
-          return false;
-        }
-        // Must be a video
-        if (
-          item.snippet.resourceId.kind !== "youtube#video" ||
-          !item.snippet.resourceId.videoId
-        ) {
-          return false;
-        }
-        // Exclude private/deleted videos
-        if (
-          item.snippet.title === "Deleted video" ||
-          item.snippet.title === "Private video"
-        )
-          return false;
-
-        // console.log("videoIds in playlist: ", videoIds);
-        // Exclude videos with unwanted content in title (trailers, clips, reviews, etc.)
-        const title = item.snippet.title.toLowerCase();
-        const excludePatterns = [
-          "trailer",
-          "teaser",
-          "review",
-          "reaction",
-          "tutorial",
-          "podcast",
-          "compilation",
-          "mixtape",
-          "mix",
-        ];
-
-        if (excludePatterns.some((pattern) => title.includes(pattern))) {
-          return false;
-        }
-
-        videoIds.push(item.snippet.resourceId.videoId);
-        return true;
-      })
-      .map((item: YouTubePlaylistItem) => ({
-        id: item.snippet.resourceId.videoId,
-        title: item.snippet.title,
-        publishedAt: item.snippet.publishedAt,
-      })),
-  );
-  // Filter to only include actual music videos
-  return data.items
-    .filter((item: YouTubePlaylistItem) => {
-      // Must be a video
-      if (item.snippet.resourceId.kind !== "youtube#video") return false;
-
-      // Exclude private/deleted videos
-      if (
-        item.snippet.title === "Deleted video" ||
-        item.snippet.title === "Private video"
-      )
-        return false;
-
-      // Exclude videos with unwanted content in title (trailers, clips, reviews, etc.)
-      const title = item.snippet.title.toLowerCase();
-      const excludePatterns = [
-        "trailer",
-        "teaser",
-        "official video",
-        "lyric video",
-        "review",
-        "reaction",
-        "tutorial",
-        "podcast",
-        "compilation",
-        "mixtape",
-        "mix",
-      ];
-
-      if (excludePatterns.some((pattern) => title.includes(pattern))) {
-        return false;
-      }
-
-      return true;
-    })
-    .map((item: YouTubePlaylistItem) => ({
-      id: item.snippet.resourceId.videoId,
-      title: item.snippet.title,
-      publishedAt: item.snippet.publishedAt,
-    }));
-}
-
 export { fetchPlaylists, fetchPlaylistSongs, fetchSong };

@@ -20,6 +20,7 @@ CategoryRouter.get(
 CategoryRouter.get(
   "/category/playlist-songs",
   authenticate,
+  validateToken,
   category_controller.getPlaylistSongs,
 );
 

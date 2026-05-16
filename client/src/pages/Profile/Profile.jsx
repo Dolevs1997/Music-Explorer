@@ -176,9 +176,7 @@ function Profile() {
           </div>
 
           <div className={styles.profileMeta}>
-            <h1 className={styles.displayName}>
-              {user.email?.split("@")[0] || "User"}
-            </h1>
+     
             <p className={styles.userEmail}>{user.email}</p>
 
             {avatarFile && (

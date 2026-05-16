@@ -1,7 +1,22 @@
 import Redis from "ioredis";
 import { createClient } from "redis";
 import { SongVideo } from "../models/Firestore/songVideo";
-import { YouTubePlaylistItem } from "./YouTube_service";
+
+interface CachedSong {
+  id: string;
+  title: string;
+  artist: string;
+  artists: string;
+  album: string;
+  thumbnail: string;
+  duration: number;
+  previewUrl: string;
+  spotifyUrl: string;
+  youtubeVideoId: string;
+  youtubeUrl: string;
+  youtubePublishedAt?: string;
+}
+
 function cacheKey(song: string, country: string) {
   return `recommends:${encodeURIComponent(song)}|${country}`;
 }
@@ -32,7 +47,7 @@ function cachePlaylistKey(playlistId: string, country: string) {
 async function setCachedPlaylistSongs(
   playlistId: string,
   country: string,
-  data: YouTubePlaylistItem,
+  data: CachedSong[],
 ) {
   const redis = new Redis(process.env.REDIS_URL || "string");
   const key = cachePlaylistKey(playlistId, country);

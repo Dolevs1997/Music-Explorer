@@ -37,14 +37,20 @@ function SongsPlaylist() {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
+              console.log("Fetched songs:", data);
+
         setPlaylist(data);
-        // console.log("Fetched playlist data:", data);
+         console.log("Fetched playlist data:", data);
       } catch (error) {
         console.error("Error fetching playlist:", error);
       }
     };
 
-    fetchPlaylist();
+      if (playlistId && token && country) {
+      fetchPlaylist();
+    } else {
+      console.warn("Missing required params:", { playlistId, token, country });
+    }
   }, [playlistId, token, country]);
   return (
     <div className="app-container">
@@ -61,7 +67,7 @@ function SongsPlaylist() {
               {playlist.map((song, index) => (
                 <Song
                   key={index}
-                  song={song.title}
+                  song={song.searchQuery || song.title}
                   country={location.state.country}
                   playingVideoId={playingVideoId}
                   setPlayingVideoId={setPlayingVideoId}
