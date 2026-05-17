@@ -119,25 +119,30 @@ async function fetchPlaylists(
   spotifyToken: string,
 ): Promise<any[]> {
   const genreIds = resolveGenreIds(playlistName);
+  console.log("playlist name: ", playlistName);
+  console.log("country playlist: ", country);
+  let results: any[] = [];
+
+  // Always search for localized playlists first
+  console.log(`Fetching localized Spotify playlists for genre: ${playlistName} in ${location}`);
+  const searchResults = await fetchSpotifyPlaylistsBySearch(playlistName, country, location, spotifyToken);
+  results = [...searchResults];
 
   if (genreIds) {
     // ── Option 2: hardcoded editorial playlists ────────────────────────────
-    // Genre is known — fetch the exact Spotify editorial playlists directly.
-    // These are always genre-accurate with no search ambiguity.
     console.log(`Using hardcoded Spotify playlists for genre: ${playlistName}`);
-    const results = await fetchSpotifyPlaylistsByIds(genreIds, country, spotifyToken);
+    const hardcodedResults = await fetchSpotifyPlaylistsByIds(genreIds, country, spotifyToken);
 
-    // If we got results, return them
-    if (results.length > 0) return results;
-
-    // If all IDs failed (e.g. removed by Spotify), fall through to search
-    console.warn(`Hardcoded IDs failed for "${playlistName}", falling back to search`);
+    // Add hardcoded playlists that aren't already in the results
+    const existingIds = new Set(results.map((r) => r.id));
+    for (const p of hardcodedResults) {
+      if (!existingIds.has(p.id)) {
+        results.push(p);
+      }
+    }
   }
 
-  // ── Option 1: Spotify search fallback ─────────────────────────────────────
-  // Genre not in map, or hardcoded IDs failed — search Spotify instead.
-  console.log(`Using Spotify search fallback for genre: ${playlistName}`);
-  return fetchSpotifyPlaylistsBySearch(playlistName, country, spotifyToken);
+  return results;
 }
 
 // Fetch specific playlists by their Spotify IDs
@@ -147,12 +152,15 @@ async function fetchSpotifyPlaylistsByIds(
   token: string,
 ): Promise<any[]> {
   const fetchPromises = ids.map((id) =>
-    fetch(
+  {
+    console.log("id: ", id);
+    return fetch(
       `https://api.spotify.com/v1/playlists/${id}?market=${country}&fields=id,name,description,images,owner,tracks.total`,
       { headers: { Authorization: `Bearer ${token}` } },
     )
-      .then((res) => res.json())
-      .catch(() => null),
+    .then((res) => res.json())
+    .catch(() => null);
+  }
   );
 
   const results = await Promise.all(fetchPromises);
@@ -173,11 +181,13 @@ async function fetchSpotifyPlaylistsByIds(
 async function fetchSpotifyPlaylistsBySearch(
   genre: string,
   country: string,
+  location: string,
   token: string,
 ): Promise<any[]> {
   const queries = [
-    `${genre} music`,
-    `best ${genre} hits`,
+    `${location} ${genre}`,
+    `best ${genre} hits ${location}`,
+    `top ${genre} ${location}`,
     `${genre} playlist ${new Date().getFullYear()}`,
   ];
 
@@ -226,27 +236,27 @@ async function fetchSong(song: string, country = "US") {
   }
   // console.log("Fetching song from YouTube API:", song, country);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
-    `${song}`,
+    `${song} audio`,
   )}&type=video&key=${API_KEY}`;
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
     console.log("data", data);
-    // if (!data || !data.items || data.items.length === 0) {
-    //   throw new Error("No videos found for the given artist and songName");
-    // }
-
+    if (!data || !data.items || data.items.length === 0) {
+      throw new Error("No videos found for the given artist and songName");
+    }
+    
     // Find first search result that actually contains a videoId
     const itemWithVideo = data.items.find(
       (it: any) => it && it.id && it.id.videoId,
     );
-    // if (!itemWithVideo) {
-    //   throw new Error("No videos with videoId found for the given query");
-    // }
+   
     if (itemWithVideo) {
       const videoId = itemWithVideo.id.videoId;
       const title = itemWithVideo.snippet?.title ?? "";
-
+      if(!videoId || !title){
+        throw new Error("No videos with videoId found for the given query");
+      }
       // Only cache and return if we have a videoId
       await setCachedSong(song, country, {
         title,
@@ -283,7 +293,7 @@ async function fetchPlaylistSongs(
     // We use offset pagination to get all tracks
     let tracks: any[] = [];
     let offset = 0;
-    const limit = 100;
+    const limit = 50;
     let total = Infinity;
 
     while (tracks.length < total) {

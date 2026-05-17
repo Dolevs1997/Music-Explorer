@@ -4,6 +4,11 @@
   align-items: center;
   justify-content: center;
   opacity: 1;
+  position: fixed;
+}
+
+.formVisible textarea {
+  width: 500px;
 }
 
 .formVisible button {
