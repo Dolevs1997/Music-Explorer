@@ -7,8 +7,8 @@ AI-Powered Music Recommendation Web App that lets users generate songs - voice, 
 - <mark> audio recording:</mark> Using **MediaRecorder** for easily handling record media and sending it as **Blob()** file to the server + using **ACRCloud API** for music recognition and generate the recognized song.
 - <mark> Voice Intent:</mark> Using **Web Speech API** for voice speech and sending transcript to the server, **OpenAI API** handling the transcript and generate the songs based on transcript.
 - <mark> Google Maps API:</mark> **Using Google API** maps for user interaction to get exact location based on user pin point on the map to get personalized music based on location
-- <mark> Spotify API:</mark> display music categories
-- <mark> YouTube Data API: </mark> using YouTube API to retrieve playlists + songs
+- <mark> Spotify API:</mark> display music categories, retrieve playlists 
+- <mark> YouTube Data API: </mark> using YouTube API to retrieve video songs 
 - <mark>Authentication: </mark> Secure user login and registration powered by OAuth with firebase and JWT (JSON Web Tokens)
 - <mark> Databases + Cache: </mark> MongoDB + Firebase for storing users, playlists and songs and all history songs in firebase and using Redis for caching songs
 - <mark> Cloudinary API: </mark> Using Cloudniary for uploading images(playlist images)
