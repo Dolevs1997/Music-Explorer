@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import BackgroundMusic from "../../components/BackgroundMusic";
 import mySound from "../../assets/sounds/Rockstar_Singer_Sings_Welcome_to_Moodiify_.mp4";
-import countryList from 'react-select-country-list'
+import countryList from "react-select-country-list";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Register() {
@@ -21,9 +21,9 @@ function Register() {
   const [lowerChar, setLowerChar] = useState(false);
   const [minLength, setMinLength] = useState(false);
   const audioRef = useRef(null);
-  const [options, setOptions] = useState(countryList().getData());
   const [countryShortName, setCountryShortName] = useState("");
   const [countryFullName, setCountryFullName] = useState("");
+  const options = countryList().getData();
   console.log("country Short Name: ", countryShortName);
   console.log("country Full Name: ", countryFullName);
   useEffect(() => {
@@ -98,57 +98,65 @@ function Register() {
           required
         />
         <label htmlFor="country">Country</label>
-        <select 
-          value={countryShortName} 
+        <select
+          value={countryShortName}
           onChange={(e) => {
             setCountryShortName(e.target.value);
-            const selectedName = options.find((opt) => opt.value === e.target.value)?.label || "";
+            const selectedName =
+              options.find((opt) => opt.value === e.target.value)?.label || "";
             setCountryFullName(selectedName);
-          }} 
-          style={{backgroundColor:"var(--color-background-100)"}}
+          }}
+          style={{ backgroundColor: "var(--color-background-100)" }}
         >
           <option value="" disabled selected>
             Select your country
           </option>
           {options.map((option) => (
-            <option key={option.value} value={option.value}>  
+            <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
         </select>
         <label htmlFor="password">Password:</label>
         <div className="passwordInputContainer">
-        <input
-          type={showPassword ? "text" : "password"}
-          id="password"
-          name="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            const pwd = e.target.value;
-            setSpecialChar(/[^A-Za-z0-9]/.test(pwd));
-            setNumberChar(/\d/.test(pwd));
-            setUpperChar(/[A-Z]/.test(pwd));
-            setLowerChar(/[a-z]/.test(pwd));
-            setMinLength(pwd.length >= 6);
-          }}
-          required
-        />
-        <EyeIconPassword size={20} showPassword={showPassword} setShowPassword={setShowPassword}/>
-    </div>
-        <label htmlFor="confirm-password">Confirm Password:</label>
-          <div className="passwordInputContainer">
-
-        <input
-          type={showConfirmNewPassword ? "text" : "password"}
-          id="confirm-password"
-          name="confirm-password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
+          <input
+            type={showPassword ? "text" : "password"}
+            id="password"
+            name="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              const pwd = e.target.value;
+              setSpecialChar(/[^A-Za-z0-9]/.test(pwd));
+              setNumberChar(/\d/.test(pwd));
+              setUpperChar(/[A-Z]/.test(pwd));
+              setLowerChar(/[a-z]/.test(pwd));
+              setMinLength(pwd.length >= 6);
+            }}
+            required
           />
-          <EyeIconPassword size={20} showPassword={showConfirmNewPassword} setShowPassword={setShowConfirmNewPassword}/>
-          </div>
+          <EyeIconPassword
+            size={20}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+          />
+        </div>
+        <label htmlFor="confirm-password">Confirm Password:</label>
+        <div className="passwordInputContainer">
+          <input
+            type={showConfirmNewPassword ? "text" : "password"}
+            id="confirm-password"
+            name="confirm-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <EyeIconPassword
+            size={20}
+            showPassword={showConfirmNewPassword}
+            setShowPassword={setShowConfirmNewPassword}
+          />
+        </div>
         <span> Password Requirements:</span>
         <ol>
           <li>
