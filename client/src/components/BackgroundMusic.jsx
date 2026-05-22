@@ -1,4 +1,4 @@
-import backgroundClip from "../../src/assets/image/backgrould-clip.mp4";
+import backgroundClip from "../../src/assets/image/mp_.mp4";
 function BackgroundMusic() {
   return (
     <>
