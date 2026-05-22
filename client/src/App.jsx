@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
+import AppIntro from "./pages/AppIntro";
 import CategoryPlaylists from "./pages/CategoryPlaylists/CategoryPlaylists";
 import { useEffect, useState } from "react";
 import Register from "./pages/Register/Register";
@@ -49,8 +50,7 @@ function App() {
           }}
         >
           <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-            {/* <Route index element={<Home user={user} />} /> */}
+            <Route path="/" element={<AppIntro />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 

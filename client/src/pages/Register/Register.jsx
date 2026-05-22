@@ -1,10 +1,9 @@
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import BackgroundMusic from "../../components/BackgroundMusic";
-import mySound from "../../assets/sounds/Rockstar_Singer_Sings_Welcome_to_Moodiify_.mp4";
 import countryList from "react-select-country-list";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
@@ -20,19 +19,11 @@ function Register() {
   const [upperChar, setUpperChar] = useState(false);
   const [lowerChar, setLowerChar] = useState(false);
   const [minLength, setMinLength] = useState(false);
-  const audioRef = useRef(null);
   const [countryShortName, setCountryShortName] = useState("");
   const [countryFullName, setCountryFullName] = useState("");
   const options = countryList().getData();
   console.log("country Short Name: ", countryShortName);
   console.log("country Full Name: ", countryFullName);
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play().catch((error) => {
-        console.error("Error playing audio:", error);
-      });
-    }
-  }, []);
   const handleRegisteration = async (e) => {
     console.log(countryShortName);
 
@@ -81,8 +72,6 @@ function Register() {
   };
   return (
     <>
-      {/* <audio ref={audioRef} src={mySound} autoPlay /> */}
-
       <BackgroundMusic />
       <form>
         <h2>Register</h2>

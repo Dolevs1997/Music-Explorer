@@ -15,6 +15,7 @@ function Login() {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
+
   async function handleSuccess(credentialResponse) {
     console.log("Login Success:", credentialResponse);
     const idToken = credentialResponse.credential;
@@ -92,7 +93,7 @@ function Login() {
       }}
     >
       <BackgroundMusic />
-      <form>
+      <form style={{ opacity: 0.9 }}>
         <Toaster />
         <h2>Login</h2>
         <label htmlFor="email">Email:</label>
