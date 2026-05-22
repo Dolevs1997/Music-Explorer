@@ -55,6 +55,30 @@ body {
   font-size: 1.2rem;
   line-height: 1.6;
 }
+
+.login {
+  border:1px solid var(--color-text);
+  border-radius: 30px;
+  padding:7px 20px 7px 20px;
+  margin: 10px 0 10px 0;
+}
+.login span{
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.login img{
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+.login:hover{
+  transform: scale(1.01);
+  transition: transform 0.5s ease-in-out;
+}
+
 .link {
   color: var(--color-text);
   font-size: 1.2rem;

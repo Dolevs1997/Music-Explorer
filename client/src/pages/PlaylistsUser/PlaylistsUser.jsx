@@ -34,6 +34,7 @@ function PlaylistsUser() {
   // stores the id of the playlist whose menu is open (or null)
   const [playlistMenu, setPlaylistMenu] = useState(null);
   console.log("user playlists: ", user.playlists);
+  console.log("user: ", user);
 
   async function handleAddPlaylist() {
     setShowCreateModal(false);
@@ -160,27 +161,22 @@ function PlaylistsUser() {
             </NavDropdown>
           </div>
           {showCreateModal && (
-       
-                <form>
-                  <label htmlFor="create">Playlist Name:</label>
-                    <input
-                      id="create"
-                      type="text"
-                      placeholder="Enter playlist name"
-                      value={playlistName}
-                      onChange={(e) => setPlaylistName(e.target.value)}
-                    />
-                    <Button
-                    onClick={() => setShowCreateModal(false)}
-                    type="cancel"
-                    >
-                      Close
-                    </Button>
-                    <Button onClick={handleAddPlaylist} type="select">
-                      Save changes
-                    </Button>
-                  </form>
-            
+            <form>
+              <label htmlFor="create">Playlist Name:</label>
+              <input
+                id="create"
+                type="text"
+                placeholder="Enter playlist name"
+                value={playlistName}
+                onChange={(e) => setPlaylistName(e.target.value)}
+              />
+              <Button onClick={() => setShowCreateModal(false)} type="cancel">
+                Close
+              </Button>
+              <Button onClick={handleAddPlaylist} type="select">
+                Save changes
+              </Button>
+            </form>
           )}
           {user.playlists.length > 0 ? (
             <ul>

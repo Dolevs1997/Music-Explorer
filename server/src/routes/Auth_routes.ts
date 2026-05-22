@@ -9,4 +9,5 @@ router.get("/logout", authController.logout);
 router.get("/refresh", authController.refreshToken);
 router.delete("/account", authenticate, authController.deleteAccount);
 router.put("/changePassword", authenticate, authController.changePassword);
+router.post("/googleLogin", authController.googleLogin);
 export default router;
