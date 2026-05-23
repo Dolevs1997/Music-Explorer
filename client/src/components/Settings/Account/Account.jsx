@@ -2,11 +2,11 @@ import { useState, useContext } from "react";
 import { changeUserPassword, deleteAccount } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
-import styles from "./AccountEdit.module.css";
 import propTypes from "prop-types";
-import ButtonComponent from "../../Button/Button"
-import EyeIconPassword from "../../EyeIconPassword/EyeIconPassword"
-function AccountEdit({ setSettingsView }) {
+import ButtonComponent from "../../Button/Button";
+import EyeIconPassword from "../../EyeIconPassword/EyeIconPassword";
+import "./Account.module.css";
+function Account({ setSettingsView }) {
   const { user, setUser } = useContext(UserContext);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -50,16 +50,16 @@ function AccountEdit({ setSettingsView }) {
       toast.error("New password must be at least 6 characters.");
       return;
     }
-    if(currentPassword === newPassword){
+    if (currentPassword === newPassword) {
       toast.error("New password must be different from current password.");
       return;
     }
     setPwLoading(true);
-    try{
+    try {
       const data = await changeUserPassword(user, currentPassword, newPassword);
       console.log("data: ", data);
       toast.success(data.message);
-    }catch(error){
+    } catch (error) {
       console.error("Error changing user password:", error);
       toast.error(error.message);
     }
@@ -123,47 +123,67 @@ function AccountEdit({ setSettingsView }) {
         {selectedPassword && !showDeleteModal && (
           <form className="settingsForm">
             <div className="passwordInputContainer">
-            <input
-              className="settingsInput"
-              type={showCurrentPassword ? "text" : "password"}
-              placeholder="Current password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              autoComplete="current-password"
+              <input
+                className="settingsInput"
+                type={showCurrentPassword ? "text" : "password"}
+                placeholder="Current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                autoComplete="current-password"
               />
-              <EyeIconPassword size={20} showPassword={showCurrentPassword} setShowPassword={setShowCurrentPassword}/>
-              </div>
+              <EyeIconPassword
+                size={20}
+                showPassword={showCurrentPassword}
+                setShowPassword={setShowCurrentPassword}
+              />
+            </div>
             <div className="passwordInputContainer">
-            <input
-              className="settingsInput"
-              type={showNewPassword ? "text" : "password"}
-              placeholder="New password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              autoComplete="new-password"
+              <input
+                className="settingsInput"
+                type={showNewPassword ? "text" : "password"}
+                placeholder="New password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                autoComplete="new-password"
               />
-              <EyeIconPassword size={20} showPassword={showNewPassword} setShowPassword={setShowNewPassword}/>
-              </div>
+              <EyeIconPassword
+                size={20}
+                showPassword={showNewPassword}
+                setShowPassword={setShowNewPassword}
+              />
+            </div>
             <div className="passwordInputContainer">
-            <input
-              className="settingsInput"
-              type={showConfirmNewPassword ? "text" : "password"}
-              placeholder="Confirm new password"
-              value={confirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)}
-              autoComplete="new-password"
+              <input
+                className="settingsInput"
+                type={showConfirmNewPassword ? "text" : "password"}
+                placeholder="Confirm new password"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                autoComplete="new-password"
               />
-              <EyeIconPassword size={20} showPassword={showConfirmNewPassword} setShowPassword={setShowConfirmNewPassword}/>
-              </div>
-            <button className="settingsBtn" type="button" disabled={pwLoading} onClick={handleChangePassword}>
+              <EyeIconPassword
+                size={20}
+                showPassword={showConfirmNewPassword}
+                setShowPassword={setShowConfirmNewPassword}
+              />
+            </div>
+            <button
+              className="settingsBtn"
+              type="button"
+              disabled={pwLoading}
+              onClick={handleChangePassword}
+            >
               {pwLoading ? "Saving..." : "Change Password"}
             </button>
-            <ButtonComponent type="cancel" onClick={() => {
-              setSelectedPassword(false)
-              setCurrentPassword("");
-              setNewPassword("");
-              setConfirmNewPassword("");
-              }}>
+            <ButtonComponent
+              type="cancel"
+              onClick={() => {
+                setSelectedPassword(false);
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmNewPassword("");
+              }}
+            >
               Cancel
             </ButtonComponent>
           </form>
@@ -176,7 +196,7 @@ function AccountEdit({ setSettingsView }) {
           be undone.
         </p>
         <button
-          className={styles.settingsBtnDanger}
+          className="settingsBtnDanger"
           onClick={() => setShowDeleteModal(true)}
         >
           Delete Account
@@ -184,14 +204,14 @@ function AccountEdit({ setSettingsView }) {
       </section>
       {/* Delete Confirmation Modal */}
       {showDeleteModal && !selectedPassword && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <h3 className={styles.modalTitle}>Delete Account</h3>
-            <p className={styles.modalText}>
+        <div className="modalOverlay">
+          <div className="modalContent">
+            <h3 className="modalTitle">Delete Account</h3>
+            <p className="modalText">
               Are you sure? This will permanently delete your account, all
               playlists, and listening history. This cannot be undone.
             </p>
-            <div className={styles.modalActions}>
+            <div className="modalActions">
               <button
                 className="settingsBtn"
                 onClick={() => setShowDeleteModal(false)}
@@ -200,7 +220,7 @@ function AccountEdit({ setSettingsView }) {
                 Cancel
               </button>
               <button
-                className={styles.settingsBtnDanger}
+                className="settingsBtnDanger"
                 onClick={handleDeleteAccount}
                 disabled={deleteLoading}
               >
@@ -213,7 +233,7 @@ function AccountEdit({ setSettingsView }) {
     </div>
   );
 }
-AccountEdit.propTypes = {
+Account.propTypes = {
   setSettingsView: propTypes.func,
 };
-export default AccountEdit;
+export default Account;
