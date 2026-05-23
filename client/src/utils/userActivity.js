@@ -64,9 +64,25 @@ const deleteSongsHistory = async (user) => {
         headers: { Authorization: `Bearer ${user.token}` },
       },
     );
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Error deleting songs history:", error);
+    throw error;
+  }
+};
+
+const addSongToHistory = async (user, song) => {
+  try {
+    const response = await axios.post(
+      `http://${SERVER_URL}/moodiify/userActivity/songsHistory?id=${user._id}`,
+      { song },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.error("Error adding song to history:", error);
     throw error;
   }
 };
@@ -76,4 +92,5 @@ export {
   changeUserPassword,
   deleteAccount,
   deleteSongsHistory,
+  addSongToHistory,
 };

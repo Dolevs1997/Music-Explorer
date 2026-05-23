@@ -1,5 +1,4 @@
 import SongSchema from "../schemas/Song_schema";
-import { addSongVideo } from "../models/Firestore/songVideo";
 import { fetchSong } from "../services/YouTube_service";
 import { Request, Response } from "express";
 
@@ -20,11 +19,10 @@ const getAll = async (req: Request, res: Response) => {
 
       return res.status(200).json(existingSong);
     }
-    const songVideo = {
-      title: songData.title,
-      videoId: videoId,
-    };
-    await addSongVideo(songVideo);
+    // const songVideo = {
+    //   title: songData.title,
+    //   videoId: videoId,
+    // };
 
     return res.status(200).json({
       song: songData.title,
