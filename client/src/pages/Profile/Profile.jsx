@@ -13,8 +13,9 @@ import { updateUserActivity } from "../../utils/userActivity";
 import { uploadImageToCloudinary } from "../../services/Cloudinary_service";
 import toast from "react-hot-toast";
 import Song from "../../components/Song/Song";
-import AccountEdit from "../../components/Settings/AccountEdit/AccountEdit";
+import Account from "../../components/Settings/Account/Account";
 import Preferences from "../../components/Settings/Preferences/Preferences";
+import Privacy from "../../components/Settings/Privacy/Privacy";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
 
@@ -176,7 +177,6 @@ function Profile() {
           </div>
 
           <div className={styles.profileMeta}>
-     
             <p className={styles.userEmail}>{user.email}</p>
 
             {avatarFile && (
@@ -204,10 +204,6 @@ function Profile() {
             <h3>{totalSongs}</h3>
             <p>Songs</p>
           </div>
-          <div className={styles.stat}>
-            <h3>{user.listeningTime || 0}</h3>
-            <p>Hours Listened</p>
-          </div>
         </div>
 
         {/* Tabs */}
@@ -221,7 +217,10 @@ function Profile() {
               <Tabs.Tab
                 className={activeTab === "playlists" ? styles.activeTab : ""}
                 id="playlists"
-                onClick={() => setActiveTab("playlists")}
+                onClick={() => {
+                  setActiveTab("playlists");
+                  setSettingsView("main");
+                }}
               >
                 Playlists
                 <Tabs.Indicator />
@@ -229,7 +228,10 @@ function Profile() {
               <Tabs.Tab
                 className={activeTab === "history" ? styles.activeTab : ""}
                 id="history"
-                onClick={() => setActiveTab("history")}
+                onClick={() => {
+                  setActiveTab("history");
+                  setSettingsView("main");
+                }}
               >
                 History
                 <Tabs.Indicator />
@@ -344,7 +346,7 @@ function Profile() {
                           <div className={styles.settingsCardIcon}>👤</div>
                         </Card.Content>
                         <Card.Description className={styles.settingsCardSub}>
-                          Password, display name, delete account
+                          Password, delete account
                         </Card.Description>
                       </Card>
                       <Card
@@ -358,7 +360,7 @@ function Profile() {
                           <div className={styles.settingsCardIcon}>🎵</div>
                         </Card.Content>
                         <Card.Description className={styles.settingsCardSub}>
-                          Default region, language
+                          Default region
                         </Card.Description>
                       </Card>
                       <Card
@@ -372,7 +374,7 @@ function Profile() {
                           <div className={styles.settingsCardIcon}>🔒</div>
                         </Card.Content>
                         <Card.Description className={styles.settingsCardSub}>
-                          Clear history, logout all devices
+                          Clear history
                         </Card.Description>
                       </Card>
                     </section>
@@ -385,10 +387,14 @@ function Profile() {
         {/* ── Account View ── */}
         <div>
           {settingsView === "account" && (
-            <AccountEdit setSettingsView={setSettingsView} />
+            <Account setSettingsView={setSettingsView} />
           )}
-          {settingsView === "preferences" && <Preferences setSettingsView={setSettingsView} />}
-          {/* {settingsView === "privacy" && <PrivacyEdit />} */}
+          {settingsView === "preferences" && (
+            <Preferences setSettingsView={setSettingsView} />
+          )}
+          {settingsView === "privacy" && (
+            <Privacy setSettingsView={setSettingsView} />
+          )}
         </div>
       </div>
     </div>

@@ -55,4 +55,25 @@ const deleteAccount = async (user) => {
     throw error;
   }
 };
-export { updateUserActivity, changeUserPassword, deleteAccount };
+
+const deleteSongsHistory = async (user) => {
+  try {
+    const response = await axios.delete(
+      `http://${SERVER_URL}/moodiify/userActivity/songsHistory?id=${user._id}`,
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting songs history:", error);
+    throw error;
+  }
+};
+
+export {
+  updateUserActivity,
+  changeUserPassword,
+  deleteAccount,
+  deleteSongsHistory,
+};

@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { UserModel } from "../schemas/User_schema";
-import { getRecentSongVideos } from "../models/Firestore/songVideo";
+import {
+  getRecentSongVideos,
+  deleteAllSongs,
+} from "../models/Firestore/songVideo";
 const update = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
   const { activity } = req.body;
@@ -49,4 +52,26 @@ const getHistorySongs = async (req: Request, res: Response) => {
   }
 };
 
-export default { update, getHistorySongs };
+const deleteHistorySongs = async (req: Request, res: Response) => {
+  const userId = req.query.id as string;
+  console.log("user id: ", userId);
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Implement the logic to delete history songs for the user
+    await deleteAllSongs();
+    return res
+      .status(200)
+      .json({ message: "History songs deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting history songs:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export default { update, getHistorySongs, deleteHistorySongs };

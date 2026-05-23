@@ -57,24 +57,24 @@ body {
 }
 
 .login {
-  border:1px solid var(--color-text);
+  border: 1px solid var(--color-text);
   border-radius: 30px;
-  padding:7px 20px 7px 20px;
+  padding: 7px 20px 7px 20px;
   margin: 10px 0 10px 0;
 }
-.login span{
+.login span {
   color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
 }
-.login img{
+.login img {
   width: 18px;
   height: 18px;
   border-radius: 50%;
 }
-.login:hover{
+.login:hover {
   transform: scale(1.01);
   transition: transform 0.5s ease-in-out;
 }
@@ -135,7 +135,7 @@ form {
   align-items: center;
   justify-content: center;
   padding: 0;
-  }
+}
 form input {
   padding: 10px;
   border-radius: 5px;
@@ -176,7 +176,7 @@ h2 {
 h2:hover {
   cursor: pointer;
 }
-.pageTitle{
+.pageTitle {
   margin-bottom: 50px;
 }
 ul {
@@ -238,7 +238,7 @@ ul {
   padding-top: 150px;
 }
 
-.settingsSection{
+.settingsSection {
   display: flex;
   flex-direction: column;
   gap: 20px;
