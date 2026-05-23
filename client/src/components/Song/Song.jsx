@@ -16,6 +16,7 @@ import Form from "react-bootstrap/Form";
 import Button from "../Button/Button";
 import toast, { Toaster } from "react-hot-toast";
 import UserContext from "../../Contexts/UserContext";
+import { addSongToHistory } from "../../utils/userActivity";
 // import { Spinner } from "../../components/ui/spinner";
 
 // import { generateImagePlaylist } from "../../services/OpenAI_service";
@@ -92,11 +93,6 @@ function Song({
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
   const { user, setUser } = useContext(UserContext);
-
-  // const { setUser } = useContext(UserContext);
-  // const user = JSON.parse(localStorage.getItem("user")) || null;
-
-  // console.log("user:", user);
   if (!user.token) {
     navigate("/login");
   }
@@ -108,7 +104,12 @@ function Song({
   if (user.playlists.length === 0) {
     user.playlists = [];
   }
-
+  console.log("song: ", song);
+  console.log("song ref: ", songRef);
+  async function handlePlaySong() {
+    await addSongToHistory(user, songRef.current);
+    dispatch({ type: "PLAY", payload: { playing: true } });
+  }
   async function handleAddSongToPlaylist(playlist) {
     const response = await addSongToPlaylist(song, state, user, playlist);
     if (response.status == 200) toast.success(`${response.data.message}`);
@@ -370,9 +371,7 @@ function Song({
             videoId={state.videoId}
             title={state.title}
             opts={opts}
-            onPlay={() => {
-              dispatch({ type: "PLAY", payload: { playing: true } });
-            }}
+            onPlay={handlePlaySong}
             onPause={() => {
               dispatch({ type: "PAUSE", payload: { playing: false } });
             }}

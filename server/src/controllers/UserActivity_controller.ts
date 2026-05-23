@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
 import { UserModel } from "../schemas/User_schema";
+import SongModel from "../schemas/Song_schema";
+import PlaylistModel from "../schemas/Playlist_schema";
 import {
   getRecentSongVideos,
   deleteAllSongs,
+  addSongVideo,
 } from "../models/Firestore/songVideo";
 const update = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
@@ -65,6 +68,8 @@ const deleteHistorySongs = async (req: Request, res: Response) => {
     }
     // Implement the logic to delete history songs for the user
     await deleteAllSongs();
+    await PlaylistModel.updateMany({ user: userId }, { $set: { songs: [] } });
+    await SongModel.deleteMany();
     return res
       .status(200)
       .json({ message: "History songs deleted successfully" });
@@ -74,4 +79,20 @@ const deleteHistorySongs = async (req: Request, res: Response) => {
   }
 };
 
-export default { update, getHistorySongs, deleteHistorySongs };
+const addHistorySong = async (req: Request, res: Response) => {
+  const userId = req.query.id as string;
+  console.log("user id: ", userId);
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  const { song } = req.body;
+  console.log("song: ", song);
+  const songVideo = {
+    title: song.song,
+    videoId: song.videoId,
+  };
+  await addSongVideo(songVideo);
+  return res.status(200).json({ message: "History song added successfully" });
+};
+
+export default { update, getHistorySongs, deleteHistorySongs, addHistorySong };

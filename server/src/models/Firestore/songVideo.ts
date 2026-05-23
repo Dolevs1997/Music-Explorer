@@ -15,7 +15,7 @@ export type SongVideo = {
 };
 
 const addSongVideo = async (songVideo: SongVideo) => {
-  // console.log("Adding song video:", songVideo);
+  console.log("Adding song video:", songVideo);
   try {
     // Check if the song video already exists
     const songVideoQuery = query(

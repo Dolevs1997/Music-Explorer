@@ -2,6 +2,7 @@ import propTypes from "prop-types";
 import { useState, useContext } from "react";
 import { deleteSongsHistory } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
+import toast from "react-hot-toast";
 
 function Privacy({ setSettingsView }) {
   const [deleteSongsModal, setDeleteSongsModal] = useState(false);
@@ -10,10 +11,18 @@ function Privacy({ setSettingsView }) {
 
   async function handleDeleteSongsHistory() {
     setDeleteLoading(true);
-    await deleteSongsHistory(user);
-    const updatedPlaylists = user.playlists.filter((p) => p.songs);
-    const updatedUser = { ...user, playlists: updatedPlaylists };
-    setUser(updatedUser);
+    try {
+      await deleteSongsHistory(user);
+      const updatedPlaylists = user.playlists.filter((p) => p.songs);
+      const updatedUser = { ...user, playlists: updatedPlaylists };
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Error deleting history songs: ", error.message);
+      toast.error("Error with deleting user history songs");
+    } finally {
+      setDeleteLoading(false);
+      setDeleteSongsModal(false);
+    }
   }
   return (
     <div>
@@ -32,7 +41,7 @@ function Privacy({ setSettingsView }) {
       {deleteSongsModal && (
         <div className="modalOverlay">
           <div className="modalContent">
-            <h3 className="modalTitle">Delete Account</h3>
+            <h3 className="modalTitle">Delete All History Songs</h3>
             <p className="modalText">
               Are you sure? This will permanently delete your history songs
             </p>

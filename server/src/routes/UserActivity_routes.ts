@@ -4,7 +4,16 @@ import { authenticate } from "../middlewares/auth_middleware";
 const router = express.Router();
 
 router.put("/update", authenticate, UserActivityController.update);
-router.get("/history", authenticate, UserActivityController.getHistorySongs);
+router.get(
+  "/songsHistory",
+  authenticate,
+  UserActivityController.getHistorySongs,
+);
+router.post(
+  "/songsHistory",
+  authenticate,
+  UserActivityController.addHistorySong,
+);
 router.delete(
   "/songsHistory",
   authenticate,
