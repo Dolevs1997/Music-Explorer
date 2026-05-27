@@ -72,6 +72,8 @@ const deleteSongsHistory = async (user) => {
 };
 
 const addSongToHistory = async (user, song) => {
+  console.log("Adding song to history:", song);
+  console.log("User data:", user);
   try {
     const response = await axios.post(
       `http://${SERVER_URL}/moodiify/userActivity/songsHistory?id=${user._id}`,

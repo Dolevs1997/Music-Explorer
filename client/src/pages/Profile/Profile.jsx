@@ -136,7 +136,6 @@ function Profile() {
 
   const currentAvatar =
     avatarPreview || user.avatar || "public/default-avatar-user.jpg";
-
   return (
     <div className="app-container">
       <header className="header">
