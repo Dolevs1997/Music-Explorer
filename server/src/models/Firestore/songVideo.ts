@@ -7,40 +7,54 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../config/firebase_config";
-
+import { admin, db } from "../../config/firebase_config";
 export type SongVideo = {
   title: string;
   videoId: string;
 };
 
-const addSongVideo = async (songVideo: SongVideo) => {
-  console.log("Adding song video:", songVideo);
+const addSongVideo = async (userId: string, songVideo: SongVideo) => {
   try {
-    // Check if the song video already exists
-    const songVideoQuery = query(
-      collection(db, "song-video"),
-      where("song", "==", songVideo.title),
-      where("videoId", "==", songVideo.videoId),
-    );
-    const querySnapshot = await getDocs(songVideoQuery);
-    if (!querySnapshot.empty) {
-      // console.log("Song video already exists:", querySnapshot.docs[0].id);
+    const col = admin.firestore().collection(`users/${userId}/song-video`);
+    const snapshot = await col
+      .where("song", "==", songVideo.title)
+      .where("videoId", "==", songVideo.videoId)
+      .get();
+    if (!snapshot.empty) {
       return; // Song video already exists, no need to add
     }
-    const docRef = await addDoc(collection(db, "song-video"), {
+    // // Check if the song video already exists
+    // const songVideoQuery = query(
+    //   collection(db, `users/${userId}/song-video`),
+    //   where("song", "==", songVideo.title),
+    //   where("videoId", "==", songVideo.videoId),
+    // );
+    // const querySnapshot = await getDocs(songVideoQuery);
+    // console.log("Query snapshot size: ", querySnapshot.size);
+    // if (!querySnapshot.empty) {
+    //   // console.log("Song video already exists:", querySnapshot.docs[0].id);
+    //   return; // Song video already exists, no need to add
+    // }
+    const docRef = await col.add({
       song: songVideo.title,
       videoId: songVideo.videoId,
-      createdAt: new Date(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     console.log("Song video added with ID: ", docRef.id);
   } catch (error) {
     console.error("Error adding song video:", error);
   }
 };
-const getRecentSongVideos = async (limit: number) => {
+const getRecentSongVideos = async (userId: string, limit: number) => {
   try {
-    const querySnapshot = await getDocs(collection(db, "song-video"));
+    const col = admin.firestore().collection(`users/${userId}/song-video`);
+    const querySnapshot = await col
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get();
+    // const querySnapshot = await getDocs(
+    //   collection(db, `users/${userId}/song-video`),
+    // );
     const allSongs: SongVideo[] = querySnapshot.docs.map((doc) => ({
       title: doc.data().song,
       videoId: doc.data().videoId,
@@ -58,10 +72,14 @@ const getRecentSongVideos = async (limit: number) => {
   }
 };
 
-const deleteAllSongs = async () => {
-  const querySnapshot = await getDocs(collection(db, "song-video"));
+const deleteAllSongs = async (userId: string) => {
+  const col = admin.firestore().collection(`users/${userId}/song-video`);
+  const querySnapshot = await col.get();
+  // const querySnapshot = await getDocs(
+  //   collection(db, `users/${userId}/song-video`),
+  // );
   for (const song of querySnapshot.docs) {
-    await deleteDoc(doc(db, "song-video", song.id));
+    await deleteDoc(doc(db, `users/${userId}/song-video`, song.id));
   }
 };
 

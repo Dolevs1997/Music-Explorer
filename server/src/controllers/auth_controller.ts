@@ -22,19 +22,19 @@ import Song_schema from "../schemas/Song_schema";
 const googleLogin = async (req: Request, res: Response) => {
   const auth = getAuth();
   const { idToken } = req.body;
-  console.log("Received Google ID token:", idToken);
+  // console.log("Received Google ID token:", idToken);
   const credential = GoogleAuthProvider.credential(idToken);
   const userCredential = await signInWithCredential(auth, credential);
   // console.log("Google sign-in successful:", userCredential);
   const firebaseUser = userCredential.user;
-  console.log("Google sign-in successful, user info:", {
-    uid: firebaseUser.uid,
-    email: firebaseUser.email,
-    photoURL: firebaseUser.photoURL,
-  });
+  // console.log("Google sign-in successful, user info:", {
+  //   uid: firebaseUser.uid,
+  //   email: firebaseUser.email,
+  //   photoURL: firebaseUser.photoURL,
+  // });
   // console.log("Firebase user from Google sign-in:", firebaseUser);
   let dbUser = await UserModel.findOne({ email: firebaseUser.email });
-  console.log("User found in database:", dbUser);
+  // console.log("User found in database:", dbUser);
   if (!dbUser) {
     dbUser = new UserModel({
       uid: firebaseUser.uid,
@@ -62,8 +62,8 @@ const googleLogin = async (req: Request, res: Response) => {
 
 const register = async (req: Request, res: Response) => {
   const { email, password, country } = req.body;
-  console.log("Registering user with email:", email);
-  console.log("user country:", country);
+  // console.log("Registering user with email:", email);
+  // console.log("user country:", country);
   if (!password) {
     return res.status(400).send("BAD REQUEST: Password is required");
   }
@@ -210,12 +210,10 @@ const login = async (req: Request, res: Response) => {
         // Signed in
         if (!userCredential.user.emailVerified) {
           await sendEmailVerification(userCredential.user, actionCodeSettings);
-          return res
-            .status(403)
-            .json({
-              message: "FORBIDDEN: Please verify your email before logging in.",
-              resentVerification: true,
-            });
+          return res.status(403).json({
+            message: "FORBIDDEN: Please verify your email before logging in.",
+            resentVerification: true,
+          });
         }
         const userAuth = userCredential.user;
         console.log("User signed in to Firebase Auth:", user);
@@ -349,7 +347,7 @@ const deleteAccount = async (req: Request, res: Response) => {
         if (foundUser.uid) {
           await admin.auth().deleteUser(foundUser.uid);
         }
-        await deleteAllSongs();
+        await deleteAllSongs(foundUser._id.toString());
         // Delete all user's playlists from MongoDB
         await PlaylistSchema.deleteMany({ user: foundUser._id });
         // Delete all songs in those playlists from MongoDB

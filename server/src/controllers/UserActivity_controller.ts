@@ -7,6 +7,7 @@ import {
   deleteAllSongs,
   addSongVideo,
 } from "../models/Firestore/songVideo";
+import { admin } from "../config/firebase_config";
 const update = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
   const { activity } = req.body;
@@ -47,7 +48,8 @@ const getHistorySongs = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const recentSongs = await getRecentSongVideos(50);
+    const uid = user._id.toString();
+    const recentSongs = await getRecentSongVideos(uid, 50);
     return res.status(200).json({ recentSongs });
   } catch (error) {
     console.error("Error retrieving user activity:", error);
@@ -67,7 +69,8 @@ const deleteHistorySongs = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
     // Implement the logic to delete history songs for the user
-    await deleteAllSongs();
+    const uid = user._id.toString();
+    await deleteAllSongs(uid);
     await PlaylistModel.updateMany({ user: userId }, { $set: { songs: [] } });
     await SongModel.deleteMany();
     return res
@@ -85,14 +88,29 @@ const addHistorySong = async (req: Request, res: Response) => {
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  // console.log("user: ", user);
+  const uid = user._id.toString();
+  // console.log("uid: ", uid);
   const { song } = req.body;
   console.log("song: ", song);
   const songVideo = {
     title: song.song,
     videoId: song.videoId,
   };
-  await addSongVideo(songVideo);
-  return res.status(200).json({ message: "History song added successfully" });
+  const idToken = req.header("Authorization")?.split(" ")[1];
+  if (!idToken) {
+    return res.status(401).json({ message: "Authorization token is required" });
+  }
+  try {
+    await addSongVideo(uid, songVideo);
+    return res.status(200).json({ message: "History song added successfully" });
+  } catch (error) {
+    console.error("Error adding history song:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
-
 export default { update, getHistorySongs, deleteHistorySongs, addHistorySong };
