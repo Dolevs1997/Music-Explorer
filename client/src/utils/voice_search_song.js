@@ -28,8 +28,7 @@ async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
       reject("User data or token is missing");
       return;
     }
-    console.log("Voice search activated");
-    console.log("userData in voice search:", userData);
+
     const recognition = voiceSearchSong();
 
     let finalTranscript = "";
@@ -68,13 +67,11 @@ async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
 
     recognition.onend = async () => {
       clearTimeout(stopTimer);
-      console.log("Speech recognition ended");
       const transcript = finalTranscript.trim();
       if (!transcript) {
         reject("No speech detected or transcript empty");
         return;
       }
-      console.log("Recognized text:", transcript);
       const payload = {
         content: transcript,
         role: "user",
@@ -82,7 +79,6 @@ async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
 
       try {
         const response = await getSongSuggestions(payload, userData.token);
-        console.log("response: \n", response);
         resolve(response);
         setResultVoice(response);
       } catch (error) {

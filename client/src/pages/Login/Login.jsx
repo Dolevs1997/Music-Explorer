@@ -17,9 +17,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   async function handleSuccess(credentialResponse) {
-    console.log("Login Success:", credentialResponse);
     const idToken = credentialResponse.credential;
-    console.log("idToken: ", idToken);
     try {
       const response = await axios.post(
         `http://${SERVER_URL}/auth/googleLogin`,
@@ -30,7 +28,6 @@ function Login() {
           },
         },
       );
-      console.log("response", response);
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
         setUser(response.data);
@@ -43,9 +40,6 @@ function Login() {
       toast.error("Google login failed! Please try again.");
     }
   }
-  const handleError = () => {
-    console.log("Login Failed");
-  };
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -128,7 +122,7 @@ function Login() {
           </Button>
         </Link>
 
-        <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+        <GoogleLogin onSuccess={handleSuccess} />
 
         <p>
           Don&apos;t have an account? {""}

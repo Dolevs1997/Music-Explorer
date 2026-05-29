@@ -22,20 +22,7 @@ function Account({ setSettingsView }) {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
-  // async function handleUpdateDisplayName(e) {
-  //   e.preventDefault();
-  //   if (!displayName.trim()) {
-  //     toast.error("Display name cannot be empty.");
-  //     return;
-  //   }
-  //   try {
-  //     await updateUserActivity(user, { displayName: displayName.trim() });
-  //     setUser({ ...user, displayName: displayName.trim() });
-  //     toast.success("Display name updated!");
-  //   } catch {
-  //     toast.error("Failed to update display name.");
-  //   }
-  // }
+
   async function handleChangePassword(e) {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmNewPassword) {
@@ -57,7 +44,6 @@ function Account({ setSettingsView }) {
     setPwLoading(true);
     try {
       const data = await changeUserPassword(user, currentPassword, newPassword);
-      console.log("data: ", data);
       toast.success(data.message);
     } catch (error) {
       console.error("Error changing user password:", error);
@@ -89,29 +75,7 @@ function Account({ setSettingsView }) {
         ‹ Back
       </button>
       <h2 className="panelTitle">Account</h2>
-      {/* Display Name
-      <section className="settingsSection">
-        <h3
-          className="settingsSectionTitle"
-          onClick={() => setSelectedDisplayName((prev) => !prev)}
-        >
-          Display Name
-        </h3>
-        {selectedDisplayName && !selectedPassword && !showDeleteModal && (
-          <form onSubmit={handleUpdateDisplayName} className="settingsForm">
-            <input
-              className="settingsInput"
-              type="text"
-              placeholder="Enter display name"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-            />
-            <button className="settingsBtn" type="submit">
-              Update Name
-            </button>
-          </form>
-        )}
-      </section> */}
+
       {/* Change Password */}
       <section className="settingsSection">
         <h3

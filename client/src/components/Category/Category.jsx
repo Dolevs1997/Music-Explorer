@@ -35,7 +35,6 @@ function Category({ category, token, country, location }) {
       });
     } else {
       toast.error("Error fetching playlists. Please try again.");
-      console.log("Error fetching playlists:", data.message);
       console.error("Error fetching playlists:", data.message);
     }
   }

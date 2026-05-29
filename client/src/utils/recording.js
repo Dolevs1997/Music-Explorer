@@ -1,9 +1,6 @@
 let mediaRecorder;
 let audioChunks = [];
 export async function handleStartRecording() {
-  console.log("Recording started");
-
-  // event.preventDefault();
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   mediaRecorder = new MediaRecorder(stream);
   mediaRecorder.ondataavailable = (event) => {
@@ -20,7 +17,6 @@ export async function handleStopRecording(
 ) {
   audioChunks = [];
   let songRecognized = "";
-  console.log("Stopping recording...");
 
   mediaRecorder.stop();
   mediaRecorder.onstop = async () => {
@@ -40,8 +36,6 @@ export async function handleStopRecording(
     );
 
     const data = await res.json();
-    console.log("Response from server:", data);
-    console.log(data);
 
     if (data.error) {
       console.error("Error:", data.error);
@@ -51,7 +45,7 @@ export async function handleStopRecording(
     }
 
     songRecognized = data.artists[0].name + " - " + data.title;
-    console.log("Song recognized:", songRecognized);
+
     setSongSuggestions([songRecognized]);
     setProccessRecording(false);
     setResultRecord(data);

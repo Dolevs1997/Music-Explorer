@@ -19,14 +19,15 @@ function Categories({ formVisible }) {
   const country = params.country || userData?.country?.shortName || "US";
 
   const [currentLocation, setCurrentLocation] = useState(
-    location.state?.locationName || userData?.country?.fullName  || "United States",
+    location.state?.locationName ||
+      userData?.country?.fullName ||
+      "United States",
   );
-  // console.log("current location: ", currentLocation);
+
   // Determine locale based on country code
   console.log("user: ", userData);
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
-  // console.log("user token in Categories:", user);
   useEffect(() => {
     if (userData == null) navigate("/login");
   });
@@ -39,7 +40,6 @@ function Categories({ formVisible }) {
   useEffect(
     function () {
       async function fetchGenres() {
-        // console.log("fetching generes");
         try {
           const response = await axios.get(
             `http://${SERVER_URL}/moodiify/categories/getAll?limit=${limit}&locale=${locale}`,

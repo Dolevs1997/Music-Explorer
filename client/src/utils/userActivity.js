@@ -1,7 +1,6 @@
 import axios from "axios";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const updateUserActivity = async (user, fields) => {
-  console.log("fields: ", fields);
   try {
     const response = await axios.put(
       `http://${SERVER_URL}/moodiify/userActivity/update?id=${user._id}`,
@@ -72,8 +71,6 @@ const deleteSongsHistory = async (user) => {
 };
 
 const addSongToHistory = async (user, song) => {
-  console.log("Adding song to history:", song);
-  console.log("User data:", user);
   try {
     const response = await axios.post(
       `http://${SERVER_URL}/moodiify/userActivity/songsHistory?id=${user._id}`,

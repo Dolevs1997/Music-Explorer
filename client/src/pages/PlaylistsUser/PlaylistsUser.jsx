@@ -15,10 +15,8 @@ import { toast } from "react-hot-toast";
 import { removePlaylist, createPlaylist } from "../../utils/playlist.js";
 import UserContext from "../../Contexts/UserContext.jsx";
 import styles from "./PlaylistsUser.module.css";
-// Dropdown removed: using custom menu
 
 function PlaylistsUser() {
-  // const user = JSON.parse(localStorage.getItem("user"));
   const [modalOverlay, setModalOverlay] = useState(false);
   const [file, setFile] = useState(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -31,10 +29,7 @@ function PlaylistsUser() {
   const { user, setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
-  // stores the id of the playlist whose menu is open (or null)
   const [playlistMenu, setPlaylistMenu] = useState(null);
-  console.log("user playlists: ", user.playlists);
-  console.log("user: ", user);
 
   async function handleAddPlaylist() {
     setShowCreateModal(false);
@@ -45,7 +40,6 @@ function PlaylistsUser() {
         playlists: [...user.playlists, result.data.playlist],
       };
       setUser(updatedUser);
-      console.log("user playlists: ", user.playlists);
 
       toast.success(`${result.data.message}`);
     } else toast.error(`${result.data.message}`);
@@ -53,9 +47,8 @@ function PlaylistsUser() {
 
   async function handleRemovePlaylist(playlistId) {
     try {
-      const data = await removePlaylist(playlistId, user);
+      await removePlaylist(playlistId, user);
 
-      console.log("Delete playlist response data:", data);
       const updatedPlaylists = user.playlists.filter(
         (p) => p.id !== playlistId && p._id !== playlistId,
       );
@@ -99,9 +92,7 @@ function PlaylistsUser() {
 
   async function handleChangeImage(e) {
     // Handle image selection and upload logic here
-    console.log("selected playlist: ", selectedPlaylist);
     const selectedImage = e.target.files[0];
-    console.log("selectedImage: ", selectedImage);
     if (selectedImage && selectedImage.type.startsWith("image/")) {
       setFile(selectedImage);
     } else {
@@ -116,10 +107,8 @@ function PlaylistsUser() {
     }
     const formData = new FormData();
     formData.append("image", file);
-    // console.log(formData.get("image"));
     try {
       const data = await updatePlaylist(selectedPlaylist, formData, user);
-      console.log("Playlist updated with new image:", data.playlist);
       // Update the user state with the new playlist data
       const updatedUser = {
         ...user,
@@ -227,7 +216,6 @@ function PlaylistsUser() {
                     <span
                       onClick={() => {
                         const id = playlist._id || playlist.id;
-                        console.log("playlist menu click", id);
                         setSelectedPlaylist(playlist);
                         setPlaylistMenu((prev) => (prev === id ? null : id));
                       }}
@@ -313,7 +301,6 @@ function PlaylistsUser() {
                     <CardBody
                       className="overflow-visible py-2"
                       onClick={() => {
-                        console.log("clicked");
                         navigate(
                           `/myplaylists/${playlist._id || playlist.id}`,
                           {
@@ -394,7 +381,6 @@ function PlaylistsUser() {
                                 { prompt: input },
                                 user,
                               );
-                              console.log("data: ", data);
                               // update user/playlist in context
                               const updatedUser = {
                                 ...user,
@@ -405,10 +391,7 @@ function PlaylistsUser() {
                                 ),
                               };
                               setUser(updatedUser);
-                              // localStorage.setItem(
-                              //   "user",
-                              //   JSON.stringify(user),
-                              // );
+
                               toast.success("Playlist image generated!");
                               setShowForm(false);
                             } catch (err) {

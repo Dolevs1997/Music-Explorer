@@ -118,7 +118,6 @@ function Profile() {
   }
   // ── History
   function handlePlaySong(song) {
-    console.log({ ...song });
     // Reset first so Song unmounts and remounts fresh for the new song
     setPlayingVideoId(null);
     setSongTitle(null);

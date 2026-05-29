@@ -26,7 +26,6 @@ function App() {
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  // console.log("user at App: ", user);
 
   useEffect(() => {
     document.title = "Moodiify | Home";

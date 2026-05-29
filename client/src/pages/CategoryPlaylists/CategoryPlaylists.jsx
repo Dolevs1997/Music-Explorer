@@ -6,16 +6,13 @@ import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
-// import UserContext from "../../Contexts/UserContext";
-// import { getStoredUser } from "../../global/StoredUser";
-// import { SearchContext } from "../../Contexts/SearchContext";
+
 function CategoryPlaylists() {
   const navigate = useNavigate();
   const location = useLocation();
   const [playlistsCategory, setPlaylistsCategory] = useState([]);
   const [categoryName, setCategoryName] = useState("Category");
-  // const user = getStoredUser();
-  // const searchContext = useContext(SearchContext);
+
   useEffect(() => {
     document.title = "Moodiify | Category Playlists";
   }, []);

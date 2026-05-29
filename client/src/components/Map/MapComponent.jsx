@@ -1,9 +1,9 @@
 import { APIProvider, Map, InfoWindow } from "@vis.gl/react-google-maps";
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import Button from "../Button/Button";
 import { useNavigate } from "react-router";
 import PoiMarker from "./Marker";
-import countryList from 'react-select-country-list'
+import countryList from "react-select-country-list";
 import UserContext from "../../Contexts/UserContext";
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;
@@ -16,12 +16,10 @@ function MapComponent() {
   const [dialogLocation, setDialogLocation] = useState("");
   const [locationName, setLocationName] = useState("United States");
   const [countryShortName, setCountryShortName] = useState("US");
-    const options = countryList().getData();
-  const {user} = useContext(UserContext);
+  const options = countryList().getData();
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  console.log("user: ", user.country.fullName);
   async function handleMapClick(mapProps) {
-    console.log("Map clicked:", mapProps);
     const lat = mapProps.detail.latLng.lat;
     const lng = mapProps.detail.latLng.lng;
     setShowDialog(true);
@@ -31,18 +29,11 @@ function MapComponent() {
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`,
     );
     const data = await result.json();
-    console.log("Geocode data:", data);
     setCountryShortName(
       data.results[data.results.length - 1].address_components[0].short_name,
     );
     const formattedAddress =
       data.results[data.results.length - 1].formatted_address;
-    // console.log("Geocode data:", data);
-    // console.log(
-    //   "Formatted Address:",
-    //   data.results[data.results.length - 1].formatted_address
-    // );
-    // console.log("Short Name:", shortName.current);
     setLocationName(formattedAddress);
   }
   async function geocode(address) {
@@ -61,14 +52,10 @@ function MapComponent() {
       setShowDialog(true);
       setDialogLocation(location);
       setLocationName(formattedAddress);
-      console.log("Location found:", location);
-    } else {
-      console.log("No results found");
     }
   }
   function handleLocationSelect(location) {
     // Handle location selection
-    console.log("Location selected:", location);
     setSelectedLocation(location);
     navigate(`/global/categories/${countryShortName}`, {
       state: { locationName: locationName, isMapVisible: false },
@@ -84,27 +71,28 @@ function MapComponent() {
       </div>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
-        <select
-          value={user?.country?.fullName}
-          className="settingsInput"
-          onChange={(e) => {
-            const selectedName = options.find((opt) => opt.value === e.target.value)?.label || "";
-            setLocationName(selectedName);
-            geocode(selectedName);
-          }}
-        
-          style={{
-            width: "300px",
-            height: "30px",
-          }}
+          <select
+            value={user?.country?.fullName}
+            className="settingsInput"
+            onChange={(e) => {
+              const selectedName =
+                options.find((opt) => opt.value === e.target.value)?.label ||
+                "";
+              setLocationName(selectedName);
+              geocode(selectedName);
+            }}
+            style={{
+              width: "300px",
+              height: "30px",
+            }}
           >
-              <option>Select Country</option>
-                        {options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-        </select>
+            <option>Select Country</option>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
         <Map
           mapId={MAP_ID}

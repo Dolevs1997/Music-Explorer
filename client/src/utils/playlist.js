@@ -1,11 +1,5 @@
 import axios from "axios";
 async function addSongToPlaylist(song, state, user, playlist) {
-  console.log("Adding song to playlist:", {
-    song: song,
-    videoId: state.videoId,
-    user,
-    playlistId: playlist._id || playlist.id,
-  });
   const response = await axios.post(
     `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/addSong?id=${playlist._id || playlist.id}`,
     {
@@ -20,10 +14,6 @@ async function addSongToPlaylist(song, state, user, playlist) {
       },
     },
   );
-  console.log("response: ", response);
-  // if (!Array.isArray(user.playlists)) {
-  //   user.playlists = [];
-  // }
 
   return response;
 }
@@ -77,9 +67,6 @@ async function removePlaylist(playlistId, user) {
 }
 
 async function updatePlaylist(playlist, updatedData, user) {
-  console.log("updatedData: ", updatedData);
-  console.log("user", user);
-
   if (updatedData instanceof FormData) {
     const response = await axios.put(
       `http://${import.meta.env.VITE_SERVER_URL}/moodiify/playlist/?id=${
