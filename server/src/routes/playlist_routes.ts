@@ -2,11 +2,9 @@ import express from "express";
 import playlistController from "../controllers/playlist_controller";
 import { authenticate } from "../middlewares/auth_middleware";
 import { validateToken } from "../middlewares/SpotifyTokens";
-// import { uploadMiddleware } from "../middlewares/upload_middleware";
 import multer from "multer";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-// import { auth } from "../config/firebase_config";
 const router = express.Router();
 
 router.post(

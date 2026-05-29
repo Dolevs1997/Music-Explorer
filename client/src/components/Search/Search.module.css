@@ -1,6 +1,7 @@
 .searchBar {
   display: flex;
   gap: 10px;
+  z-index: 100;
 }
 
 .searchBar img {
@@ -15,6 +16,7 @@
 .searchBar img:active {
   transform: scale(0.9);
 }
+
 .recordingSpinner {
   cursor: pointer;
   display: flex;

@@ -13,8 +13,6 @@ interface Message {
   content: string;
 }
 const SongSuggestions = async (text: Message) => {
-  console.log("text: ", text);
-
   const completion = await openai.chat.completions.create({
     model: "gpt-4.1",
     temperature: 0.0,
@@ -35,10 +33,8 @@ const SongSuggestions = async (text: Message) => {
     ],
     store: true,
   });
-  console.log("completion message: \n", completion.choices[0].message.content);
 
   const suggestions: string | null = completion.choices[0].message.content;
-  console.log("suggestions: ", suggestions);
   if (!suggestions) {
     return [];
   }
@@ -56,7 +52,6 @@ const SongSuggestionsVoice = async () => {
     file: fs.createReadStream("/path/to/file/audio.mp3"),
     model: "gpt-4o-transcribe",
   });
-  console.log("transcription: ", transcription.text);
   if (!transcription.text) {
     throw new Error("Transcription failed");
   }
@@ -64,18 +59,15 @@ const SongSuggestionsVoice = async () => {
     role: "user",
     content: transcription.text,
   });
-  console.log("songSuggestions: ", songSuggestions);
 
   return songSuggestions;
 };
 
 const generatePlaylistPicture = async (prompt: string) => {
-  console.log("prompt: ", prompt);
   const result = await openai.images.generate({
     model: "gpt-image-1.5",
     prompt,
   });
-  console.log("result: ", result);
   if (!result.data || result.data.length === 0) {
     throw new Error("Image generation failed");
   }

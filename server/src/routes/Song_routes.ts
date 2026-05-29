@@ -11,17 +11,9 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-// const { uploadMiddleware } = require("../middlewares/upload_middleware");
-
-// const upload = multer({ dest: "uploads/" }); // For parsing multipart/form-data in memory
-
-// Existing route
-// router.get("/", authenticate, songController.getVideo);
-
 router.get("/song", authenticate, songController.getById);
 router.delete("/song/:videoId", authenticate, songController.deletebyVideoId);
 
-// New route for recognition
 router.post(
   "/recognize-audio",
   authenticate,

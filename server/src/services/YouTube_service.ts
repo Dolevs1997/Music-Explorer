@@ -241,7 +241,6 @@ async function fetchSong(song: string, country = "US") {
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    console.log("data", data);
     if (!data || !data.items || data.items.length === 0) {
       throw new Error("No videos found for the given artist and songName");
     }
@@ -285,9 +284,7 @@ async function fetchPlaylistSongs(
   // Check cache first
   const cached = await getCachedSongPlaylist(playlistId, country);
   if (cached) return cached;
-
-  console.log("Fetching Spotify playlist tracks for:", playlistId);
-
+  
   try {
     // Spotify returns max 100 tracks per request
     // We use offset pagination to get all tracks
@@ -308,9 +305,7 @@ async function fetchPlaylistSongs(
       }
 
       const data = await response.json();
-      console.log("data", data);
       total = data.total;
-      console.log("total", total);
       const pageTracks = data.items
         .filter((item: any) => {
           // Skip null tracks (can happen with local files or removed tracks)

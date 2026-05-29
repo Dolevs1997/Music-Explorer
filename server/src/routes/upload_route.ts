@@ -11,10 +11,7 @@ uploadRouter.post(
   upload.single("image"),
   async (req, res) => {
     try {
-      console.log("Received file upload request");
-      // console.log(req);
       const file = req.file;
-      console.log("filePath: ", file);
       if (!file) {
         return res
           .status(400)
@@ -22,7 +19,6 @@ uploadRouter.post(
       }
       const { data } = await uploadToCloudinary(file.buffer, file.originalname);
       const imageUrl = data?.secure_url;
-      console.log("imageUrl: ", imageUrl);
       if (!imageUrl) {
         return res
           .status(500)

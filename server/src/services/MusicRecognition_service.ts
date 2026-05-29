@@ -39,8 +39,6 @@ function sign(signString: string, accessSecret: string) {
 function identify(data: Buffer, options: Options, cb: Function) {
   var current_data = new Date();
   var timestamp = current_data.getTime() / 1000;
-  console.log("options:", options);
-  console.log("data received:", data);
   var stringToSign = buildStringToSign(
     "POST",
     options.endpoint,
@@ -49,10 +47,8 @@ function identify(data: Buffer, options: Options, cb: Function) {
     options.signature_version,
     timestamp
   );
-  console.log("String to sign:", stringToSign);
 
   var signature = sign(stringToSign, options.access_secret);
-  console.log("Signature:", signature);
   // const blobData = new Blob([data], { type: "application/octet-stream" });
   // console.log("Blob data created:", blobData);
   var form = new FormData();
@@ -66,13 +62,11 @@ function identify(data: Buffer, options: Options, cb: Function) {
   form.append("signature_version", options.signature_version);
   form.append("signature", signature);
   form.append("timestamp", timestamp);
-  console.log("Form data prepared:", form);
   axios
     .post("http://" + options.host + options.endpoint, form, {
       headers: form.getHeaders(),
     })
     .then((response) => {
-      console.log("ACRCloud response:", response.data);
       cb(null, response.data);
     })
     .catch((error) => {
@@ -80,11 +74,6 @@ function identify(data: Buffer, options: Options, cb: Function) {
       cb(error, null);
     });
 
-  //fetch("http://"+options.host + options.endpoint,
-  //      {method: 'POST', body: form })
-  //      .then((res) => {return res.text()})
-  //      .then((res) => {cb(res, null)})
-  //      .catch((err) => {cb(null, err)});
 }
 
 export default identify;

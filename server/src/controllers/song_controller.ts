@@ -10,14 +10,12 @@ import { uploadAudioToCloudinary } from "../services/Cloudniary_service";
 dotenv.config();
 
 const getById = async (req: Request, res: Response) => {
-  // console.log("GetById called with query:", req.query);
   const { id } = req.query;
   if (!id) {
     return res.status(400).json({ error: "Please provide id in query params" });
   }
   try {
     const song = await SongSchema.findOne({ videoId: id });
-    // console.log("Fetched song by ID:", song);
     res.status(200).json(song);
   } catch (err) {
     console.error("Error fetching song by ID:", err);
@@ -26,16 +24,12 @@ const getById = async (req: Request, res: Response) => {
 };
 
 const recognizeAudio = async (req: Request, res: Response) => {
-  // console.log("request body: ", req.body);
-  // console.log("request file: ", req.file);
   if (!req.file) {
     return res.status(400).json({ error: "Audio file missing" });
   }
   await uploadAudioToCloudinary(req.file.buffer, req.file.originalname);
   const data: Buffer = req.file.buffer;
-  // console.log("options:", defaultOptions);
-  // console.log(req.file);
-  // let data: Buffer = fs.readFileSync(req.file.path);
+
   if (!data) {
     return res.status(400).json({ error: "Audio file location missing" });
   }
@@ -53,27 +47,20 @@ const recognizeAudio = async (req: Request, res: Response) => {
       }
       // Process the recognized music data
       const musicInfo = body.metadata.music[0];
-      console.log("Recognized music info:", musicInfo);
       res.status(200).json(musicInfo);
     },
   );
 };
 
 const deletebyVideoId = async (req: Request, res: Response) => {
-  // console.log("DeletebyVideoId called with params:", req.params);
   const { videoId } = req.params;
   const user = req.body.user;
   const playlistId = req.body.playlistId;
   if (!videoId || !user || !playlistId) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  // const userRef = await getUser(user.email);
-  // if (!userRef || userRef.error) {
-  //   console.error("Error retrieving user from Firestore:", userRef.error);
-  //   return res.status(500).json({ message: "Error retrieving user data" });
-  // }
+
   const playlist = await PlaylistSchema.findById(playlistId);
-  // const playlistRef = await getPlaylistUser(playlist.name, userRef);
   if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
@@ -82,11 +69,7 @@ const deletebyVideoId = async (req: Request, res: Response) => {
     if (!song) {
       return res.status(404).json({ message: "Song not found" });
     }
-    // console.log("handling Firestore deletion for song:", song);
-    // const deletedSong = await deleteSongUser(song, playlistRef, userRef);
-    // if (!deletedSong) {
-    //   return res.status(404).json({ message: "Song not found in user songs" });
-    // }
+
     // If the song is in multiple playlists, just remove it from this playlist
     song.playlists = song.playlists.filter(
       (pid) => pid.toString() !== playlistId.toString(),
