@@ -12,7 +12,6 @@ async function getSongSuggestions(payload, token) {
         },
       },
     );
-    // console.log("response: \n", response);
     return response.data;
   } catch (error) {
     console.error("Error fetching song suggestions:", error);
@@ -32,7 +31,6 @@ async function generateImagePlaylist(prompt, token) {
       },
     },
   );
-  // console.log("response: ", response);
   return response.data;
 }
 

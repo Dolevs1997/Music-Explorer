@@ -8,7 +8,6 @@ export function UserProvider({ children }) {
 
   const updateUser = (newUser) => {
     setUser(newUser);
-    console.log("newUser", newUser);
     if (newUser) localStorage.setItem("user", JSON.stringify(newUser));
     else localStorage.removeItem("user");
   };

@@ -33,7 +33,6 @@ export default function Search() {
   const [resultRecord, setResultRecord] = useState(null);
   const [resultVoice, setResultVoice] = useState(null);
 
-  // console.log("secondsLeft:", secondsLeft);
   useEffect(() => {
     setSecondsLeft(10);
   }, []);

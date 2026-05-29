@@ -17,7 +17,6 @@ function SongsPlaylistUser() {
   const { playlistId } = useParams();
   const location = useLocation();
   let playlist = location.state?.playlist;
-  console.log(user.playlists);
   const [songs, setSongs] = useState(location.state?.songs || []);
   if (!playlist) {
     console.error("Playlist not found for ID:", playlistId);
@@ -25,10 +24,7 @@ function SongsPlaylistUser() {
   if (!user) {
     console.error("User not found in local storage or state.");
   }
-  // console.log("playlist", playlist);
   function handleRemoveSong(removedSong, videoId) {
-    console.log("removedSong: ", removedSong);
-    console.log("videoId: ", videoId);
     // Update local songs state
     setSongs((prevSongs) =>
       prevSongs.filter(
@@ -69,17 +65,11 @@ function SongsPlaylistUser() {
           throw new Error("Failed to fetch playlist songs");
         }
         const data = await response.json();
-        // console.log("Fetched playlist songs data:", data);
         setSongs(
           data.songs.map((songObj) => {
-            // console.log("songObj: ", songObj);
             return songObj.song;
           }),
         );
-
-        // setSongs(() => data.map((song) => song.song));
-        // setSongs(data.playlist.songs.song || []);
-        // console.log("songs", songs);
       } catch (error) {
         console.error("Error fetching playlist songs:", error);
       }

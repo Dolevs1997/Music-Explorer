@@ -99,13 +99,10 @@ function Song({
   if (!user.playlists) {
     user.playlists = [];
     localStorage.setItem("user", JSON.stringify(user));
-    console.log("No playlists found, initializing user.playlists");
   }
   if (user.playlists.length === 0) {
     user.playlists = [];
   }
-  console.log("song: ", song);
-  console.log("song ref: ", songRef);
   async function handlePlaySong() {
     await addSongToHistory(user, songRef.current);
     dispatch({ type: "PLAY", payload: { playing: true } });
@@ -115,7 +112,6 @@ function Song({
     if (response.status == 200) toast.success(`${response.data.message}`);
     else if (response.status != 200) toast.error(`${response.data.message}`);
     const data = response.data;
-    console.log("data: ", data);
 
     try {
       dispatch({
@@ -183,7 +179,6 @@ function Song({
           return;
         }
         if (songRef.current && songRef.current.videoId != undefined) {
-          console.log("Using cached song data");
           dispatch({
             type: "SET_VIDEO_SONG",
             payload: {
@@ -197,7 +192,6 @@ function Song({
         }
         if (!state.error) {
           try {
-            console.log("fetching song video id");
             const data = await fetchSongYT(song, country, user);
             songRef.current = data;
             if (data.videoId != undefined)
@@ -226,15 +220,13 @@ function Song({
   );
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
-    const data = await removeSongFromPlaylist(videoId, user, playlistId);
-    console.log("Removed song from playlist:", data);
+    await removeSongFromPlaylist(videoId, user, playlistId);
     try {
       if (onRemoveSong) {
         onRemoveSong(song, videoId);
 
         toast.success("Song removed from playlist");
       } else {
-        console.log("onRemoveSong:", onRemoveSong);
         console.warn("onRemoveSong is undefined!");
       }
 
@@ -385,7 +377,6 @@ function Song({
               className={styles.thumbnail}
               loading="lazy"
               onClick={() => {
-                console.log("Clicked to play videoId:", state.videoId);
                 setPlayingVideoId(state.videoId);
               }}
             />

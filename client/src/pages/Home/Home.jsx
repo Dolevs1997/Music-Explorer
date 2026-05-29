@@ -25,7 +25,6 @@ export default function Home({ user }) {
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
 
-  // console.log("user at home: ", user);
   // Add inactivity detection
   useInactivity(30 * 60 * 1000, () => {
     // 30 minutes
@@ -36,7 +35,7 @@ export default function Home({ user }) {
   useEffect(() => {
     document.title = "Moodiify | Home";
   }, []);
-  
+
   useEffect(() => {
     if (isMapVisible) {
       navigate("/global");

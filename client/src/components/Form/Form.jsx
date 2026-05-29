@@ -10,7 +10,6 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
   const [text, setText] = useState("I want you to generate ");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  console.log("Form Component");
   const user = JSON.parse(localStorage.getItem("user"));
   if (!user) {
     toast.error("Please login to continue.");

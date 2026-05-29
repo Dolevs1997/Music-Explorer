@@ -22,11 +22,8 @@ function Register() {
   const [countryShortName, setCountryShortName] = useState("");
   const [countryFullName, setCountryFullName] = useState("");
   const options = countryList().getData();
-  console.log("country Short Name: ", countryShortName);
-  console.log("country Full Name: ", countryFullName);
-  const handleRegisteration = async (e) => {
-    console.log(countryShortName);
 
+  const handleRegisteration = async (e) => {
     e.preventDefault();
     if (!email || !password || !confirmPassword || !countryShortName) {
       toast.error("Please fill in all fields");
@@ -56,7 +53,6 @@ function Register() {
         },
       },
     );
-    console.log("response", response);
     if (response.status == 200) {
       toast.success("Registration successful! Redirecting to login...");
       setTimeout(() => {
@@ -65,8 +61,6 @@ function Register() {
     } else if (response.status == 409) {
       toast.error("User already exists! Please login.");
     } else if (response.status == 400) {
-      const data = response.data;
-      console.log("Bad request data:", data);
       toast.error("Bad request! Please check your input.");
     } else toast.error("Registration failed! Please try again.");
   };

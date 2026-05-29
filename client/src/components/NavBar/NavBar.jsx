@@ -11,8 +11,6 @@ function NavBar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
-  // console.log("user: ", user);
-
   async function handleLogout() {
     try {
       const response = await axios.get(
