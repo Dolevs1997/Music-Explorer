@@ -7,11 +7,9 @@ import {
   deleteAllSongs,
   addSongVideo,
 } from "../models/Firestore/songVideo";
-import { admin } from "../config/firebase_config";
 const update = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
   const { activity } = req.body;
-  console.log("activity: ", activity);
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
@@ -24,7 +22,6 @@ const update = async (req: Request, res: Response) => {
       { $set: activity },
       { new: true },
     );
-    console.log("user: ", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -39,7 +36,6 @@ const update = async (req: Request, res: Response) => {
 
 const getHistorySongs = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
-  console.log("user id: ", userId);
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
@@ -59,7 +55,6 @@ const getHistorySongs = async (req: Request, res: Response) => {
 
 const deleteHistorySongs = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
-  console.log("user id: ", userId);
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
@@ -84,7 +79,6 @@ const deleteHistorySongs = async (req: Request, res: Response) => {
 
 const addHistorySong = async (req: Request, res: Response) => {
   const userId = req.query.id as string;
-  console.log("user id: ", userId);
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
   }
@@ -92,11 +86,8 @@ const addHistorySong = async (req: Request, res: Response) => {
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
-  // console.log("user: ", user);
   const uid = user._id.toString();
-  // console.log("uid: ", uid);
   const { song } = req.body;
-  console.log("song: ", song);
   const songVideo = {
     title: song.song,
     videoId: song.videoId,

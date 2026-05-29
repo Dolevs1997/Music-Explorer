@@ -1,12 +1,4 @@
-import {
-  addDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { admin, db } from "../../config/firebase_config";
 export type SongVideo = {
   title: string;
@@ -23,18 +15,7 @@ const addSongVideo = async (userId: string, songVideo: SongVideo) => {
     if (!snapshot.empty) {
       return; // Song video already exists, no need to add
     }
-    // // Check if the song video already exists
-    // const songVideoQuery = query(
-    //   collection(db, `users/${userId}/song-video`),
-    //   where("song", "==", songVideo.title),
-    //   where("videoId", "==", songVideo.videoId),
-    // );
-    // const querySnapshot = await getDocs(songVideoQuery);
-    // console.log("Query snapshot size: ", querySnapshot.size);
-    // if (!querySnapshot.empty) {
-    //   // console.log("Song video already exists:", querySnapshot.docs[0].id);
-    //   return; // Song video already exists, no need to add
-    // }
+
     const docRef = await col.add({
       song: songVideo.title,
       videoId: songVideo.videoId,
@@ -52,9 +33,7 @@ const getRecentSongVideos = async (userId: string, limit: number) => {
       .orderBy("createdAt", "desc")
       .limit(limit)
       .get();
-    // const querySnapshot = await getDocs(
-    //   collection(db, `users/${userId}/song-video`),
-    // );
+
     const allSongs: SongVideo[] = querySnapshot.docs.map((doc) => ({
       title: doc.data().song,
       videoId: doc.data().videoId,
@@ -75,9 +54,6 @@ const getRecentSongVideos = async (userId: string, limit: number) => {
 const deleteAllSongs = async (userId: string) => {
   const col = admin.firestore().collection(`users/${userId}/song-video`);
   const querySnapshot = await col.get();
-  // const querySnapshot = await getDocs(
-  //   collection(db, `users/${userId}/song-video`),
-  // );
   for (const song of querySnapshot.docs) {
     await deleteDoc(doc(db, `users/${userId}/song-video`, song.id));
   }

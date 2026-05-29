@@ -17,7 +17,6 @@ export const uploadToCloudinary = async (
             console.error("Cloudinary upload error: ", error);
             return reject(error);
           }
-          console.log("Cloudinary upload result: ", result);
           return resolve({ data: result });
         },
       );
@@ -50,7 +49,6 @@ export const uploadAudioToCloudinary = async (
             console.error("Cloudinary upload error: ", error);
             return reject(error);
           }
-          console.log("Cloudinary upload result: ", result);
           return resolve({ data: result });
         },
       );

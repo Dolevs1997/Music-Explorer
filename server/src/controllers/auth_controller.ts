@@ -22,19 +22,10 @@ import Song_schema from "../schemas/Song_schema";
 const googleLogin = async (req: Request, res: Response) => {
   const auth = getAuth();
   const { idToken } = req.body;
-  // console.log("Received Google ID token:", idToken);
   const credential = GoogleAuthProvider.credential(idToken);
   const userCredential = await signInWithCredential(auth, credential);
-  // console.log("Google sign-in successful:", userCredential);
   const firebaseUser = userCredential.user;
-  // console.log("Google sign-in successful, user info:", {
-  //   uid: firebaseUser.uid,
-  //   email: firebaseUser.email,
-  //   photoURL: firebaseUser.photoURL,
-  // });
-  // console.log("Firebase user from Google sign-in:", firebaseUser);
   let dbUser = await UserModel.findOne({ email: firebaseUser.email });
-  // console.log("User found in database:", dbUser);
   if (!dbUser) {
     dbUser = new UserModel({
       uid: firebaseUser.uid,
@@ -62,8 +53,6 @@ const googleLogin = async (req: Request, res: Response) => {
 
 const register = async (req: Request, res: Response) => {
   const { email, password, country } = req.body;
-  // console.log("Registering user with email:", email);
-  // console.log("user country:", country);
   if (!password) {
     return res.status(400).send("BAD REQUEST: Password is required");
   }
@@ -138,7 +127,6 @@ const register = async (req: Request, res: Response) => {
 
         sendEmailVerification(userAuth, actionCodeSettings)
           .then(async () => {
-            console.log("Verification email sent to:", userAuth.email);
             const user = new UserModel({
               uid: userAuth.uid,
               email: email,
@@ -156,9 +144,6 @@ const register = async (req: Request, res: Response) => {
               .status(500)
               .send("INTERNAL SERVER ERROR: " + error.message);
           });
-
-        // console.log("User created in Firebase Auth:", user);
-        // console.log("Firebase Auth user creation successful:", userAuth.uid);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -202,7 +187,6 @@ const login = async (req: Request, res: Response) => {
     const user = await UserModel.findOne({ email: email }).populate(
       "playlists",
     );
-    // console.log("user found in database:", user);
     if (!user) return res.status(404).send("NOT FOUND: User does not exist");
     const auth = getAuth(app);
     signInWithEmailAndPassword(auth, email, password)
@@ -216,17 +200,11 @@ const login = async (req: Request, res: Response) => {
           });
         }
         const userAuth = userCredential.user;
-        console.log("User signed in to Firebase Auth:", user);
         const isEmailValid = userSchemaZod.safeParse({
           email: userAuth.email,
         });
         if (!isEmailValid.success)
           return res.status(400).send("BAD REQUEST: Invalid user data");
-        // const userFirestore = await getUser(email);
-        // if (!userFirestore)
-        //   return res
-        //     .status(404)
-        //     .send("NOT FOUND: User does not exist in Firestore");
 
         const tokens = await generateTokens(user);
         res.status(200).json({
@@ -339,7 +317,6 @@ const deleteAccount = async (req: Request, res: Response) => {
       if (err) return res.sendStatus(403);
 
       try {
-        console.log("Decoded token for account deletion:", decoded.id);
         const foundUser = await UserModel.findById(decoded.id);
         if (!foundUser) return res.sendStatus(404);
 
@@ -356,7 +333,6 @@ const deleteAccount = async (req: Request, res: Response) => {
         });
         // Delete the user from MongoDB
         await foundUser.deleteOne();
-        console.log("Account deleted successfully");
         res.sendStatus(204);
       } catch (error: any) {
         console.error("Error deleting account:", error);

@@ -10,9 +10,6 @@ import { generatePlaylistPicture } from "../services/OpenAI_service";
 const updatePlaylist = async (req: Request, res: Response) => {
   // Implementation for updating a playlist
   const { id } = req.query;
-  console.log("req.body: ", req.body);
-  // console.log("file: ", req.file);
-  // console.log("Updating playlist with ID:", id);
   const playlist = await PlaylistSchema.findById(id);
 
   if (!playlist) {
@@ -20,14 +17,9 @@ const updatePlaylist = async (req: Request, res: Response) => {
   }
   if (req.file) {
     try {
-      console.log("Received file upload request");
-      // console.log(req);
       const file = req.file;
-      console.log("filePath: ", file);
-
       const { data } = await uploadToCloudinary(file.buffer, file.originalname);
       const imageUrl = data?.secure_url;
-      console.log("imageUrl: ", imageUrl);
       if (!imageUrl) {
         return res
           .status(500)
@@ -44,7 +36,6 @@ const updatePlaylist = async (req: Request, res: Response) => {
 
       // Save base64 to Cloudinary
       const image_base64 = result.data[0].b64_json;
-      // console.log("result: ", result);
       if (!result.data || result.data.length === 0 || !image_base64) {
         throw new Error("Image generation failed");
       }
@@ -56,7 +47,6 @@ const updatePlaylist = async (req: Request, res: Response) => {
         `playlist-${id}-${Date.now()}.png`,
       );
       playlist.imageUrl = data?.secure_url;
-      console.log("playlist imageUrl: ", playlist.imageUrl);
       await playlist.save();
       return res
         .status(200)
@@ -103,13 +93,6 @@ const createPlaylist = async (req: Request, res: Response) => {
 
   // If the playlist does not exist, create a new one
   else {
-    console.log("Creating new playlist:", playlistName);
-    // //generate image for playlist: //
-    // const description = `generate an image for playlist ${playlistName} music, I want it to be match the playlist name`;
-
-    // const response = await generatePlaylistPicture(description);
-    // console.log("response: ", response);
-
     newPlaylist = new PlaylistSchema({
       name: playlistName,
       user: userId,
@@ -132,7 +115,6 @@ const createPlaylist = async (req: Request, res: Response) => {
 const addSongToPlaylist = async (req: Request, res: Response) => {
   const { song, videoId } = req.body;
   const playlistId = req.query.id;
-  console.log("addSongToPlaylist called with:", song, videoId, playlistId);
   if (!song || !videoId || !playlistId) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -183,27 +165,20 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
 };
 
 const getPlaylistSongs = async (req: Request, res: Response) => {
-  // console.log("Getting playlist songs");
-  // console.log("Request query ID:", req.query.id);
-
   const playlistId = req.query.id;
   try {
     const playlistObject = await PlaylistSchema.findById(playlistId);
-    // console.log("Playlist object:", playlistObject);
     if (!playlistObject) {
       return res.status(404).json({ message: "Playlist not found" });
     }
     const userId: Types.ObjectId = playlistObject.user;
     const userObject = await UserModel.findById(userId);
-    // console.log("User object:", userObject);
     if (!userObject) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const playlist =
       await PlaylistSchema.findById(playlistId).populate("songs");
-    console.log("Playlist with populated songs:", playlist);
-
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
     }
@@ -215,7 +190,6 @@ const getPlaylistSongs = async (req: Request, res: Response) => {
 };
 const deletePlaylist = async (req: Request, res: Response) => {
   const playlistId = req.query.id;
-  console.log("Deleting playlist with ID:", playlistId);
   try {
     const playlist = await PlaylistSchema.findByIdAndDelete(playlistId);
     if (!playlist) {

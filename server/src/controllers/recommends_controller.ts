@@ -4,9 +4,6 @@ import { Request, Response } from "express";
 
 const getAll = async (req: Request, res: Response) => {
   const { song, country } = req.query;
-  // console.log("request:", req.token);
-  // const result =
-  // console.log("recommends_controller");
   try {
     const songData = await fetchSong(song as string, country as string);
     if (!songData) {
@@ -15,14 +12,8 @@ const getAll = async (req: Request, res: Response) => {
     const videoId = songData.videoId;
     const existingSong = await SongSchema.findOne({ videoId: videoId });
     if (existingSong) {
-      // console.log("Song already exists in the database:", existingSong);
-
       return res.status(200).json(existingSong);
     }
-    // const songVideo = {
-    //   title: songData.title,
-    //   videoId: videoId,
-    // };
 
     return res.status(200).json({
       song: songData.title,

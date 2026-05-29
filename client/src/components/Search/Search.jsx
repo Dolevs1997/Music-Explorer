@@ -12,7 +12,7 @@ import MicrophoneAnimation from "../../components/icons/MicrophoneAnimation";
 import { Spinner } from "../../components/ui/spinner";
 import Form from "../Form/Form";
 import { Toaster, toast } from "react-hot-toast";
-
+import TooltipComponent from "../TooltipComponent";
 export default function Search() {
   const {
     formVisible,
@@ -32,6 +32,7 @@ export default function Search() {
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
   const [resultRecord, setResultRecord] = useState(null);
   const [resultVoice, setResultVoice] = useState(null);
+
   // console.log("secondsLeft:", secondsLeft);
   useEffect(() => {
     setSecondsLeft(10);
@@ -98,87 +99,93 @@ export default function Search() {
             </div>
           </span>
         )}
-
-        {!isRecording && (
-          <span
-            onClick={() => {
-              setIsRecording(true);
-              setProccessRecording(true);
-              handleStartRecording();
-              setIsVoiceSearch(false);
-              setIsMapVisible(false);
-              setFormVisible(false);
-            }}
-          >
-            <img src="/moodiify/record_i.png" />
-            {proccessRecording && (
-              <div className={styles.recordingSpinner}>
-                <Spinner />
-                Proccessing...
-              </div>
-            )}
-          </span>
-        )}
+        <TooltipComponent text="Identify song (currently works only for spotify)">
+          {!isRecording && (
+            <span
+              onClick={() => {
+                setIsRecording(true);
+                setProccessRecording(true);
+                handleStartRecording();
+                setIsVoiceSearch(false);
+                setIsMapVisible(false);
+                setFormVisible(false);
+              }}
+            >
+              <img src="/moodiify/record_i.png" />
+              {proccessRecording && (
+                <div className={styles.recordingSpinner}>
+                  <Spinner />
+                  Proccessing...
+                </div>
+              )}
+            </span>
+          )}
+        </TooltipComponent>
         {isVoiceSearch && (
           <MicrophoneAnimation setIsVoiceSearch={setIsVoiceSearch} />
         )}
-
-        {!isVoiceSearch && (
+        <TooltipComponent text="searching song by voice">
+          {!isVoiceSearch && (
+            <span
+              onClick={async () => {
+                setIsVoiceSearch(true);
+                setProccessVoiceSearch(true);
+                const response = await handleVoiceSearch(
+                  userData,
+                  10000,
+                  setResultVoice,
+                );
+                if (!response) return;
+                console.log("response from voice search:", response);
+                setProccessVoiceSearch(false);
+                setSongSuggestions(response);
+                setIsVoiceSearch(false);
+                setIsMapVisible(false);
+                setIsRecording(false);
+                setFormVisible(false);
+                navigate("/home");
+              }}
+            >
+              <img src="/moodiify/mic_i.png" />
+              {proccessVoiceSearch && (
+                <div className={styles.recordingSpinner}>
+                  <Spinner />
+                  Proccessing...
+                </div>
+              )}
+            </span>
+          )}
+        </TooltipComponent>
+        <TooltipComponent text="searching song by text">
+          <span>
+            {formVisible && (
+              <Form
+                setSongSuggestions={setSongSuggestions}
+                setFormVisible={setFormVisible}
+                formVisible={formVisible}
+              />
+            )}
+            <img
+              src="/moodiify/chat_i.png"
+              onClick={() => {
+                setIsVoiceSearch(false);
+                setIsRecording(false);
+                setIsMapVisible(false);
+                setFormVisible(!formVisible);
+              }}
+            />
+          </span>
+        </TooltipComponent>
+        <TooltipComponent text="explore global songs">
           <span
-            onClick={async () => {
-              setIsVoiceSearch(true);
-              setProccessVoiceSearch(true);
-              const response = await handleVoiceSearch(
-                userData,
-                10000,
-                setResultVoice,
-              );
-              if (!response) return;
-              console.log("response from voice search:", response);
-              setProccessVoiceSearch(false);
-              setSongSuggestions(response);
-              setIsVoiceSearch(false);
-              setIsMapVisible(false);
-              setIsRecording(false);
-              setFormVisible(false);
-              navigate("/home");
+            onClick={() => {
+              setIsMapVisible(!isMapVisible);
+              navigate("/global");
             }}
           >
-            <img src="/moodiify/mic_i.png" />
-            {proccessVoiceSearch && (
-              <div className={styles.recordingSpinner}>
-                <Spinner />
-                Proccessing...
-              </div>
-            )}
+            <img src="/moodiify/earth_i.png" />
           </span>
-        )}
-        <span>
-          {formVisible && (
-            <Form
-              setSongSuggestions={setSongSuggestions}
-              setFormVisible={setFormVisible}
-              formVisible={formVisible}
-            />
-          )}
-          <img
-            src="/moodiify/chat_i.png"
-            onClick={() => {
-              setIsVoiceSearch(false);
-              setIsRecording(false);
-              setIsMapVisible(false);
-              setFormVisible(!formVisible);
-            }}
-          />
-        </span>
-        <span
-          onClick={() => {
-            setIsMapVisible(!isMapVisible);
-            navigate("/global");
-          }}
-        >
-          <img src="/moodiify/earth_i.png" />
-        </span>
+        </TooltipComponent>
       </div>
       <Toaster />
     </>

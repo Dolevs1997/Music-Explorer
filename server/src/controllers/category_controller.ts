@@ -27,7 +27,7 @@ const getById = async (req: Request, res: Response) => {
   const name = req.query.name;
   const country = req.query.country || "US";
   const locationName = req.query.location || "United States";
-    const spotifyToken = req.headers["spotify-token"] as string;
+  const spotifyToken = req.headers["spotify-token"] as string;
 
   if (!name) {
     return res
@@ -38,7 +38,7 @@ const getById = async (req: Request, res: Response) => {
     name as string,
     country as string,
     locationName as string,
-    spotifyToken
+    spotifyToken,
   );
   if (!result) {
     return res.status(400).json({ error: "No playlists found" });
@@ -50,10 +50,6 @@ const getPlaylistSongs = async (req: Request, res: Response) => {
   const playlistId = req.query.id as string;
   const country = (req.query.country as string) || "US";
   const spotifyToken = req.headers["spotify-token"] as string;
-  console.log("getPlaylistSongs called:");
-  console.log("  playlistId:", playlistId);
-  console.log("  country:", country);
-  console.log("  spotifyToken present:", spotifyToken);
   if (!playlistId) {
     return res.status(400).json({ error: "Playlist ID is required" });
   }
