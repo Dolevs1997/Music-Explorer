@@ -32,6 +32,7 @@ function SongsPlaylist() {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
+        // console.log("data: ", data);
         setPlaylist(data);
       } catch (error) {
         console.error("Error fetching playlist:", error);
@@ -64,6 +65,7 @@ function SongsPlaylist() {
                   playingVideoId={playingVideoId}
                   setPlayingVideoId={setPlayingVideoId}
                   playlistId={playlistId}
+                  spotifyUrl={song?.spotifyUrl}
                 />
               ))}
             </ul>

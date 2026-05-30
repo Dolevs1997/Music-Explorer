@@ -24,10 +24,10 @@ function NavBar() {
       );
       if (response.status === 204) {
         setUser(null);
-        toast.success("Logout successful! Redirecting to login...");
         setTimeout(() => {
           navigate("/login");
         }, 2000);
+        toast.success("Logout successful! Redirecting to login...");
       }
     } catch (error) {
       console.error("Error during logout:", error);

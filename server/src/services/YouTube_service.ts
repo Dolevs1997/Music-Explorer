@@ -94,7 +94,6 @@ const SPOTIFY_GENRE_PLAYLISTS: Record<string, string[]> = {
     "37i9dQZF1DX4SBhb3fqCJd", // Are & Be
     "37i9dQZF1DX0h0QhwldIlP", // R&B Hits
   ],
-
 };
 
 // Resolve which genre keywords match a given category name
@@ -119,19 +118,25 @@ async function fetchPlaylists(
   spotifyToken: string,
 ): Promise<any[]> {
   const genreIds = resolveGenreIds(playlistName);
-  console.log("playlist name: ", playlistName);
-  console.log("country playlist: ", country);
+
   let results: any[] = [];
 
   // Always search for localized playlists first
-  console.log(`Fetching localized Spotify playlists for genre: ${playlistName} in ${location}`);
-  const searchResults = await fetchSpotifyPlaylistsBySearch(playlistName, country, location, spotifyToken);
+  const searchResults = await fetchSpotifyPlaylistsBySearch(
+    playlistName,
+    country,
+    location,
+    spotifyToken,
+  );
   results = [...searchResults];
 
   if (genreIds) {
     // ── Option 2: hardcoded editorial playlists ────────────────────────────
-    console.log(`Using hardcoded Spotify playlists for genre: ${playlistName}`);
-    const hardcodedResults = await fetchSpotifyPlaylistsByIds(genreIds, country, spotifyToken);
+    const hardcodedResults = await fetchSpotifyPlaylistsByIds(
+      genreIds,
+      country,
+      spotifyToken,
+    );
 
     // Add hardcoded playlists that aren't already in the results
     const existingIds = new Set(results.map((r) => r.id));
@@ -151,17 +156,14 @@ async function fetchSpotifyPlaylistsByIds(
   country: string,
   token: string,
 ): Promise<any[]> {
-  const fetchPromises = ids.map((id) =>
-  {
-    console.log("id: ", id);
+  const fetchPromises = ids.map((id) => {
     return fetch(
       `https://api.spotify.com/v1/playlists/${id}?market=${country}&fields=id,name,description,images,owner,tracks.total`,
       { headers: { Authorization: `Bearer ${token}` } },
     )
-    .then((res) => res.json())
-    .catch(() => null);
-  }
-  );
+      .then((res) => res.json())
+      .catch(() => null);
+  });
 
   const results = await Promise.all(fetchPromises);
 
@@ -211,7 +213,8 @@ async function fetchSpotifyPlaylistsBySearch(
       // Basic relevance filter — skip if genre not mentioned anywhere
       const title = (playlist.name || "").toLowerCase();
       const description = (playlist.description || "").toLowerCase();
-      if (!title.includes(genreLower) && !description.includes(genreLower)) return;
+      if (!title.includes(genreLower) && !description.includes(genreLower))
+        return;
 
       unique.set(playlist.id, {
         id: playlist.id,
@@ -244,16 +247,16 @@ async function fetchSong(song: string, country = "US") {
     if (!data || !data.items || data.items.length === 0) {
       throw new Error("No videos found for the given artist and songName");
     }
-    
+
     // Find first search result that actually contains a videoId
     const itemWithVideo = data.items.find(
       (it: any) => it && it.id && it.id.videoId,
     );
-   
+
     if (itemWithVideo) {
       const videoId = itemWithVideo.id.videoId;
       const title = itemWithVideo.snippet?.title ?? "";
-      if(!videoId || !title){
+      if (!videoId || !title) {
         throw new Error("No videos with videoId found for the given query");
       }
       // Only cache and return if we have a videoId
@@ -280,11 +283,10 @@ async function fetchPlaylistSongs(
 ): Promise<any[]> {
   if (!playlistId) throw new Error("Playlist ID is required");
   if (!spotifyToken) throw new Error("Spotify token is required");
-
   // Check cache first
   const cached = await getCachedSongPlaylist(playlistId, country);
   if (cached) return cached;
-  
+
   try {
     // Spotify returns max 100 tracks per request
     // We use offset pagination to get all tracks
@@ -292,6 +294,7 @@ async function fetchPlaylistSongs(
     let offset = 0;
     const limit = 50;
     let total = Infinity;
+    const uniqueTrackIds = new Set<string>();
 
     while (tracks.length < total) {
       const response = await fetch(
@@ -300,14 +303,26 @@ async function fetchPlaylistSongs(
       );
 
       if (!response.ok) {
-        console.error("Error fetching Spotify playlist tracks:", response.statusText);
-        throw new Error(`Failed to fetch playlist tracks: ${response.statusText}`);
+        console.error(
+          "Error fetching Spotify playlist tracks:",
+          response.statusText,
+        );
+        throw new Error(
+          `Failed to fetch playlist tracks: ${response.statusText}`,
+        );
       }
 
       const data = await response.json();
+      for (const item of data.items) {
+        console.log("Fetched track from Spotify:", item);
+      }
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {
+          console.log("track id: ", item?.track?.id);
+          if (uniqueTrackIds.has(item?.track.id)) return false;
+          uniqueTrackIds.add(item?.track.id);
+
           // Skip null tracks (can happen with local files or removed tracks)
           if (!item?.track) return false;
           if (!item.track.id) return false;
