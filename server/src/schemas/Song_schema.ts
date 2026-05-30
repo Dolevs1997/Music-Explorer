@@ -8,6 +8,8 @@ const SongSchema = new mongoose.Schema({
   videoId: {
     type: String,
     required: false,
+    unique: true,
+    sparse: true,
   },
   regionCode: {
     type: String,

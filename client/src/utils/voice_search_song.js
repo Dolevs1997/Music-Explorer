@@ -1,6 +1,42 @@
-// import axios from "axios";
 import { getSongSuggestions } from "../services/OpenAI_service";
-function voiceSearchSong() {
+
+// Web Speech API language codes
+const SPEECH_RECOGNITION_LANGUAGES = {
+  "en-US": "English (US)",
+  "en-GB": "English (UK)",
+  "he-IL": "עברית (Hebrew)",
+  "fr-FR": "Français (French)",
+  "de-DE": "Deutsch (German)",
+  "it-IT": "Italiano (Italian)",
+  "es-ES": "Español (Spanish)",
+  "pt-BR": "Português (Portuguese)",
+  "ru-RU": "Русский (Russian)",
+  "zh-CN": "中文 (Chinese)",
+  "ja-JP": "日本語 (Japanese)",
+  "ar-SA": "العربية (Arabic)",
+  "ko-KR": "한국어 (Korean)",
+  "hi-IN": "हिन्दी (Hindi)",
+};
+
+// Detect browser language and convert to Web Speech API format
+function getDetectedLanguage() {
+  const browserLang = navigator.language || navigator.userLanguage;
+  console.log("Browser language detected:", browserLang);
+  // Check if browser language is directly supported
+  if (SPEECH_RECOGNITION_LANGUAGES[browserLang]) {
+    return browserLang;
+  }
+
+  // Try to match language without region
+  const langCode = browserLang.split("-")[0];
+  const matching = Object.keys(SPEECH_RECOGNITION_LANGUAGES).find((lang) =>
+    lang.startsWith(langCode),
+  );
+
+  return matching || "en-US";
+}
+
+function voiceSearchSong(language = null) {
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   const SpeechGrammarList =
@@ -14,14 +50,25 @@ function voiceSearchSong() {
   recognition.continuous = true;
   // Get partial (interim) results while speaking
   recognition.interimResults = true;
-  recognition.lang = "en-US";
+
+  // Use provided language or detect automatically
+  const detectedLang = language || getDetectedLanguage();
+  recognition.lang = detectedLang;
+  console.log("Speech recognition language set to:", recognition.lang);
+
   recognition.maxAlternatives = 1;
   recognition.start();
   return recognition;
 }
 
 // timeoutMs controls how long to listen before processing
-async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
+// language parameter can be used to override auto-detected language (e.g., "he-IL" for Hebrew)
+async function handleVoiceSearch(
+  userData,
+  timeoutMs = 10000,
+  setResultVoice,
+  language = null,
+) {
   return new Promise((resolve, reject) => {
     if (!userData || !userData.token) {
       console.error("User data or token is missing");
@@ -29,7 +76,7 @@ async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
       return;
     }
 
-    const recognition = voiceSearchSong();
+    const recognition = voiceSearchSong(language);
 
     let finalTranscript = "";
 
@@ -90,4 +137,4 @@ async function handleVoiceSearch(userData, timeoutMs = 10000, setResultVoice) {
   });
 }
 
-export { handleVoiceSearch };
+export { handleVoiceSearch, SPEECH_RECOGNITION_LANGUAGES, getDetectedLanguage };

@@ -3,7 +3,7 @@ import {
   handleStartRecording,
   handleStopRecording,
 } from "../../utils/recording";
-import { handleVoiceSearch } from "../../utils/voice_search_song";
+import { handleVoiceSearch, SPEECH_RECOGNITION_LANGUAGES, getDetectedLanguage } from "../../utils/voice_search_song";
 import { useNavigate } from "react-router";
 import { useContext, useState, useEffect } from "react";
 import { SearchContext } from "../../Contexts/SearchContext";
@@ -32,6 +32,7 @@ export default function Search() {
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
   const [resultRecord, setResultRecord] = useState(null);
   const [resultVoice, setResultVoice] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState(getDetectedLanguage());
 
   useEffect(() => {
     setSecondsLeft(10);
@@ -68,6 +69,19 @@ export default function Search() {
   return (
     <>
       <div className={styles.searchBar}>
+        {/* Language Selector for Voice Search */}
+        <select
+          value={selectedLanguage}
+          onChange={(e) => setSelectedLanguage(e.target.value)}
+          className={styles.languageSelector}
+          title="Select language for voice search"
+        >
+          {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
+            <option key={code} value={code}>
+              {name}
+            </option>
+          ))}
+        </select>
         {isRecording && (
           <span
             className={styles.recordingSpinner}
@@ -100,7 +114,7 @@ export default function Search() {
         )}
         <TooltipComponent text="Identify song (currently works only for spotify)">
           {!isRecording && (
-            <span
+            <button
               onClick={() => {
                 setIsRecording(true);
                 setProccessRecording(true);
@@ -109,6 +123,7 @@ export default function Search() {
                 setIsMapVisible(false);
                 setFormVisible(false);
               }}
+              disabled={proccessRecording}
             >
               <img src="/moodiify/record_i.png" />
               {proccessRecording && (
@@ -117,7 +132,7 @@ export default function Search() {
                   Proccessing...
                 </div>
               )}
-            </span>
+            </button>
           )}
         </TooltipComponent>
         {isVoiceSearch && (
@@ -125,7 +140,7 @@ export default function Search() {
         )}
         <TooltipComponent text="searching song by voice">
           {!isVoiceSearch && (
-            <span
+            <button
               onClick={async () => {
                 setIsVoiceSearch(true);
                 setProccessVoiceSearch(true);
@@ -133,9 +148,10 @@ export default function Search() {
                   userData,
                   10000,
                   setResultVoice,
+                  selectedLanguage,
                 );
+                console.log("response: ", response);
                 if (!response) return;
-                console.log("response from voice search:", response);
                 setProccessVoiceSearch(false);
                 setSongSuggestions(response);
                 setIsVoiceSearch(false);
@@ -144,6 +160,7 @@ export default function Search() {
                 setFormVisible(false);
                 navigate("/home");
               }}
+              disabled={proccessVoiceSearch}
             >
               <img src="/moodiify/mic_i.png" />
               {proccessVoiceSearch && (
@@ -152,7 +169,7 @@ export default function Search() {
                   Proccessing...
                 </div>
               )}
-            </span>
+            </button>
           )}
         </TooltipComponent>
         <TooltipComponent text="searching song by text">

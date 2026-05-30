@@ -124,13 +124,14 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Playlist not found" });
     }
 
-    let existingSong = await SongSchema.findOne({
-      song: song,
-      videoId: videoId,
-    });
+    let existingSong = await SongSchema.findOne({ videoId: videoId });
     if (existingSong) {
       if (existingSong.playlists.some((id) => id.toString() === playlistId)) {
         return res.status(400).json({ message: "Song already in playlist" });
+      }
+      // Keep a consistent song title if the stored record is missing or outdated.
+      if (!existingSong.song || existingSong.song !== song) {
+        existingSong.song = song;
       }
       existingSong.playlists.push(playlist._id);
       await existingSong.save();
