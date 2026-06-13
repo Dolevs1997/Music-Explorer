@@ -31,7 +31,7 @@ function AppIntro() {
   return (
     <div className={styles.introContainer}>
       <video ref={videoRef} className={styles.video} controls="false" autoPlay>
-        <source src="/moodiify/app-intro.mp4" type="video/mp4" />
+        <source src="/music-explorer/app-intro.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <button className={styles.skipButton} onClick={handleSkip}>

@@ -36,13 +36,13 @@ const initApp = async () => {
     app.use(urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, "public")));
     app.use("/auth", authRouter);
-    app.use("/moodiify/recommends", recommendRouter);
-    app.use("/moodiify/categories", categoriesRouter);
-    app.use("/moodiify/videoSong", songRouter);
-    app.use("/moodiify/playlist", playlistRouter);
-    app.use("/moodiify/upload", uploadRouter);
+    app.use("/music-explorer/recommends", recommendRouter);
+    app.use("/music-explorer/categories", categoriesRouter);
+    app.use("/music-explorer/videoSong", songRouter);
+    app.use("/music-explorer/playlist", playlistRouter);
+    app.use("/music-explorer/upload", uploadRouter);
     app.use("/api", openaiRouter);
-    app.use("/moodiify/userActivity", userActivityRouter);
+    app.use("/music-explorer/userActivity", userActivityRouter);
 
     return app;
   } catch (e: unknown) {

@@ -1,7 +1,8 @@
 .logo {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 60%;
+  object-fit: contain;
   cursor: pointer;
   transition: transform 0.3s ease-in-out;
   position: absolute;

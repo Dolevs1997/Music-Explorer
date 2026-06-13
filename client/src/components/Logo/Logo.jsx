@@ -9,7 +9,11 @@ export default function Logo() {
   };
   return (
     <div onClick={handleLogoClick}>
-      <img src="/moodiify/logo-app.png" alt="logo" className={styles.logo} />
+      <img
+        src="/music-explorer/logo-app.png"
+        alt="logo"
+        className={styles.logo}
+      />
     </div>
   );
 }

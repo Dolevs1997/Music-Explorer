@@ -3,7 +3,11 @@ import {
   handleStartRecording,
   handleStopRecording,
 } from "../../utils/recording";
-import { handleVoiceSearch, SPEECH_RECOGNITION_LANGUAGES, getDetectedLanguage } from "../../utils/voice_search_song";
+import {
+  handleVoiceSearch,
+  SPEECH_RECOGNITION_LANGUAGES,
+  getDetectedLanguage,
+} from "../../utils/voice_search_song";
 import { useNavigate } from "react-router";
 import { useContext, useState, useEffect } from "react";
 import { SearchContext } from "../../Contexts/SearchContext";
@@ -32,7 +36,9 @@ export default function Search() {
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
   const [resultRecord, setResultRecord] = useState(null);
   const [resultVoice, setResultVoice] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState(getDetectedLanguage());
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    getDetectedLanguage(),
+  );
 
   useEffect(() => {
     setSecondsLeft(10);
@@ -125,7 +131,7 @@ export default function Search() {
               }}
               disabled={proccessRecording}
             >
-              <img src="/moodiify/record_i.png" />
+              <img src="/music-explorer/record_i.png" />
               {proccessRecording && (
                 <div className={styles.recordingSpinner}>
                   <Spinner />
@@ -162,7 +168,7 @@ export default function Search() {
               }}
               disabled={proccessVoiceSearch}
             >
-              <img src="/moodiify/mic_i.png" />
+              <img src="/music-explorer/mic_i.png" />
               {proccessVoiceSearch && (
                 <div className={styles.recordingSpinner}>
                   <Spinner />
@@ -182,7 +188,7 @@ export default function Search() {
               />
             )}
             <img
-              src="/moodiify/chat_i.png"
+              src="/music-explorer/chat_i.png"
               onClick={() => {
                 setIsVoiceSearch(false);
                 setIsRecording(false);
@@ -199,7 +205,7 @@ export default function Search() {
               navigate("/global");
             }}
           >
-            <img src="/moodiify/earth_i.png" />
+            <img src="/music-explorer/earth_i.png" />
           </span>
         </TooltipComponent>
       </div>

@@ -19,7 +19,7 @@ function SongsPlaylist() {
         const response = await fetch(
           `http://${
             import.meta.env.VITE_SERVER_URL
-          }/moodiify/categories/category/playlist-songs/?id=${playlistId}&country=${country}`,
+          }/music-explorer/categories/category/playlist-songs/?id=${playlistId}&country=${country}`,
           {
             method: "GET",
             headers: {

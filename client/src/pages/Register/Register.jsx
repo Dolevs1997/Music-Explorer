@@ -56,7 +56,10 @@ function Register() {
     if (response.status == 200) {
       toast.success("Registration successful! Redirecting to login...");
       setTimeout(() => {
-        navigate("/login");
+        navigate("/login", {
+          state:
+            "a link has been sent you your email, verify your email address",
+        });
       }, 2000);
     } else if (response.status == 409) {
       toast.error("User already exists! Please login.");

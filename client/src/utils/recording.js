@@ -25,7 +25,7 @@ export async function handleStopRecording(
     const formData = new FormData();
     formData.append("audioFile", audioBlob, "sample.wav");
     const res = await fetch(
-      `http://${import.meta.env.VITE_SERVER_URL}/moodiify/videoSong/recognize-audio`,
+      `http://${import.meta.env.VITE_SERVER_URL}/music-explorer/videoSong/recognize-audio`,
       {
         body: formData,
         method: "POST",

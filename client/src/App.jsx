@@ -28,12 +28,12 @@ function App() {
   const user = JSON.parse(localStorage.getItem("user")) || null;
 
   useEffect(() => {
-    document.title = "Moodiify | Home";
+    document.title = "music-explorer | Home";
   }, []);
 
   return (
     <UserProvider>
-      <BrowserRouter basename="/moodiify">
+      <BrowserRouter basename="/music-explorer">
         <SearchContext.Provider
           value={{
             songSuggestions,

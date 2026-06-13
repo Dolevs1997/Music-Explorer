@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import Button from "../../components/Button/Button";
 import { useState, useContext } from "react";
 import { Toaster, toast } from "react-hot-toast";
@@ -15,7 +15,10 @@ function Login() {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
-
+  const location = useLocation();
+  if (location.state != null) {
+    alert(location.state);
+  }
   async function handleSuccess(credentialResponse) {
     const idToken = credentialResponse.credential;
     try {

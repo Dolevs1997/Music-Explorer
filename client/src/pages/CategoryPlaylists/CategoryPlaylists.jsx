@@ -14,7 +14,7 @@ function CategoryPlaylists() {
   const [categoryName, setCategoryName] = useState("Category");
 
   useEffect(() => {
-    document.title = "Moodiify | Category Playlists";
+    document.title = "Music Explorer | Category Playlists";
   }, []);
   useEffect(() => {
     const { state } = location;

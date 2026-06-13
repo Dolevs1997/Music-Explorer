@@ -53,7 +53,7 @@ function SongsPlaylistUser() {
         const response = await fetch(
           `http://${
             import.meta.env.VITE_SERVER_URL
-          }/moodiify/playlist/?id=${playlistId}`,
+          }/music-explorer/playlist/?id=${playlistId}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
