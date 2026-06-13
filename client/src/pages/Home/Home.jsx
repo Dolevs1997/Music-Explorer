@@ -33,7 +33,7 @@ export default function Home({ user }) {
   });
 
   useEffect(() => {
-    document.title = "Moodiify | Home";
+    document.title = "Music Explorer | Home";
   }, []);
 
   useEffect(() => {

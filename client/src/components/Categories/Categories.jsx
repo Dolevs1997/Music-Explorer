@@ -42,7 +42,7 @@ function Categories({ formVisible }) {
       async function fetchGenres() {
         try {
           const response = await axios.get(
-            `http://${SERVER_URL}/moodiify/categories/getAll?limit=${limit}&locale=${locale}`,
+            `http://${SERVER_URL}/music-explorer/categories/getAll?limit=${limit}&locale=${locale}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -81,7 +81,7 @@ function Categories({ formVisible }) {
       limit = showMore ? 6 : 50;
 
       const response = await axios.get(
-        `http://${SERVER_URL}/moodiify/categories/getAll?limit=${limit}`,
+        `http://${SERVER_URL}/music-explorer/categories/getAll?limit=${limit}`,
         {
           headers: {
             "Content-Type": "application/json",

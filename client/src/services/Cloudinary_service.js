@@ -2,7 +2,7 @@ import axios from "axios";
 async function uploadImageToCloudinary(formData, token) {
   try {
     const response = await axios.post(
-      `http://${import.meta.env.VITE_SERVER_URL}/moodiify/upload/`,
+      `http://${import.meta.env.VITE_SERVER_URL}/music-explorer/upload/`,
       formData,
       {
         headers: {
