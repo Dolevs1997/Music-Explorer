@@ -1,4 +1,4 @@
-# Moodiify – AI-Powered Music Recommendation Web App
+# Music Explorer – AI-Powered Music Recommendation Web App
 
 AI-Powered Music Recommendation Web App that lets users generate songs - voice, recognize song, location point or text input. Integrated OpenAI for understanding user intent, YouTube Data API for song recommendations, and Spotify API for categorized playlists by genre.
 
@@ -26,7 +26,7 @@ AI-Powered Music Recommendation Web App that lets users generate songs - voice, 
 
 ## Quick Start
 
-Follow these steps to get a local copy of Moodiify up and running.
+Follow these steps to get a local copy of Music Explorer up and running.
 
 ### Prerequisites
 
@@ -48,8 +48,8 @@ Installations
 <li>Clone the repository</li>
 
 ```
-git clone https://github.com/Dolevs1997/moodiify.git
-cd moodiify
+git clone https://github.com/Dolevs1997/music-explorer.git
+cd music-explorer
 ```
 
 <li>Install Dependencies (Root)</li>
@@ -129,7 +129,7 @@ cd server && npm run dev
 ### Repository Structure
 
 ```
-moodiify/
+music-explorer/
 ├── client/                 # React Frontend
 │   ├── src/
 │   │   ├── components/     # Reusable UI components (Song, SearchBar,NavBar,...)
@@ -154,7 +154,7 @@ moodiify/
 └── README.md
 ```
 
-## Moodiify Architecture
+## Music Explorer Architecture
 
 <img width="1000" height="603" alt="image" src="https://github.com/user-attachments/assets/bfc92017-e86e-408a-8359-7feba10e5084" />
 
