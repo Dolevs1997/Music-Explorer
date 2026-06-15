@@ -26,6 +26,7 @@ const googleLogin = async (req: Request, res: Response) => {
   const userCredential = await signInWithCredential(auth, credential);
   const firebaseUser = userCredential.user;
   let dbUser = await UserModel.findOne({ email: firebaseUser.email });
+  let message = "";
   if (!dbUser) {
     dbUser = new UserModel({
       uid: firebaseUser.uid,
@@ -37,6 +38,8 @@ const googleLogin = async (req: Request, res: Response) => {
     });
     await dbUser.save();
     await sendPasswordResetEmail(auth, firebaseUser.email!, actionCodeSettings);
+    message =
+      "New user created with Google login. A password reset email has been sent to your email address. Please set a password to enable manual login in the future.";
   }
 
   const tokens = await generateTokens(dbUser as any);
@@ -47,6 +50,7 @@ const googleLogin = async (req: Request, res: Response) => {
     _id: dbUser._id,
     playlists: dbUser.playlists,
     avatar: dbUser.avatar,
+    message: message,
     ...tokens,
   });
 };
@@ -65,10 +69,12 @@ const register = async (req: Request, res: Response) => {
     const existedUser = await UserModel.findOne({ email: email });
     if (existedUser != null) {
       if (existedUser.uid) {
+        console.log("existedUser:", existedUser);
         // If the user already exists with Google login, allow setting a password
         // on the same Firebase account so manual login works later.
         try {
           await admin.auth().updateUser(existedUser.uid, { password });
+
           const tokens = await generateTokens(existedUser as any);
           return res.status(200).json({
             message:
