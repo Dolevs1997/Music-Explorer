@@ -48,26 +48,6 @@ function NavBar() {
           </NavDropdown.Item>
           <NavDropdown.Divider />
 
-          {/* {user?.playlists && user.playlists.length > 0 ? (
-              user.playlists.map((playlist, index) => (
-                <NavDropdown.Item
-                  key={index}
-                  onClick={() => {
-                    console.log("playlist clicked:", playlist);
-                    navigate(`/myplaylists/${playlist._id || playlist.id}`, {
-                      state: { playlist, user },
-                    });
-                  }}
-                >
-                  {playlist.name}
-                </NavDropdown.Item>
-              ))
-            ) : (
-              <NavDropdown.Item disabled>
-                No Playlists Available
-              </NavDropdown.Item>
-            )} */}
-
           <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
         </NavDropdown>
       </nav>

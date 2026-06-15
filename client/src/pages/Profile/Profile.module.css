@@ -277,22 +277,7 @@
 :global(.backBtn):hover {
   opacity: 0.75;
 }
-:global(.settingsInput) {
-  padding: 10px 14px;
-  border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #1a1a1a;
-  color: #eee;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-:global(.settingsInput)::placeholder {
-  color: #555;
-}
-:global(.settingsInput):focus {
-  border-color: var(--color-button, #6246ea);
-}
+
 :global(.settingsBtn) {
   padding: 10px 20px;
   border-radius: 7px;

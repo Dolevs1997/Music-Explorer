@@ -39,7 +39,7 @@ export default function Search() {
   const [selectedLanguage, setSelectedLanguage] = useState(
     getDetectedLanguage(),
   );
-
+  console.log(userData);
   useEffect(() => {
     setSecondsLeft(10);
   }, []);
@@ -79,7 +79,7 @@ export default function Search() {
         <select
           value={selectedLanguage}
           onChange={(e) => setSelectedLanguage(e.target.value)}
-          className={styles.languageSelector}
+          className="settingsInput"
           title="Select language for voice search"
         >
           {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
@@ -88,6 +88,7 @@ export default function Search() {
             </option>
           ))}
         </select>
+
         {isRecording && (
           <span
             className={styles.recordingSpinner}

@@ -20,7 +20,7 @@ function Profile() {
   const { user, setUser } = useContext(UserContext);
 
   const [activeTab, setActiveTab] = useState("playlists");
-
+  console.log(user);
   //Avatar states
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -135,6 +135,7 @@ function Profile() {
 
   const currentAvatar =
     avatarPreview || user.avatar || "public/default-avatar-user.jpg";
+  console.log("current avatar: ", currentAvatar);
   return (
     <div className="app-container">
       <header className="header">

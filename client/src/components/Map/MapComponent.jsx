@@ -5,11 +5,14 @@ import { useNavigate } from "react-router";
 import PoiMarker from "./Marker";
 import countryList from "react-select-country-list";
 import UserContext from "../../Contexts/UserContext";
+import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
+
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;
 function MapComponent() {
   // store clicked location
   const [selectedLocation, setSelectedLocation] = useState({ lat: 0, lng: 0 });
+  const { setCurrentLocation } = useContext(CurrentLocationContext);
   // store show dialog state to add location
   const [showDialog, setShowDialog] = useState(false);
   // store dialog location
@@ -54,11 +57,11 @@ function MapComponent() {
       setLocationName(formattedAddress);
     }
   }
-  function handleLocationSelect(location) {
+  function handleLocationSelect() {
     // Handle location selection
-    setSelectedLocation(location);
+    setCurrentLocation(locationName);
     navigate(`/global/categories/${countryShortName}`, {
-      state: { locationName: locationName, isMapVisible: false },
+      state: { isMapVisible: false },
     });
     setShowDialog(false);
   }
@@ -111,10 +114,7 @@ function MapComponent() {
             position={dialogLocation}
             onCloseClick={() => setShowDialog(false)}
           >
-            <Button
-              onClick={() => handleLocationSelect(dialogLocation)}
-              type="select"
-            >
+            <Button onClick={handleLocationSelect} type="select">
               <p> Location selected: {locationName}</p>
             </Button>
           </InfoWindow>

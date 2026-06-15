@@ -15,6 +15,7 @@ import NavBar from "./components/NavBar/NavBar";
 import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
 import { UserProvider } from "./Contexts/UserContext";
+import { CurrentLocationContext } from "./Contexts/CurrentLocationContext";
 import PlaylistsUser from "./pages/PlaylistsUser/PlaylistsUser";
 import Profile from "./pages/Profile/Profile";
 import "@heroui/react/styles";
@@ -26,79 +27,85 @@ function App() {
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || null;
-
+  const [currentLocation, setCurrentLocation] = useState(
+    user?.country?.fullName || "United States",
+  );
   useEffect(() => {
     document.title = "music-explorer | Home";
   }, []);
 
   return (
     <UserProvider>
-      <BrowserRouter basename="/music-explorer">
-        <SearchContext.Provider
-          value={{
-            songSuggestions,
-            setSongSuggestions,
-            isRecording,
-            setIsRecording,
-            isMapVisible,
-            setIsMapVisible,
-            formVisible,
-            setFormVisible,
-            isVoiceSearch,
-            setIsVoiceSearch,
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<AppIntro />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+      <CurrentLocationContext.Provider
+        value={{ currentLocation, setCurrentLocation }}
+      >
+        <BrowserRouter basename="/music-explorer">
+          <SearchContext.Provider
+            value={{
+              songSuggestions,
+              setSongSuggestions,
+              isRecording,
+              setIsRecording,
+              isMapVisible,
+              setIsMapVisible,
+              formVisible,
+              setFormVisible,
+              isVoiceSearch,
+              setIsVoiceSearch,
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<AppIntro />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            <Route path="/home" element={<Home user={user} />}>
+              <Route path="/home" element={<Home user={user} />}>
+                <Route
+                  path="categories"
+                  element={<Categories formVisible={formVisible} user={user} />}
+                />
+                <Route
+                  path="songSuggestions"
+                  element={<Navigate to="/home" replace />}
+                />
+              </Route>
+              <Route path="/profile" element={<Profile />} />
+
               <Route
-                path="categories"
-                element={<Categories formVisible={formVisible} user={user} />}
-              />
+                path="/category/playlists"
+                element={<CategoryPlaylists />}
+              ></Route>
               <Route
-                path="songSuggestions"
-                element={<Navigate to="/home" replace />}
+                path="/category/playlists/:playlistId/songs"
+                element={<CategorySongsPlaylist />}
               />
-            </Route>
-            <Route path="/profile" element={<Profile />} />
-
-            <Route
-              path="/category/playlists"
-              element={<CategoryPlaylists />}
-            ></Route>
-            <Route
-              path="/category/playlists/:playlistId/songs"
-              element={<CategorySongsPlaylist />}
-            />
-            <Route path="/myplaylists" element={<PlaylistsUser />} />
-            <Route
-              path="/myplaylists/:playlistId"
-              element={<SongsPlaylistUser />}
-            />
-            <Route path="/global" element={<Home user={user} />} />
-            <Route
-              path="/global/categories/:country"
-              element={
-                <div className="home">
-                  <div className="header">
-                    <Logo />
-                    <Search />
-                    <NavBar />
+              <Route path="/myplaylists" element={<PlaylistsUser />} />
+              <Route
+                path="/myplaylists/:playlistId"
+                element={<SongsPlaylistUser />}
+              />
+              <Route path="/global" element={<Home user={user} />} />
+              <Route
+                path="/global/categories/:country"
+                element={
+                  <div className="home">
+                    <div className="header">
+                      <Logo />
+                      <Search />
+                      <NavBar />
+                    </div>
+                    <div className="homeContainer">
+                      <Categories />
+                    </div>
                   </div>
-                  <div className="homeContainer">
-                    <Categories />
-                  </div>
-                </div>
-              }
-            />
+                }
+              />
 
-            <Route path="*" element={<ErrorPage />} />
-          </Routes>
-        </SearchContext.Provider>
-      </BrowserRouter>
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+          </SearchContext.Provider>
+        </BrowserRouter>
+      </CurrentLocationContext.Provider>
     </UserProvider>
   );
 }

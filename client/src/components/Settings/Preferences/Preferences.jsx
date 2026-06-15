@@ -1,10 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import propTypes from "prop-types";
 import countryList from "react-select-country-list";
 import ButtonComponent from "../../Button/Button";
 import { updateUserActivity } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
+import { CurrentLocationContext } from "../../../Contexts/CurrentLocationContext";
 function Preferences({ setSettingsView }) {
   const [countryOptionSelected, setCountryOptionSelected] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ function Preferences({ setSettingsView }) {
   const [countryFullName, setCountryFullName] = useState(
     user?.country?.fullName || "",
   );
+  const { setCurrentLocation } = useContext(CurrentLocationContext);
   const country = {
     shortName: countryShortName,
     fullName: countryFullName,
@@ -35,6 +37,7 @@ function Preferences({ setSettingsView }) {
       await updateUserActivity(user, { country });
       setUser({ ...user, country });
       setCountryOptionSelected(false);
+      setCurrentLocation(countryFullName);
       toast.success("Preferences updated successfully.");
     } catch (error) {
       console.error("Error updating preferences:", error);
@@ -43,6 +46,10 @@ function Preferences({ setSettingsView }) {
       setLoading(false);
     }
   }
+  useEffect(() => {
+    // UI will automatically re-render when currentLocation changes
+    // Components consuming currentLocation context will update
+  }, []);
   return (
     <div>
       <button className="backBtn" onClick={() => setSettingsView("main")}>
