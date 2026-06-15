@@ -1,28 +1,29 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Category from "../Category/Category";
 import styles from "./Categories.module.css";
-import { Link, useParams, useLocation, useNavigate } from "react-router";
+import { Link, useParams, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { countryToLocale } from "../../utils/countryLocalMap";
+import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Categories({ formVisible }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const params = useParams();
-  const location = useLocation();
+  // const location = useLocation();
 
   const userData = JSON.parse(localStorage.getItem("user"));
   const country = params.country || userData?.country?.shortName || "US";
-
-  const [currentLocation, setCurrentLocation] = useState(
-    location.state?.locationName ||
-      userData?.country?.fullName ||
-      "United States",
-  );
+  const { currentLocation } = useContext(CurrentLocationContext);
+  // const [currentLocation, setCurrentLocation] = useState(
+  //   location.state?.locationName ||
+  //     userData?.country?.fullName ||
+  //     "United States",
+  // );
 
   // Determine locale based on country code
   console.log("user: ", userData);
@@ -31,11 +32,11 @@ function Categories({ formVisible }) {
   useEffect(() => {
     if (userData == null) navigate("/login");
   });
-  useEffect(() => {
-    if (location.state?.locationName) {
-      setCurrentLocation(location.state.locationName);
-    }
-  }, [location.state]);
+  // useEffect(() => {
+  //   if (location.state?.locationName) {
+  //     setCurrentLocation(location.state.locationName);
+  //   }
+  // }, [location.state]);
 
   useEffect(
     function () {

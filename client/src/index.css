@@ -241,6 +241,35 @@ ul {
   gap: 20px;
   align-items: center;
 }
+
+.languageSelector {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #e5e5e5;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.languageSelector:hover {
+  border-color: #999;
+}
+
+.settingsInput {
+  padding: 10px 14px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1a1a1a;
+  color: #eee;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.settingsInput:focus {
+  border-color: var(--color-button, #6246ea);
+}
 /* @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

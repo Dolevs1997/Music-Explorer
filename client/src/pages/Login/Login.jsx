@@ -1,12 +1,14 @@
 import { Link, useNavigate, useLocation } from "react-router";
 import Button from "../../components/Button/Button";
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 import UserContext from "../../Contexts/UserContext";
+
 import BackgroundMusic from "../../components/BackgroundMusic";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 import { GoogleLogin } from "@react-oauth/google";
+import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
@@ -16,8 +18,11 @@ function Login() {
   const { setUser } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
-  if (location.state != null) {
-    alert(location.state);
+  const message = useRef(location.state);
+  const { setCurrentLocation } = useContext(CurrentLocationContext);
+  if (location.state) {
+    toast(message.current);
+    location.state = null;
   }
   async function handleSuccess(credentialResponse) {
     const idToken = credentialResponse.credential;
@@ -31,6 +36,7 @@ function Login() {
           },
         },
       );
+      console.log("response google: ", response);
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
         setUser(response.data);
@@ -69,6 +75,7 @@ function Login() {
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
         setUser(response.data);
+        setCurrentLocation(response.data.country.fullName);
         setTimeout(() => {
           navigate("/home");
         }, 2000); // Redirect after 2 seconds

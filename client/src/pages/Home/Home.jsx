@@ -9,6 +9,7 @@ import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
 import { SearchContext } from "../../Contexts/SearchContext";
 import { useInactivity } from "../../hooks/useInactivity";
+
 import propTypes from "prop-types";
 export default function Home({ user }) {
   const {
@@ -24,14 +25,12 @@ export default function Home({ user }) {
   const location = useLocation();
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
-
   // Add inactivity detection
   useInactivity(30 * 60 * 1000, () => {
     // 30 minutes
     localStorage.removeItem("user");
     navigate("/login");
   });
-
   useEffect(() => {
     document.title = "Music Explorer | Home";
   }, []);
@@ -101,5 +100,9 @@ Home.propTypes = {
         name: propTypes.string,
       }),
     ),
+    country: {
+      shortName: propTypes.string,
+      fullName: propTypes.string,
+    },
   }),
 };
