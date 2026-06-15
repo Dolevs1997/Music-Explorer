@@ -36,10 +36,15 @@ function Login() {
           },
         },
       );
-      console.log("response google: ", response);
+      // console.log("response google: ", response);
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
+        if (response.data.message) {
+          toast(response.data.message);
+        }
         setUser(response.data);
+        setCurrentLocation(response.data.country.fullName || "United States");
+
         setTimeout(() => {
           navigate("/home");
         }, 2000); // Redirect after 2 seconds
@@ -75,7 +80,7 @@ function Login() {
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
         setUser(response.data);
-        setCurrentLocation(response.data.country.fullName);
+        setCurrentLocation(response.data.country.fullName || "United States");
         setTimeout(() => {
           navigate("/home");
         }, 2000); // Redirect after 2 seconds
