@@ -71,6 +71,7 @@ const deleteSongsHistory = async (user) => {
 };
 
 const addSongToHistory = async (user, song) => {
+  console.log("song: ", song);
   try {
     const response = await axios.post(
       `http://${SERVER_URL}/music-explorer/userActivity/songsHistory?id=${user._id}`,

@@ -1,9 +1,20 @@
 import Song from "../Song/Song";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import propTypes from "prop-types";
 
 function Songs({ songSuggestions, onRemoveSong }) {
   const [playingVideoId, setPlayingVideoId] = useState(null);
+  const [renderedVideoIds, setRenderedVideoIds] = useState(new Set());
+
+  // Callback for Song components to register their videoId
+  const registerVideoId = useCallback((videoId) => {
+    setRenderedVideoIds((prev) => new Set(prev).add(videoId));
+  }, []);
+
+  // Check if a videoId is a duplicate
+  const isVideoDuplicate = useCallback((videoId) => {
+    return renderedVideoIds.has(videoId);
+  }, [renderedVideoIds]);
 
   return (
     <div>
@@ -19,6 +30,8 @@ function Songs({ songSuggestions, onRemoveSong }) {
                   playingVideoId={playingVideoId}
                   setPlayingVideoId={setPlayingVideoId}
                   onRemoveSong={onRemoveSong}
+                  registerVideoId={registerVideoId}
+                  isVideoDuplicate={isVideoDuplicate}
                 />
               </li>
             ))}
@@ -31,6 +44,8 @@ function Songs({ songSuggestions, onRemoveSong }) {
             playingVideoId={playingVideoId}
             setPlayingVideoId={setPlayingVideoId}
             onRemoveSong={onRemoveSong}
+            registerVideoId={registerVideoId}
+            isVideoDuplicate={isVideoDuplicate}
           />
         </div>
       )}

@@ -17,6 +17,7 @@ import { Spinner } from "../../components/ui/spinner";
 import Form from "../Form/Form";
 import { Toaster, toast } from "react-hot-toast";
 import TooltipComponent from "../TooltipComponent";
+import { deduplicateSongs } from "../../utils/deduplicateSongs";
 export default function Search() {
   const {
     formVisible,
@@ -39,7 +40,6 @@ export default function Search() {
   const [selectedLanguage, setSelectedLanguage] = useState(
     getDetectedLanguage(),
   );
-  console.log(userData);
   useEffect(() => {
     setSecondsLeft(10);
   }, []);
@@ -55,7 +55,7 @@ export default function Search() {
   }, [resultRecord, resultVoice, navigate]);
   function handleSecondsLeft(seconds) {
     setInterval(function () {
-      if (seconds > 0) setSecondsLeft(seconds - 1);
+      if (seconds > 0) setSecondsLeft(() => seconds - 1);
     }, 1000);
   }
   function handleTimeOut() {
@@ -160,7 +160,7 @@ export default function Search() {
                 console.log("response: ", response);
                 if (!response) return;
                 setProccessVoiceSearch(false);
-                setSongSuggestions(response);
+                setSongSuggestions(deduplicateSongs(response));
                 setIsVoiceSearch(false);
                 setIsMapVisible(false);
                 setIsRecording(false);

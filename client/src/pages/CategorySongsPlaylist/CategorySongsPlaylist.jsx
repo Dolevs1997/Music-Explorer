@@ -4,18 +4,20 @@ import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 import Song from "../../components/Song/Song";
-
+import { Spinner } from "../../components/ui/spinner";
 function SongsPlaylist() {
   const { playlistId } = useParams();
   const location = useLocation();
   const { playlistName, token, country } = location.state || {};
   const [playlist, setPlaylist] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [playingVideoId, setPlayingVideoId] = useState(null);
 
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(
           `http://${
             import.meta.env.VITE_SERVER_URL
@@ -32,7 +34,8 @@ function SongsPlaylist() {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        // console.log("data: ", data);
+        setIsLoading(false);
+        console.log("data: ", data);
         setPlaylist(data);
       } catch (error) {
         console.error("Error fetching playlist:", error);
@@ -65,12 +68,13 @@ function SongsPlaylist() {
                   playingVideoId={playingVideoId}
                   setPlayingVideoId={setPlayingVideoId}
                   playlistId={playlistId}
-                  spotifyUrl={song?.spotifyUrl}
                 />
               ))}
             </ul>
+          ) : isLoading ? (
+            <Spinner />
           ) : (
-            <p>No songs found in this playlist.</p>
+            <p>No playlist found</p>
           )}
         </div>
       </main>

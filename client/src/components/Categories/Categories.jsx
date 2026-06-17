@@ -26,7 +26,6 @@ function Categories({ formVisible }) {
   // );
 
   // Determine locale based on country code
-  console.log("user: ", userData);
   const locale = countryToLocale[country] || "en_US"; // fallback to English
   let limit = categories.length === 0 ? 6 : categories.length;
   useEffect(() => {
