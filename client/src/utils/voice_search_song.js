@@ -21,7 +21,6 @@ const SPEECH_RECOGNITION_LANGUAGES = {
 // Detect browser language and convert to Web Speech API format
 function getDetectedLanguage() {
   const browserLang = navigator.language || navigator.userLanguage;
-  console.log("Browser language detected:", browserLang);
   // Check if browser language is directly supported
   if (SPEECH_RECOGNITION_LANGUAGES[browserLang]) {
     return browserLang;

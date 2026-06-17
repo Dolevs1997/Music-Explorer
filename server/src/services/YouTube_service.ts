@@ -313,13 +313,10 @@ async function fetchPlaylistSongs(
       }
 
       const data = await response.json();
-      for (const item of data.items) {
-        console.log("Fetched track from Spotify:", item);
-      }
+
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {
-          console.log("track id: ", item?.track?.id);
           if (uniqueTrackIds.has(item?.track.id)) return false;
           uniqueTrackIds.add(item?.track.id);
 
