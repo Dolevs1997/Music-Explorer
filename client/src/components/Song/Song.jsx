@@ -256,26 +256,30 @@ function Song({
               }}
               aria-label="Options"
             >
-              {!remove ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="35px"
-                  viewBox="0 -960 960 960"
-                  width="35px"
-                  fill="#e3e3e3"
-                >
-                  <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z" />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="35px"
-                  viewBox="0 -960 960 960"
-                  width="35px"
-                  fill="#e3e3e3"
-                >
-                  <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z" />
-                </svg>
+              {state.videoId && (
+                <>
+                  {!remove ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="35px"
+                      viewBox="0 -960 960 960"
+                      width="35px"
+                      fill="#e3e3e3"
+                    >
+                      <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z" />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="35px"
+                      viewBox="0 -960 960 960"
+                      width="35px"
+                      fill="#e3e3e3"
+                    >
+                      <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z" />
+                    </svg>
+                  )}
+                </>
               )}
             </span>
           </div>
@@ -362,7 +366,7 @@ function Song({
               )}
             </ListGroup>
           )}
-          <span className={styles.songDetails}>{song}</span>
+          {state.videoId && <span className={styles.songDetails}>{song}</span>}
           {state.videoId &&
             // lazy-mount player only for the active/playing song to avoid multiple iframe loads
             (playingVideoId === state.videoId ? (
