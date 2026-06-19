@@ -303,12 +303,14 @@ async function fetchPlaylistSongs(
       );
 
       if (!response.ok) {
+        console.log("response:", response);
+        const errorData = await response.json();
         console.error(
-          "Error fetching Spotify playlist tracks:",
-          response.statusText,
+          `Spotify API error fetching playlist songs: ${response.status} ${response.statusText}`,
+          errorData,
         );
         throw new Error(
-          `Failed to fetch playlist tracks: ${response.statusText}`,
+          `Spotify API error: ${errorData.error?.message || response.statusText}`,
         );
       }
 
@@ -317,6 +319,7 @@ async function fetchPlaylistSongs(
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {
+          console.log("item:", item);
           if (uniqueTrackIds.has(item?.track.id)) return false;
           uniqueTrackIds.add(item?.track.id);
 
