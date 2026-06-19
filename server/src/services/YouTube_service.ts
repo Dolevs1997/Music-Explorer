@@ -298,7 +298,7 @@ async function fetchPlaylistSongs(
 
     while (tracks.length < total) {
       const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=${country}&limit=${limit}&offset=${offset}&fields=total,items(track(id,name,artists,album(name,images),duration_ms,preview_url,external_urls))`,
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=${country}&limit=${limit}&offset=${offset}&fields=total,items(track(id,name,artists,album(name,images),duration_ms,preview_url,external_urls,is_playable))}`,
         { headers: { Authorization: `Bearer ${spotifyToken}` } },
       );
 
@@ -319,7 +319,7 @@ async function fetchPlaylistSongs(
         .filter((item: any) => {
           if (uniqueTrackIds.has(item?.track.id)) return false;
           uniqueTrackIds.add(item?.track.id);
-
+          console.log("item:", item);
           // Skip null tracks (can happen with local files or removed tracks)
           if (!item?.track) return false;
           if (!item.track.id) return false;
@@ -340,6 +340,7 @@ async function fetchPlaylistSongs(
           spotifyUrl: item.track.external_urls?.spotify || "",
           // This is what Song.jsx will use to search YouTube for playback
           searchQuery: `${item.track.artists?.[0]?.name} - ${item.track.name}`,
+          isPlayable: item.track.is_playable || false,
         }));
 
       tracks = [...tracks, ...pageTracks];
