@@ -12,7 +12,7 @@ import userActivityRouter from "./routes/UserActivity_routes";
 import playlistRouter from "./routes/playlist_routes";
 import cors from "cors";
 import { json, urlencoded } from "body-parser";
-import { connectRedis } from "./services/Redis_service";
+// import { connectRedis } from "./services/Redis_service";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config();
@@ -27,7 +27,7 @@ const initApp = async () => {
     db.on("error", (error) => console.error(error));
     db.once("connected", () => console.log("Connected to MongoDB"));
     // Connect to Redis
-    await connectRedis();
+    // await connectRedis();
 
     // Initialize Express app
     const app = express();

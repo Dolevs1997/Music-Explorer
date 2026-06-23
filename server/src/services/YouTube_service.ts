@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
-import {
-  getCachedSong,
-  setCachedSong,
-  getCachedSongPlaylist,
-  setCachedPlaylistSongs,
-} from "./Redis_service";
+// import {
+//   getCachedSong,
+//   setCachedSong,
+//   getCachedSongPlaylist,
+//   setCachedPlaylistSongs,
+// } from "./Redis_service";
 dotenv.config();
 const API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -232,15 +232,16 @@ async function fetchSpotifyPlaylistsBySearch(
 async function fetchSong(song: string, country = "US") {
   const controller = new AbortController();
   const signal = controller.signal;
-  const cachedSong = await getCachedSong(song, country);
-  if (cachedSong && (cachedSong as any).videoId) {
-    // console.log("Returning cached song:", cachedSong);
-    return cachedSong;
-  }
-  // console.log("Fetching song from YouTube API:", song, country);
+  // const cachedSong = await getCachedSong(song, country);
+  // if (cachedSong && (cachedSong as any).videoId) {
+  //   // console.log("Returning cached song:", cachedSong);
+  //   return cachedSong;
+  // }
+  console.log("Fetching song from YouTube API:", song);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song} audio`,
   )}&type=video&key=${API_KEY}`;
+  // console.log("YouTube API URL:", url);
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
@@ -260,10 +261,10 @@ async function fetchSong(song: string, country = "US") {
         throw new Error("No videos with videoId found for the given query");
       }
       // Only cache and return if we have a videoId
-      await setCachedSong(song, country, {
-        title,
-        videoId,
-      });
+      // await setCachedSong(song, country, {
+      //   title,
+      //   videoId,
+      // });
 
       return { title, videoId };
     }
@@ -284,8 +285,8 @@ async function fetchPlaylistSongs(
   if (!playlistId) throw new Error("Playlist ID is required");
   if (!spotifyToken) throw new Error("Spotify token is required");
   // Check cache first
-  const cached = await getCachedSongPlaylist(playlistId, country);
-  if (cached) return cached;
+  // const cached = await getCachedSongPlaylist(playlistId, country);
+  // if (cached) return cached;
 
   try {
     // Spotify returns max 100 tracks per request
@@ -319,7 +320,9 @@ async function fetchPlaylistSongs(
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {
-          console.log("item:", item);
+          // console.log("item:", item);
+          // Ensure the track exists and has a duration greater than 400000ms
+          if (item?.track?.duration_ms >= 400000) return false;
           if (uniqueTrackIds.has(item?.track.id)) return false;
           uniqueTrackIds.add(item?.track.id);
 
@@ -353,7 +356,7 @@ async function fetchPlaylistSongs(
     }
 
     // Cache the result
-    await setCachedPlaylistSongs(playlistId, country, tracks);
+    // await setCachedPlaylistSongs(playlistId, country, tracks);
 
     return tracks;
   } catch (error) {

@@ -81,8 +81,6 @@ function Song({
   setPlayingVideoId,
   playlistId,
   onRemoveSong,
-  registerVideoId,
-  isVideoDuplicate,
 }) {
   const navigate = useNavigate();
   const [playlistName, setPlaylistName] = useState("");
@@ -93,7 +91,8 @@ function Song({
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
   const { user, setUser } = useContext(UserContext);
-  const [isDuplicate, setIsDuplicate] = useState(false);
+  const hasFetchedRef = useRef(false); // ← add this ref
+  // console.log("song: ", song);
   // console.log("song ref: ", songRef);
   // console.log("song video state: ", state.videoId);
   if (!user.token) {
@@ -162,7 +161,8 @@ function Song({
     function () {
       async function fetchSong(song, user, country) {
         if (!song || !user.token) return;
-
+        // Already fetched for this song — skip entirely
+        if (hasFetchedRef.current) return;
         // if we already cached the resolved song and state already set -> do nothing
         if (songRef.current && state.videoId === songRef.current.videoId) {
           return;
@@ -179,46 +179,43 @@ function Song({
           });
           return;
         }
-        if (!state.error) {
-          try {
-            const data = await fetchSongYT(song, country, user);
-            console.log("video Id: ", data.videoId);
+        if (state.error) return;
 
-            // Check if this videoId is a duplicate
-            if (isVideoDuplicate && registerVideoId) {
-              if (isVideoDuplicate(data.videoId)) {
-                console.log("Duplicate videoId found, skipping:", data.videoId);
-                setIsDuplicate(true);
-                return;
-              }
-              // Register this videoId as now rendered
-              registerVideoId(data.videoId);
-            }
+        try {
+          hasFetchedRef.current = true; // ← mark before fetch to prevent race conditions
 
-            songRef.current = data;
-            if (data.videoId != undefined)
-              dispatch({
-                type: "SET_VIDEO_SONG",
-                payload: {
-                  videoId: data.videoId,
-                  regionCode: data.regionCode,
-                  song: data.song,
-                  playlists: songRef.current.playlists,
-                },
-              });
-          } catch (error) {
-            console.error("Error fetching song recommendations:", error);
-            dispatch({
-              type: "SET_ERROR",
-              payload: { error: "Failed to fetch song recommendations" },
-            });
+          const data = await fetchSongYT(song, country, user);
+          if (!data?.videoId) {
+            hasFetchedRef.current = false; // reset if fetch returned nothing
+            return;
           }
+          // console.log("video Id: ", data.videoId);
+
+          songRef.current = data;
+
+          dispatch({
+            type: "SET_VIDEO_SONG",
+            payload: {
+              videoId: data.videoId,
+              regionCode: data.regionCode,
+              song: data.song,
+              playlists: [],
+            },
+          });
+        } catch (error) {
+          hasFetchedRef.current = false; // reset on error so retry is possible
+
+          console.error("Error fetching song", error);
+          dispatch({
+            type: "SET_ERROR",
+            payload: { error: "Failed to fetch song " },
+          });
         }
       }
 
       fetchSong(song, user, country);
     },
-    [song, user, country, state, playlistId, isVideoDuplicate, registerVideoId],
+    [song, user.token, country, playlistId],
   );
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
@@ -241,160 +238,153 @@ function Song({
 
   return (
     <div className="homeContainer">
-      {!isDuplicate && (
-        <>
-          <div>
-            <Toaster />
-            <span
-              className={styles.optionsBtn}
-              onClick={(e) => {
-                e.stopPropagation();
-                setMenuOpen(!menuOpen);
-                if (menuPlaylistsOpen) {
-                  setMenuPlaylistsOpen(false);
-                }
-              }}
-              aria-label="Options"
-            >
-              {state.videoId && (
-                <>
-                  {!remove ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="35px"
-                      viewBox="0 -960 960 960"
-                      width="35px"
-                      fill="#e3e3e3"
-                    >
-                      <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="35px"
-                      viewBox="0 -960 960 960"
-                      width="35px"
-                      fill="#e3e3e3"
-                    >
-                      <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z" />
-                    </svg>
-                  )}
-                </>
-              )}
-            </span>
-          </div>
-          {menuOpen && !remove && (
-            <ListGroup defaultActiveKey>
-              <ListGroup.Item
-                action
-                onClick={() => setMenuPlaylistsOpen((prev) => !prev)}
-              >
-                + Add to Playlist
-              </ListGroup.Item>
-            </ListGroup>
-          )}
-          {menuOpen && remove && (
-            <ListGroup defaultActiveKey>
-              <ListGroup.Item
-                action
-                onClick={() =>
-                  handleRemoveSongFromPlaylist(state.videoId, remove.playlistId)
-                }
-              >
-                Remove from Playlist
-              </ListGroup.Item>
-            </ListGroup>
-          )}
-
-          {menuPlaylistsOpen && (
-            <ListGroup>
-              {user.playlists.map((playlist) => (
-                <ListGroup.Item
-                  action
-                  key={playlist.name}
-                  onClick={() => handleAddSongToPlaylist(playlist)}
+      <div>
+        <Toaster />
+        <span
+          className={styles.optionsBtn}
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen);
+            if (menuPlaylistsOpen) {
+              setMenuPlaylistsOpen(false);
+            }
+          }}
+          aria-label="Options"
+        >
+          {state.videoId && (
+            <>
+              {!remove ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="35px"
+                  viewBox="0 -960 960 960"
+                  width="35px"
+                  fill="#e3e3e3"
                 >
-                  {playlist.name}
-                </ListGroup.Item>
-              ))}
-              <ListGroup.Item action onClick={() => setShowModal(true)}>
-                Create New Playlist
-              </ListGroup.Item>
-              {showModal && (
-                <div className="modalOverlay">
-                  <Modal.Dialog style={{ marginTop: "20px" }}>
-                    <Modal.Body>Enter Playlist Name:</Modal.Body>
-                    <Form.Control
-                      type="text"
-                      placeholder="Playlist Name"
-                      value={playlistName}
-                      onChange={(e) => setPlaylistName(e.target.value)}
-                    />
-                    <Modal.Footer>
-                      <Button onClick={() => setShowModal(false)} type="close">
-                        Close
-                      </Button>
-                      <Button
-                        onClick={async () => {
-                          // Create the playlist first
-                          const response = await createPlaylist(
-                            playlistName,
-                            user,
-                          );
-
-                          if (response.status === 200) {
-                            const newPlaylist = response.data.playlist;
-                            toast.success(`${response.data.message}`);
-                            // IMMEDIATELY add the current song to the new playlist
-                            await handleAddSongToPlaylist(newPlaylist);
-                          } else {
-                            toast.error(
-                              "Failed to create playlist. Please try again.",
-                            );
-                          }
-
-                          setShowModal(false);
-                          setPlaylistName("");
-                        }}
-                        type="submit"
-                      >
-                        Save changes
-                      </Button>
-                    </Modal.Footer>
-                  </Modal.Dialog>
-                </div>
+                  <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="35px"
+                  viewBox="0 -960 960 960"
+                  width="35px"
+                  fill="#e3e3e3"
+                >
+                  <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z" />
+                </svg>
               )}
-            </ListGroup>
+            </>
           )}
-          {state.videoId && <span className={styles.songDetails}>{song}</span>}
-          {state.videoId &&
-            // lazy-mount player only for the active/playing song to avoid multiple iframe loads
-            (playingVideoId === state.videoId ? (
-              <YouTube
-                videoId={state.videoId}
-                title={state.title}
-                opts={opts}
-                onPlay={handlePlaySong}
-                onPause={() => {
-                  dispatch({ type: "PAUSE", payload: { playing: false } });
-                }}
-              />
-            ) : (
-              // lightweight preview: thumbnail + play button
-              <div>
-                <img
-                  src={`https://img.youtube.com/vi/${state.videoId}/hqdefault.jpg`}
-                  alt={state.title}
-                  className={styles.thumbnail}
-                  loading="lazy"
-                  onClick={() => {
-                    setPlayingVideoId(state.videoId);
-                  }}
-                />
-              </div>
-            ))}
-        </>
+        </span>
+      </div>
+      {menuOpen && !remove && (
+        <ListGroup defaultActiveKey>
+          <ListGroup.Item
+            action
+            onClick={() => setMenuPlaylistsOpen((prev) => !prev)}
+          >
+            + Add to Playlist
+          </ListGroup.Item>
+        </ListGroup>
       )}
+      {menuOpen && remove && (
+        <ListGroup defaultActiveKey>
+          <ListGroup.Item
+            action
+            onClick={() =>
+              handleRemoveSongFromPlaylist(state.videoId, remove.playlistId)
+            }
+          >
+            Remove from Playlist
+          </ListGroup.Item>
+        </ListGroup>
+      )}
+
+      {menuPlaylistsOpen && (
+        <ListGroup>
+          {user.playlists.map((playlist) => (
+            <ListGroup.Item
+              action
+              key={playlist.name}
+              onClick={() => handleAddSongToPlaylist(playlist)}
+            >
+              {playlist.name}
+            </ListGroup.Item>
+          ))}
+          <ListGroup.Item action onClick={() => setShowModal(true)}>
+            Create New Playlist
+          </ListGroup.Item>
+          {showModal && (
+            <div className="modalOverlay">
+              <Modal.Dialog style={{ marginTop: "20px" }}>
+                <Modal.Body>Enter Playlist Name:</Modal.Body>
+                <Form.Control
+                  type="text"
+                  placeholder="Playlist Name"
+                  value={playlistName}
+                  onChange={(e) => setPlaylistName(e.target.value)}
+                />
+                <Modal.Footer>
+                  <Button onClick={() => setShowModal(false)} type="close">
+                    Close
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      // Create the playlist first
+                      const response = await createPlaylist(playlistName, user);
+
+                      if (response.status === 200) {
+                        const newPlaylist = response.data.playlist;
+                        toast.success(`${response.data.message}`);
+                        // IMMEDIATELY add the current song to the new playlist
+                        await handleAddSongToPlaylist(newPlaylist);
+                      } else {
+                        toast.error(
+                          "Failed to create playlist. Please try again.",
+                        );
+                      }
+
+                      setShowModal(false);
+                      setPlaylistName("");
+                    }}
+                    type="submit"
+                  >
+                    Save changes
+                  </Button>
+                </Modal.Footer>
+              </Modal.Dialog>
+            </div>
+          )}
+        </ListGroup>
+      )}
+      {state.videoId && <span className={styles.songDetails}>{song}</span>}
+      {state.videoId &&
+        // lazy-mount player only for the active/playing song to avoid multiple iframe loads
+        (playingVideoId === state.videoId ? (
+          <YouTube
+            videoId={state.videoId}
+            title={state.title}
+            opts={opts}
+            onPlay={handlePlaySong}
+            onPause={() => {
+              dispatch({ type: "PAUSE", payload: { playing: false } });
+            }}
+          />
+        ) : (
+          // lightweight preview: thumbnail + play button
+          <div>
+            <img
+              src={`https://img.youtube.com/vi/${state.videoId}/hqdefault.jpg`}
+              alt={state.title}
+              className={styles.thumbnail}
+              loading="lazy"
+              onClick={() => {
+                setPlayingVideoId(state.videoId);
+              }}
+            />
+          </div>
+        ))}
     </div>
   );
 }
@@ -406,9 +396,6 @@ Song.propTypes = {
   setPlayingVideoId: propTypes.func,
   playlistId: propTypes.string,
   onRemoveSong: propTypes.func,
-  videoId: propTypes.string,
-  registerVideoId: propTypes.func,
-  isVideoDuplicate: propTypes.func,
 };
 
 export default Song;
