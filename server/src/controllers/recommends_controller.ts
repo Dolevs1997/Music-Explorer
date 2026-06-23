@@ -10,10 +10,10 @@ const getAll = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "No song data from YouTube" });
     }
     const videoId = songData.videoId;
-    const existingSong = await SongSchema.findOne({ videoId: videoId });
-    if (existingSong) {
-      return res.status(200).json(existingSong);
-    }
+    // const existingSong = await SongSchema.findOne({ videoId: videoId });
+    // if (existingSong) {
+    //   return res.status(200).json(existingSong);
+    // }
 
     return res.status(200).json({
       song: songData.title,

@@ -35,7 +35,7 @@ function SongsPlaylist() {
         }
         const data = await response.json();
         setIsLoading(false);
-        console.log("data: ", data);
+        // console.log("data: ", data);
         setPlaylist(data);
       } catch (error) {
         console.error("Error fetching playlist:", error);
