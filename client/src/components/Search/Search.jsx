@@ -82,6 +82,7 @@ export default function Search() {
           className="settingsInput"
           title="Select language for voice search"
         >
+          <option disabled>Choose your language for voice</option>
           {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
             <option key={code} value={code}>
               {name}

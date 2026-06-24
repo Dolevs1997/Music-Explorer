@@ -3,17 +3,38 @@ import { fetchSong } from "../services/YouTube_service";
 import { Request, Response } from "express";
 
 const getAll = async (req: Request, res: Response) => {
-  const { song, country } = req.query;
+  const song = req.query?.song as string;
+  const country = (req.query?.country || "US") as string;
+  const excludedVideoIdsParam = req.query?.excludedVideoIds as
+    | string
+    | string[];
+  console.log("Excluded Video IDs Param:", excludedVideoIdsParam); // Debugging line
+  const excludedVideoIds = Array.isArray(excludedVideoIdsParam)
+    ? excludedVideoIdsParam
+    : typeof excludedVideoIdsParam === "string"
+      ? excludedVideoIdsParam
+          .split(",")
+          .map((id) => id.trim())
+          .filter(Boolean)
+      : [];
+  console.log("Excluded Video IDs Array:", excludedVideoIds); // Debugging line
   try {
-    const songData = await fetchSong(song as string, country as string);
+    if (!song) return res.status(400).json({ error: "Missing song parameter" });
+    const songData = await fetchSong(
+      song as string,
+      country as string,
+      excludedVideoIds as string[],
+    );
     if (!songData) {
-      return res.status(404).json({ error: "No song data from YouTube" });
+      return res
+        .status(404)
+        .json({ error: "No unique song data from YouTube" });
     }
     const videoId = songData.videoId;
-    const existingSong = await SongSchema.findOne({ videoId: videoId });
-    if (existingSong) {
-      return res.status(200).json(existingSong);
-    }
+    // const existingSong = await SongSchema.findOne({ videoId: videoId });
+    // if (existingSong) {
+    //   return res.status(200).json(existingSong);
+    // }
 
     return res.status(200).json({
       song: songData.title,

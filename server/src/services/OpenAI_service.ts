@@ -13,6 +13,7 @@ interface Message {
   content: string;
 }
 const SongSuggestions = async (text: Message) => {
+  console.log("SongSuggestions input:", text); // Debugging line
   const completion = await openai.chat.completions.create({
     model: "gpt-4.1",
     temperature: 0.0,
@@ -21,14 +22,14 @@ const SongSuggestions = async (text: Message) => {
       {
         role: "system",
         content:
-          "You are a strict music assistant. Return ONLY song suggestions that clearly match the user's description. Output each suggestion on its own line in exactly this format: Artist - Song Title - Year. Exclude any results that are live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, or any non-music/video content. Do NOT include duplicates, numbering, bullets, commentary, links, or extra text. If no relevant songs exist, return an empty response.",
+          "You are a strict music assistant. Return ONLY song suggestions that clearly match the user's description. Output each suggestion on its own line in exactly this format: Artist - Song Title - Year. Exclude any results that are live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, or any non-music/video content. Do NOT include duplicates, numbering, bullets, commentary, links, or extra text and the max ammount of songs is up to 50. If no relevant songs exist, return an empty response.",
       },
       {
         role: text.role,
         content:
           "Provide me with a list of song suggestions based on the following description: " +
           text.content +
-          " music only: artist name - song name - year. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.  If NO relevant songs exist || if it's NOT a song, return an empty response",
+          " music only: artist name - song name - year. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.  If NO relevant songs exist || you can't provide suggestions || if it's NOT a song, return an empty response",
       },
     ],
     store: true,
@@ -41,7 +42,7 @@ const SongSuggestions = async (text: Message) => {
   const songSuggestions = suggestions
     .substring(suggestions.indexOf("1.").valueOf())
     .split("\n");
-  console.log("Raw suggestions:", suggestions);
+  console.log("Song Suggestions:", songSuggestions); // Debugging line
   return songSuggestions;
 };
 
