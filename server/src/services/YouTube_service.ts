@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
-// import {
-//   getCachedSong,
-//   setCachedSong,
-//   getCachedSongPlaylist,
-//   setCachedPlaylistSongs,
-// } from "./Redis_service";
+import {
+  getCachedSong,
+  setCachedSong,
+  getCachedSongPlaylist,
+  setCachedPlaylistSongs,
+} from "./Redis_service";
 dotenv.config();
 const API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -229,14 +229,21 @@ async function fetchSpotifyPlaylistsBySearch(
 
   return Array.from(unique.values());
 }
-async function fetchSong(song: string, country = "US") {
+async function fetchSong(
+  song: string,
+  country = "US",
+  excludedVideoIds: string[] = [],
+) {
   const controller = new AbortController();
   const signal = controller.signal;
-  // const cachedSong = await getCachedSong(song, country);
-  // if (cachedSong && (cachedSong as any).videoId) {
-  //   // console.log("Returning cached song:", cachedSong);
-  //   return cachedSong;
-  // }
+  const excludedVideoSet = new Set(
+    excludedVideoIds.map((id) => id.trim()).filter(Boolean),
+  );
+  const cachedSong = await getCachedSong(song, country);
+  if (cachedSong && (cachedSong as any).videoId) {
+    // console.log("Returning cached song:", cachedSong);
+    return cachedSong;
+  }
   console.log("Fetching song from YouTube API:", song);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song} audio`,
@@ -249,9 +256,10 @@ async function fetchSong(song: string, country = "US") {
       throw new Error("No videos found for the given artist and songName");
     }
 
-    // Find first search result that actually contains a videoId
+    // Find first search result that actually contains a unique videoId
     const itemWithVideo = data.items.find(
-      (it: any) => it && it.id && it.id.videoId,
+      (it: any) =>
+        it && it.id && it.id.videoId && !excludedVideoSet.has(it.id.videoId),
     );
 
     if (itemWithVideo) {
@@ -261,13 +269,15 @@ async function fetchSong(song: string, country = "US") {
         throw new Error("No videos with videoId found for the given query");
       }
       // Only cache and return if we have a videoId
-      // await setCachedSong(song, country, {
-      //   title,
-      //   videoId,
-      // });
+      await setCachedSong(song, country, {
+        title,
+        videoId,
+      });
 
       return { title, videoId };
     }
+
+    throw new Error("No unique videos found for the given query");
   } catch (error) {
     console.error(
       "YouTube_service file in fetchSong: Error fetching songs:",
@@ -285,8 +295,8 @@ async function fetchPlaylistSongs(
   if (!playlistId) throw new Error("Playlist ID is required");
   if (!spotifyToken) throw new Error("Spotify token is required");
   // Check cache first
-  // const cached = await getCachedSongPlaylist(playlistId, country);
-  // if (cached) return cached;
+  const cached = await getCachedSongPlaylist(playlistId, country);
+  if (cached) return cached;
 
   try {
     // Spotify returns max 100 tracks per request
@@ -356,7 +366,7 @@ async function fetchPlaylistSongs(
     }
 
     // Cache the result
-    // await setCachedPlaylistSongs(playlistId, country, tracks);
+    await setCachedPlaylistSongs(playlistId, country, tracks);
 
     return tracks;
   } catch (error) {
