@@ -24,9 +24,9 @@ const getAll = async (req: Request, res: Response) => {
 };
 
 const getById = async (req: Request, res: Response) => {
-  const name = req.query.name;
-  const country = req.query.country || "US";
-  const locationName = req.query.location || "United States";
+  const name = req.query.name as string;
+  const country = (req.query.country as string) || "US";
+  const locationName = (req.query.location as string) || "United States";
   const spotifyToken = req.headers["spotify-token"] as string;
 
   if (!name) {

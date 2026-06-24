@@ -73,7 +73,8 @@ function reducer(state, action) {
       return state;
   }
 }
-
+const globalUsedVideoIds = new Set();
+let fetchQueuePromise = Promise.resolve(); // <-- The magical gatekeeper tracker
 function Song({
   song,
   country = "US",
@@ -92,6 +93,7 @@ function Song({
   const remove = useContext(removeBtn);
   const { user, setUser } = useContext(UserContext);
   const hasFetchedRef = useRef(false); // ← add this ref
+
   // console.log("song: ", song);
   // console.log("song ref: ", songRef);
   // console.log("song video state: ", state.videoId);
@@ -157,39 +159,45 @@ function Song({
     setPlaylistName("");
   }
 
-  useEffect(
-    function () {
-      async function fetchSong(song, user, country) {
-        if (!song || !user.token) return;
-        // Already fetched for this song — skip entirely
-        if (hasFetchedRef.current) return;
-        // if we already cached the resolved song and state already set -> do nothing
-        if (songRef.current && state.videoId === songRef.current.videoId) {
-          return;
-        }
-        if (songRef.current && songRef.current.videoId != undefined) {
-          dispatch({
-            type: "SET_VIDEO_SONG",
-            payload: {
-              videoId: songRef.current.videoId,
-              regionCode: songRef.current.regionCode,
-              song: songRef.current.song,
-              playlists: songRef.current.playlists,
-            },
-          });
-          return;
-        }
-        if (state.error) return;
+  useEffect(() => {
+    async function processQueue() {
+      if (!song || !user.token) return;
+      if (hasFetchedRef.current) return;
+      if (songRef.current && state.videoId === songRef.current.videoId) return;
+      if (songRef.current?.videoId) {
+        dispatch({
+          type: "SET_VIDEO_SONG",
+          payload: {
+            videoId: songRef.current.videoId,
+            regionCode: songRef.current.regionCode,
+            song: songRef.current.song,
+            playlists: [],
+          },
+        });
+        return;
+      }
+      if (state.error) return;
 
+      // Mark it right away to prevent secondary component updates from re-triggering
+      hasFetchedRef.current = true;
+
+      // FORCE this component to wait its turn in line
+      fetchQueuePromise = fetchQueuePromise.then(async () => {
         try {
-          hasFetchedRef.current = true; // ← mark before fetch to prevent race conditions
+          // NOW globalUsedVideoIds is guaranteed to have the videoId from previous components!
+          const excludedIds = Array.from(globalUsedVideoIds);
 
-          const data = await fetchSongYT(song, country, user);
+          const data = await fetchSongYT(song, country, user, excludedIds);
+
           if (!data?.videoId) {
-            hasFetchedRef.current = false; // reset if fetch returned nothing
+            hasFetchedRef.current = false; // Reset if API failed to find anything
             return;
           }
-          // console.log("video Id: ", data.videoId);
+
+          // Lock this ID down immediately before the next queue item executes
+          if (!globalUsedVideoIds.has(data.videoId)) {
+            globalUsedVideoIds.add(data.videoId);
+          }
 
           songRef.current = data;
 
@@ -203,20 +211,18 @@ function Song({
             },
           });
         } catch (error) {
-          hasFetchedRef.current = false; // reset on error so retry is possible
-
+          hasFetchedRef.current = false; // Reset on error so retry is possible
           console.error("Error fetching song", error);
           dispatch({
             type: "SET_ERROR",
             payload: { error: "Failed to fetch song " },
           });
         }
-      }
+      });
+    }
 
-      fetchSong(song, user, country);
-    },
-    [song, user.token, country, playlistId],
-  );
+    processQueue();
+  }, [song, user.token, country, playlistId]);
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
     await removeSongFromPlaylist(videoId, user, playlistId);
