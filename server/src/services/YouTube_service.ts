@@ -229,18 +229,26 @@ async function fetchSpotifyPlaylistsBySearch(
 
   return Array.from(unique.values());
 }
-async function fetchSong(song: string, country = "US") {
+async function fetchSong(
+  song: string,
+  country = "US",
+  excludedVideoIds: string[] = [],
+) {
   const controller = new AbortController();
   const signal = controller.signal;
+  const excludedVideoSet = new Set(
+    excludedVideoIds.map((id) => id.trim()).filter(Boolean),
+  );
   const cachedSong = await getCachedSong(song, country);
   if (cachedSong && (cachedSong as any).videoId) {
     // console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
-  // console.log("Fetching song from YouTube API:", song, country);
+  console.log("Fetching song from YouTube API:", song);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song} audio`,
   )}&type=video&key=${API_KEY}`;
+  // console.log("YouTube API URL:", url);
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
@@ -248,9 +256,10 @@ async function fetchSong(song: string, country = "US") {
       throw new Error("No videos found for the given artist and songName");
     }
 
-    // Find first search result that actually contains a videoId
+    // Find first search result that actually contains a unique videoId
     const itemWithVideo = data.items.find(
-      (it: any) => it && it.id && it.id.videoId,
+      (it: any) =>
+        it && it.id && it.id.videoId && !excludedVideoSet.has(it.id.videoId),
     );
 
     if (itemWithVideo) {
@@ -267,6 +276,8 @@ async function fetchSong(song: string, country = "US") {
 
       return { title, videoId };
     }
+
+    throw new Error("No unique videos found for the given query");
   } catch (error) {
     console.error(
       "YouTube_service file in fetchSong: Error fetching songs:",
@@ -303,12 +314,14 @@ async function fetchPlaylistSongs(
       );
 
       if (!response.ok) {
+        console.log("response:", response);
+        const errorData = await response.json();
         console.error(
-          "Error fetching Spotify playlist tracks:",
-          response.statusText,
+          `Spotify API error fetching playlist songs: ${response.status} ${response.statusText}`,
+          errorData,
         );
         throw new Error(
-          `Failed to fetch playlist tracks: ${response.statusText}`,
+          `Spotify API error: ${errorData.error?.message || response.statusText}`,
         );
       }
 
@@ -317,6 +330,9 @@ async function fetchPlaylistSongs(
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {
+          // console.log("item:", item);
+          // Ensure the track exists and has a duration greater than 400000ms
+          if (item?.track?.duration_ms >= 400000) return false;
           if (uniqueTrackIds.has(item?.track.id)) return false;
           uniqueTrackIds.add(item?.track.id);
           console.log("item:", item);

@@ -316,7 +316,6 @@ function Profile() {
                   <Song
                     key={playingVideoId} // ← forces remount on every new song
                     song={songTitle}
-                    videoId={playingVideoId} // ← new prop
                     playingVideoId={playingVideoId}
                     setPlayingVideoId={setPlayingVideoId}
                   />
