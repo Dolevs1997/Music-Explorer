@@ -63,6 +63,7 @@ function reducer(state, action) {
       return {
         ...state,
         error: action.payload.error,
+        loading: false,
       };
     case "PLAY":
       return { ...state, playing: true };
@@ -94,7 +95,7 @@ function Song({
   const { user, setUser } = useContext(UserContext);
   const hasFetchedRef = useRef(false); // ← add this ref
 
-  // console.log("song: ", song);
+  console.log("song: ", song);
   // console.log("song ref: ", songRef);
   // console.log("song video state: ", state.videoId);
   if (!user.token) {
@@ -191,6 +192,10 @@ function Song({
 
           if (!data?.videoId) {
             hasFetchedRef.current = false; // Reset if API failed to find anything
+            dispatch({
+              type: "SET_ERROR",
+              payload: { error: "Song video could not be fetched." },
+            });
             return;
           }
 
@@ -240,6 +245,10 @@ function Song({
     } catch (error) {
       console.error("Error removing song from playlist:", error);
     }
+  }
+
+  if (state.loading || state.error || !state.videoId) {
+    return null;
   }
 
   return (

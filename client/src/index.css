@@ -7,8 +7,10 @@
   --color-background-app: #151416;
   --color-background-100: #2d2b30;
   --color-background-800: #181997;
-  --color-button: #6c63aa;
-  --color-button-send: #7700ff;
+  --color-button-send: #7700ffb5;
+  --color-button-send-hover: #7700ff;
+  --color-button-accept: #1d673fb5;
+  --color-button-accept-hover: #00ff77;
   --color-button-delete: oklch(0.577 0.245 27.325);
   --color-text-dark: #adb5bd;
   --color-primary: #4000ff;
@@ -183,7 +185,28 @@ h2:hover {
 .pageTitle {
   margin-bottom: 50px;
 }
-ul {
+.playlists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin: 0 auto;
+  padding: 20px;
+  align-items: center;
+  max-width: 1600px;
+}
+
+@media screen and (max-width: 1200px) {
+  .playlists {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+}
+@media screen and (max-width: 800px) {
+  .playlists {
+    grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+    gap: 15px;
+  }
+}
+/* ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   padding: 20px;
@@ -195,7 +218,7 @@ ul {
   ul {
     grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
   }
-}
+} */
 .background {
   position: relative;
   width: 100%;
@@ -270,46 +293,6 @@ ul {
 .settingsInput:focus {
   border-color: var(--color-button, #6246ea);
 }
-/* @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-} */
 
 .dark {
   --background: oklch(0.145 0 0);

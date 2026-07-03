@@ -171,8 +171,6 @@
 
 /* History Tab */
 .historyList {
-  grid-template-columns: repeat(auto-fill, minmax(400px, 5fr));
-
   padding: 0;
   margin: 0;
   gap: 0.5rem;
@@ -291,14 +289,7 @@
     background 0.2s ease,
     transform 0.15s ease;
 }
-:global(.settingsBtn):hover:not(:disabled) {
-  background: var(--color-button-hover, #4f37c8);
-  transform: scale(1.02);
-}
-:global(.settingsBtn):disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+
 @media (max-width: 600px) {
   .profileHeader {
     flex-direction: column;

@@ -6,6 +6,7 @@ import propTypes from "prop-types";
 import ButtonComponent from "../../Button/Button";
 import EyeIconPassword from "../../EyeIconPassword/EyeIconPassword";
 import "./Account.module.css";
+import Button from "../../Button/Button";
 function Account({ setSettingsView }) {
   const { user, setUser } = useContext(UserContext);
 
@@ -131,14 +132,13 @@ function Account({ setSettingsView }) {
                 setShowPassword={setShowConfirmNewPassword}
               />
             </div>
-            <button
-              className="settingsBtn"
-              type="button"
-              disabled={pwLoading}
+            <Button
+              type="submit"
               onClick={handleChangePassword}
+              loading={pwLoading}
             >
               {pwLoading ? "Saving..." : "Change Password"}
-            </button>
+            </Button>
             <ButtonComponent
               type="cancel"
               onClick={() => {
@@ -159,12 +159,9 @@ function Account({ setSettingsView }) {
           Permanently deletes your account and all associated data. This cannot
           be undone.
         </p>
-        <button
-          className="settingsBtnDanger"
-          onClick={() => setShowDeleteModal(true)}
-        >
+        <Button type="delete" onClick={() => setShowDeleteModal(true)}>
           Delete Account
-        </button>
+        </Button>
       </section>
       {/* Delete Confirmation Modal */}
       {showDeleteModal && !selectedPassword && (
@@ -176,20 +173,20 @@ function Account({ setSettingsView }) {
               playlists, and listening history. This cannot be undone.
             </p>
             <div className="modalActions">
-              <button
-                className="settingsBtn"
+              <Button
+                type="cancel"
                 onClick={() => setShowDeleteModal(false)}
-                disabled={deleteLoading}
+                loading={deleteLoading}
               >
                 Cancel
-              </button>
-              <button
-                className="settingsBtnDanger"
+              </Button>
+              <Button
+                type="accept"
                 onClick={handleDeleteAccount}
-                disabled={deleteLoading}
+                loading={deleteLoading}
               >
                 {deleteLoading ? "Deleting..." : "Yes, Delete"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

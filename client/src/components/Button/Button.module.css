@@ -1,8 +1,8 @@
-.button {
- padding: 10px 20px;
+button {
+  padding: 10px 20px;
   border-radius: 7px;
   border: none;
-   color: white;
+  color: white;
   font-size: 0.9rem;
   cursor: pointer;
   width: fit-content;
@@ -10,26 +10,80 @@
     background 0.2s ease,
     transform 0.15s ease;
 }
+/* ── Danger Button ── */
+
 button[type="cancel"],
-button[type="close"] {
-  background-color: gray;
-}
+button[type="close"],
 button[type="delete"] {
-  background-color: var(--color-button-delete);
+  border: 1px solid rgba(220, 50, 50, 0.4);
+  background: rgba(220, 50, 50, 0.1);
+  color: #e05555;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
+
+button[type="cancel"]:hover:not(:disabled),
+button[type="close"]:hover:not(:disabled),
+button[type="delete"]:hover:not(:disabled) {
+  background: rgba(220, 50, 50, 0.2);
+  border-color: rgba(220, 50, 50, 0.7);
+  transform: scale(1.02);
+}
+button[type="cancel"]:disabled,
+button[type="close"]:disabled,
+button[type="delete"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button[type="select"],
+button[type="submit"],
+button[type="send"],
 button[type="login"],
 button[type="register"] {
-  background-color: var(--color-button);
+  border: 1px solid var(--color-background-800);
+  background: var(--color-button-send);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
-button[type="select"],
-button[type="submit"] {
-  background-color: var(--color-button-send);
+button[type="select"]:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled),
+button[type="send"]:hover:not(:disabled),
+button[type="login"]:hover:not(:disabled),
+button[type="register"]:hover:not(:disabled) {
+  background: var(--color-button-send-hover);
+  border-color: var(--color-button-send-hover);
+  transform: scale(1.02);
 }
+
+button[type="accept"] {
+  border: 1px solid var(--color-button-accept);
+  background: var(--color-button-accept);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: fit-content;
+  transition-duration: 1s;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+button[type="accept"]:hover:not(:disabled) {
+  background: var(--color-button-accept-hover);
+  border-color: var(--color-button-accept-hover);
+  transition-duration: 1s;
+  transform: scale(1.02);
+}
+
 button[type="link"] {
   background-color: var(--color-background-800);
-}
-.button:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-   transform: scale(1.01);
-  transition: transform 0.5s ease-in-out;
 }

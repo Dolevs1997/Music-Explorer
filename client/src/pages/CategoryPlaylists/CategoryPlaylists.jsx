@@ -34,7 +34,7 @@ function CategoryPlaylists() {
       <main className={styles.playlistsContainer}>
         <h1 className={styles.title}>{categoryName} Playlist</h1>
 
-        <div className={styles.playlists}>
+        <div className="playlists">
           {playlistsCategory.length > 0 &&
             playlistsCategory.map((playlist) => (
               <PlaylistCategory

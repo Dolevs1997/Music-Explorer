@@ -8,7 +8,6 @@ const getAll = async (req: Request, res: Response) => {
   const excludedVideoIdsParam = req.query?.excludedVideoIds as
     | string
     | string[];
-  console.log("Excluded Video IDs Param:", excludedVideoIdsParam); // Debugging line
   const excludedVideoIds = Array.isArray(excludedVideoIdsParam)
     ? excludedVideoIdsParam
     : typeof excludedVideoIdsParam === "string"
@@ -17,7 +16,6 @@ const getAll = async (req: Request, res: Response) => {
           .map((id) => id.trim())
           .filter(Boolean)
       : [];
-  console.log("Excluded Video IDs Array:", excludedVideoIds); // Debugging line
   try {
     if (!song) return res.status(400).json({ error: "Missing song parameter" });
     const songData = await fetchSong(
