@@ -131,8 +131,8 @@ function Login() {
           />
         </div>
 
-        <Link to="/home" className="link">
-          <Button onClick={(e) => handleLogin(e)} type="login">
+        <Link to="/home">
+          <Button type="login" onClick={(e) => handleLogin(e)}>
             Login
           </Button>
         </Link>

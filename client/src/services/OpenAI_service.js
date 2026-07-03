@@ -12,6 +12,7 @@ async function getSongSuggestions(payload, token) {
         },
       },
     );
+    console.log("response from getSongSuggestions:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching song suggestions:", error);

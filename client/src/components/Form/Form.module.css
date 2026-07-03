@@ -11,7 +11,7 @@
   width: 500px;
 }
 
-.formVisible button {
+/* .formVisible button {
   margin-top: 10px;
   padding: 10px;
   border: none;
@@ -25,4 +25,4 @@
 .formVisible button:hover {
   background-color: var(--color-button);
   transition-duration: 0.5s;
-}
+} */

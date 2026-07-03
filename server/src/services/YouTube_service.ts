@@ -245,15 +245,17 @@ async function fetchSong(
     return cachedSong;
   }
   console.log("Fetching song from YouTube API:", song);
+
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
-    `${song} audio`,
-  )}&type=video&key=${API_KEY}`;
+    `${song} official music video`,
+  )}&key=${API_KEY}`;
   // console.log("YouTube API URL:", url);
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
+    console.log("YouTube API response data:", data); // Debugging line
     if (!data || !data.items || data.items.length === 0) {
-      throw new Error("No videos found for the given artist and songName");
+      return null; // No results found
     }
 
     // Find first search result that actually contains a unique videoId
@@ -277,7 +279,7 @@ async function fetchSong(
       return { title, videoId };
     }
 
-    throw new Error("No unique videos found for the given query");
+    return null; // No unique videos found
   } catch (error) {
     console.error(
       "YouTube_service file in fetchSong: Error fetching songs:",
@@ -308,21 +310,33 @@ async function fetchPlaylistSongs(
     const uniqueTrackIds = new Set<string>();
 
     while (tracks.length < total) {
+      const fieldsParam = encodeURIComponent(
+        "total,items(track(id,name,artists,album(name,images),duration_ms,preview_url,external_urls))",
+      );
       const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=${country}&limit=${limit}&offset=${offset}&fields=total,items(track(id,name,artists,album(name,images),duration_ms,preview_url,external_urls,is_playable))}`,
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=${country}&limit=${limit}&offset=${offset}&fields=${fieldsParam}`,
         { headers: { Authorization: `Bearer ${spotifyToken}` } },
       );
 
       if (!response.ok) {
         console.log("response:", response);
-        const errorData = await response.json();
+        let errorMessage = response.statusText;
+
+        try {
+          const text = await response.text();
+          if (text) {
+            const errorData = JSON.parse(text);
+            errorMessage = errorData.error?.message || errorMessage;
+          }
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+
         console.error(
           `Spotify API error fetching playlist songs: ${response.status} ${response.statusText}`,
-          errorData,
+          errorMessage,
         );
-        throw new Error(
-          `Spotify API error: ${errorData.error?.message || response.statusText}`,
-        );
+        throw new Error(`Spotify API error: ${errorMessage}`);
       }
 
       const data = await response.json();
@@ -356,7 +370,6 @@ async function fetchPlaylistSongs(
           spotifyUrl: item.track.external_urls?.spotify || "",
           // This is what Song.jsx will use to search YouTube for playback
           searchQuery: `${item.track.artists?.[0]?.name} - ${item.track.name}`,
-          isPlayable: item.track.is_playable || false,
         }));
 
       tracks = [...tracks, ...pageTracks];

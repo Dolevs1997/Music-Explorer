@@ -168,7 +168,7 @@ function Register() {
           </li>
         </ol>
         <Link to="/login">
-          <Button onClick={handleRegisteration} type="register">
+          <Button type="register" onClick={handleRegisteration}>
             Register
           </Button>
         </Link>

@@ -2,33 +2,3 @@
   justify-items: center;
   margin-top: 100px;
 }
-
-.playlists {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-  margin: 0 auto;
-  padding: 20px;
-  align-items: center;
-  max-width: 1600px;
-}
-
-@media screen and (max-width: 1200px) {
-  .playlists {
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  }
-}
-@media screen and (max-width: 800px) {
-  .playlists {
-    grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
-    gap: 15px;
-  }
-}
-
-
-.header {
-  align-items: center;
-  justify-content: space-between;
-  display: flex;
-  padding: 10px;
-}

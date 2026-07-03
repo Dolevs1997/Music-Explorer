@@ -3,6 +3,7 @@ import { useState, useContext } from "react";
 import { deleteSongsHistory } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
+import Button from "../../Button/Button";
 
 function Privacy({ setSettingsView }) {
   const [deleteSongsModal, setDeleteSongsModal] = useState(false);
@@ -46,20 +47,20 @@ function Privacy({ setSettingsView }) {
               Are you sure? This will permanently delete your history songs
             </p>
             <div className="modalActions">
-              <button
-                className="settingsBtn"
+              <Button
+                type="cancel"
                 onClick={() => setDeleteSongsModal(false)}
                 disabled={deleteLoading}
               >
                 Cancel
-              </button>
-              <button
-                className="settingsBtnDanger"
+              </Button>
+              <Button
+                type="accept"
                 onClick={handleDeleteSongsHistory}
-                disabled={deleteLoading}
+                loading={deleteLoading}
               >
                 {deleteLoading ? "Deleting..." : "Yes, Delete"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

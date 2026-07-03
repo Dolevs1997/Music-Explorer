@@ -59,7 +59,7 @@ function SongsPlaylist() {
         <div className="playlist-songs">
           <h2>{playlistName}</h2>
           {playlist.length > 0 ? (
-            <ul>
+            <div className="playlists">
               {playlist.map((song, index) => (
                 <Song
                   key={index}
@@ -70,7 +70,7 @@ function SongsPlaylist() {
                   playlistId={playlistId}
                 />
               ))}
-            </ul>
+            </div>
           ) : isLoading ? (
             <Spinner />
           ) : (

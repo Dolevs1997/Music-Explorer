@@ -6,6 +6,7 @@ import { Spinner } from "../../components/ui/spinner";
 import propTypes from "prop-types";
 import { Toaster, toast } from "react-hot-toast";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
+import Button from "../Button/Button";
 
 function Form({ setSongSuggestions, setFormVisible, formVisible }) {
   const [text, setText] = useState("I want you to generate ");
@@ -28,7 +29,6 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
       const response = await getSongSuggestions(payload, user.token);
       const uniqueSongs = deduplicateSongs(response);
       setSongSuggestions(uniqueSongs);
-
       setFormVisible(!formVisible);
       setText("");
       if (uniqueSongs.length === 0) {
@@ -53,10 +53,22 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
       <label htmlFor="text">What is your mood today?</label>
 
       <textarea id="text" value={text} onChange={handleChange} />
-
-      <button type="submit" onClick={(e) => handleSubmit(e)}>
-        Send
-      </button>
+      <div className="modalActions">
+        <Button
+          type="submit"
+          onClick={(e) => handleSubmit(e)}
+          loading={isLoading}
+        >
+          Send
+        </Button>
+        <Button
+          type="cancel"
+          onClick={() => setFormVisible((prev) => !prev)}
+          loading={isLoading}
+        >
+          Cancel
+        </Button>
+      </div>
       {isLoading && (
         <>
           <Spinner />

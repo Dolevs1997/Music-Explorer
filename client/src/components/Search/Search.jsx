@@ -89,7 +89,43 @@ export default function Search() {
             </option>
           ))}
         </select>
-
+        <TooltipComponent text="searching song by voice">
+          {!isVoiceSearch && (
+            <button
+              onClick={async () => {
+                setIsVoiceSearch(true);
+                setProccessVoiceSearch(true);
+                const response = await handleVoiceSearch(
+                  userData,
+                  10000,
+                  setResultVoice,
+                  selectedLanguage,
+                );
+                console.log("response: ", response);
+                if (!response) return;
+                setProccessVoiceSearch(false);
+                setSongSuggestions(deduplicateSongs(response));
+                setIsVoiceSearch(false);
+                setIsMapVisible(false);
+                setIsRecording(false);
+                setFormVisible(false);
+                navigate("/home");
+              }}
+              disabled={proccessVoiceSearch}
+            >
+              <img src="/music-explorer/mic_i.png" />
+              {proccessVoiceSearch && (
+                <div className={styles.recordingSpinner}>
+                  <Spinner />
+                  Proccessing...
+                </div>
+              )}
+            </button>
+          )}
+          {isVoiceSearch && (
+            <MicrophoneAnimation setIsVoiceSearch={setIsVoiceSearch} />
+          )}
+        </TooltipComponent>
         {isRecording && (
           <span
             className={styles.recordingSpinner}
@@ -143,43 +179,7 @@ export default function Search() {
             </button>
           )}
         </TooltipComponent>
-        {isVoiceSearch && (
-          <MicrophoneAnimation setIsVoiceSearch={setIsVoiceSearch} />
-        )}
-        <TooltipComponent text="searching song by voice">
-          {!isVoiceSearch && (
-            <button
-              onClick={async () => {
-                setIsVoiceSearch(true);
-                setProccessVoiceSearch(true);
-                const response = await handleVoiceSearch(
-                  userData,
-                  10000,
-                  setResultVoice,
-                  selectedLanguage,
-                );
-                console.log("response: ", response);
-                if (!response) return;
-                setProccessVoiceSearch(false);
-                setSongSuggestions(deduplicateSongs(response));
-                setIsVoiceSearch(false);
-                setIsMapVisible(false);
-                setIsRecording(false);
-                setFormVisible(false);
-                navigate("/home");
-              }}
-              disabled={proccessVoiceSearch}
-            >
-              <img src="/music-explorer/mic_i.png" />
-              {proccessVoiceSearch && (
-                <div className={styles.recordingSpinner}>
-                  <Spinner />
-                  Proccessing...
-                </div>
-              )}
-            </button>
-          )}
-        </TooltipComponent>
+
         <TooltipComponent text="searching song by text">
           <span>
             {formVisible && (
