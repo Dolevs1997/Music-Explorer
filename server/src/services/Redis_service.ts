@@ -1,5 +1,7 @@
 import Redis from "ioredis";
 import { SongVideo } from "../models/Firestore/songVideo";
+import dotenv from "dotenv";
+dotenv.config();
 
 interface CachedSong {
   id: string;
@@ -15,13 +17,7 @@ interface CachedSong {
   youtubeUrl: string;
   youtubePublishedAt?: string;
 }
-
-// Single shared connection — not a new one per function call
-const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
-
-redis.on("error", (err) => console.error("Redis Client Error:", err));
-redis.on("connect", () => console.log("Connected to Redis"));
-
+let redis: Redis;
 function cacheKey(song: string, country: string) {
   return `recommends:${encodeURIComponent(song)}|${country}`;
 }
@@ -54,7 +50,13 @@ async function setCachedPlaylistSongs(
 }
 
 async function connectRedis() {
-  console.log("Redis connection initialized");
+  // Single shared connection — not a new one per function call
+  let redisUrl = process.env.REDIS_URL as string;
+  console.log("Redis URL:", redisUrl);
+  redis = new Redis(redisUrl);
+
+  redis.on("error", (err) => console.error("Redis Client Error:", err));
+  redis.on("connect", () => console.log("Connected to Redis"));
 }
 
 export {
