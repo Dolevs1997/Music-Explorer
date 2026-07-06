@@ -13,12 +13,13 @@ export default function Logo() {
     window.location.reload();
   };
   return (
-    <div className={styles.logoContainer}>
-      <div onClick={handleLogoClick}>
+    <div>
+      <div>
         <img
           src="/music-explorer/logo-app.png"
           alt="logo"
           className={styles.logo}
+          onClick={handleLogoClick}
         />
       </div>
       <span className="languageSelector" style={{ marginLeft: "80px" }}>

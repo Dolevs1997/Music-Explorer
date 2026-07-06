@@ -174,18 +174,18 @@ function Account({ setSettingsView }) {
             </p>
             <div className="modalActions">
               <Button
-                type="cancel"
-                onClick={() => setShowDeleteModal(false)}
-                loading={deleteLoading}
-              >
-                Cancel
-              </Button>
-              <Button
                 type="accept"
                 onClick={handleDeleteAccount}
                 loading={deleteLoading}
               >
                 {deleteLoading ? "Deleting..." : "Yes, Delete"}
+              </Button>
+              <Button
+                type="cancel"
+                onClick={() => setShowDeleteModal(false)}
+                loading={deleteLoading}
+              >
+                Cancel
               </Button>
             </div>
           </div>

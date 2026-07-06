@@ -48,18 +48,18 @@ function Privacy({ setSettingsView }) {
             </p>
             <div className="modalActions">
               <Button
-                type="cancel"
-                onClick={() => setDeleteSongsModal(false)}
-                disabled={deleteLoading}
-              >
-                Cancel
-              </Button>
-              <Button
                 type="accept"
                 onClick={handleDeleteSongsHistory}
                 loading={deleteLoading}
               >
                 {deleteLoading ? "Deleting..." : "Yes, Delete"}
+              </Button>
+              <Button
+                type="cancel"
+                onClick={() => setDeleteSongsModal(false)}
+                disabled={deleteLoading}
+              >
+                Cancel
               </Button>
             </div>
           </div>

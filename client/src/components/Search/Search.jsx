@@ -103,12 +103,15 @@ export default function Search() {
                 );
                 console.log("response: ", response);
                 if (!response) return;
+                else if (response?.length == 0)
+                  toast.error("No available songs, please try again..");
                 setProccessVoiceSearch(false);
                 setSongSuggestions(deduplicateSongs(response));
                 setIsVoiceSearch(false);
                 setIsMapVisible(false);
                 setIsRecording(false);
                 setFormVisible(false);
+
                 navigate("/home");
               }}
               disabled={proccessVoiceSearch}
@@ -163,6 +166,8 @@ export default function Search() {
                 setIsRecording(true);
                 setProccessRecording(true);
                 handleStartRecording();
+                clearTimeout();
+                setSecondsLeft(10);
                 setIsVoiceSearch(false);
                 setIsMapVisible(false);
                 setFormVisible(false);

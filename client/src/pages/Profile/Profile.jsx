@@ -158,12 +158,12 @@ function Profile() {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                width="16"
-                height="16"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#1f1f1f"
               >
-                <path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm6.5-4H19l-1.5-2h-11L5 5h-.5A3.5 3.5 0 0 0 1 8.5v10A3.5 3.5 0 0 0 4.5 22h15a3.5 3.5 0 0 0 3.5-3.5v-10A3.5 3.5 0 0 0 18.5 5z" />
+                <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
               </svg>
             </button>
             <input
@@ -291,9 +291,9 @@ function Profile() {
                   </p>
                 )}
                 {!historyLoading && recentSongs.length > 0 && (
-                  <ul className={styles.historyList}>
+                  <div className={styles.historyList}>
                     {recentSongs.map((song, index) => (
-                      <li
+                      <div
                         key={song.videoId || index}
                         className={styles.historyItem}
                         onClick={() => {
@@ -308,9 +308,9 @@ function Profile() {
                         <div className={styles.historyInfo}>
                           <p className={styles.historySongName}>{song.title}</p>
                         </div>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 )}
                 {playingVideoId && songTitle && (
                   <Song
