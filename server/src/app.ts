@@ -1,4 +1,5 @@
 // Description: This file is the entry point of the application.
+import { connectRedis } from "./services/Redis_service";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -27,7 +28,7 @@ const initApp = async () => {
     db.on("error", (error) => console.error(error));
     db.once("connected", () => console.log("Connected to MongoDB"));
     // Connect to Redis
-    // await connectRedis();
+    await connectRedis();
 
     // Initialize Express app
     const app = express();
