@@ -33,21 +33,30 @@
   right: 4px;
   width: 32px;
   height: 32px;
+  padding: 0;
   border-radius: 50%;
-  background: var(--color-button, #6246ea);
+  background: var(--color-button-send);
   border: 2px solid #111;
   color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
+  z-index: 2;
   transition:
     transform 0.2s ease,
     background 0.2s ease;
 }
+.changeAvatarBtn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: #fff;
+}
 .changeAvatarBtn:hover {
   transform: scale(1.1);
-  background: var(--color-button-hover, #4f37c8);
+  background: var(--color-button-send, #4f37c8);
 }
 
 .profileMeta {
@@ -83,7 +92,7 @@
   padding: 8px 22px;
   border-radius: 6px;
   border: none;
-  background: var(--color-button, #6246ea);
+  background: var(--color-button-send, #6246ea);
   color: white;
   font-size: 0.9rem;
   cursor: pointer;
@@ -93,7 +102,7 @@
     transform 0.15s ease;
 }
 .saveBtn:hover:not(:disabled) {
-  background: var(--color-button-hover, #4f37c8);
+  background: var(--color-button-send, #4f37c8);
   transform: scale(1.03);
 }
 .saveBtn:disabled {
@@ -158,7 +167,7 @@
   transform: scale(1.05);
   transition: transform 0.3s ease;
   cursor: pointer;
-  border-color: var(--color-button, #6246ea);
+  border-color: var(--color-button-send, #6246ea);
 }
 /* Playlist Tab */
 
@@ -171,13 +180,15 @@
 
 /* History Tab */
 .historyList {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  margin-top: 1.5rem;
   padding: 0;
   margin: 0;
-  gap: 0.5rem;
 }
 
 .historyItem {
-  display: flex;
   align-items: center;
   gap: 1rem;
   padding: 10px 14px;
@@ -234,7 +245,7 @@
   margin: 0 0 0.5rem;
 }
 :global(.settingsSectionTitle):hover {
-  color: var(--color-button, #6246ea);
+  color: var(--color-button-send, #6246ea);
   cursor: pointer;
 }
 
@@ -262,7 +273,7 @@
 :global(.backBtn) {
   background: none;
   border: none;
-  color: var(--color-button, #6246ea);
+  color: var(--color-button-send, #6246ea);
   font-size: 0.95rem;
   cursor: pointer;
   padding: 0;
@@ -280,7 +291,7 @@
   padding: 10px 20px;
   border-radius: 7px;
   border: none;
-  background: var(--color-button, #6246ea);
+  background: var(--color-button-send, #6246ea);
   color: white;
   font-size: 0.9rem;
   cursor: pointer;

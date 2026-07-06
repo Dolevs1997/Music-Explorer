@@ -10,9 +10,9 @@
   --color-button-send: #7700ffb5;
   --color-button-send-hover: #7700ff;
   --color-button-accept: #1d673fb5;
-  --color-button-accept-hover: #00ff77;
-  --color-button-delete: oklch(0.577 0.245 27.325);
-  --color-text-dark: #adb5bd;
+  --color-button-accept-hover: #1d673fb6;
+  --color-button-delete: rgba(220, 50, 50, 0.1);
+  --color-button-delete-hover: rgba(220, 50, 50, 0.2);
   --color-primary: #4000ff;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -280,7 +280,6 @@ h2:hover {
 }
 
 .settingsInput {
-  padding: 10px 14px;
   border-radius: 7px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: #1a1a1a;

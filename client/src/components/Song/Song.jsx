@@ -233,15 +233,12 @@ function Song({
     await removeSongFromPlaylist(videoId, user, playlistId);
     try {
       if (onRemoveSong) {
-        onRemoveSong(song, videoId);
+        onRemoveSong(state.song || song, videoId);
 
         toast.success("Song removed from playlist");
       } else {
         console.warn("onRemoveSong is undefined!");
       }
-
-      // Optionally update user.playlists in localStorage if needed
-      localStorage.setItem("user", JSON.stringify(user));
     } catch (error) {
       console.error("Error removing song from playlist:", error);
     }
@@ -341,32 +338,37 @@ function Song({
                   onChange={(e) => setPlaylistName(e.target.value)}
                 />
                 <Modal.Footer>
-                  <Button onClick={() => setShowModal(false)} type="close">
-                    Close
-                  </Button>
-                  <Button
-                    onClick={async () => {
-                      // Create the playlist first
-                      const response = await createPlaylist(playlistName, user);
-
-                      if (response.status === 200) {
-                        const newPlaylist = response.data.playlist;
-                        toast.success(`${response.data.message}`);
-                        // IMMEDIATELY add the current song to the new playlist
-                        await handleAddSongToPlaylist(newPlaylist);
-                      } else {
-                        toast.error(
-                          "Failed to create playlist. Please try again.",
+                  <div className="modalActions">
+                    <Button onClick={() => setShowModal(false)} type="close">
+                      Close
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        // Create the playlist first
+                        const response = await createPlaylist(
+                          playlistName,
+                          user,
                         );
-                      }
 
-                      setShowModal(false);
-                      setPlaylistName("");
-                    }}
-                    type="submit"
-                  >
-                    Save changes
-                  </Button>
+                        if (response.status === 200) {
+                          const newPlaylist = response.data.playlist;
+                          toast.success(`${response.data.message}`);
+                          // IMMEDIATELY add the current song to the new playlist
+                          await handleAddSongToPlaylist(newPlaylist);
+                        } else {
+                          toast.error(
+                            "Failed to create playlist. Please try again.",
+                          );
+                        }
+
+                        setShowModal(false);
+                        setPlaylistName("");
+                      }}
+                      type="submit"
+                    >
+                      Save changes
+                    </Button>
+                  </div>
                 </Modal.Footer>
               </Modal.Dialog>
             </div>

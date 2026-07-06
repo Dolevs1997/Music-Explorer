@@ -4,7 +4,7 @@ import Button from "../Button/Button";
 import { useNavigate } from "react-router";
 import PoiMarker from "./Marker";
 import countryList from "react-select-country-list";
-import UserContext from "../../Contexts/UserContext";
+// import UserContext from "../../Contexts/UserContext";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -20,7 +20,7 @@ function MapComponent() {
   const [locationName, setLocationName] = useState("United States");
   const [countryShortName, setCountryShortName] = useState("US");
   const options = countryList().getData();
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
   const navigate = useNavigate();
   async function handleMapClick(mapProps) {
     const lat = mapProps.detail.latLng.lat;
@@ -38,6 +38,7 @@ function MapComponent() {
     const formattedAddress =
       data.results[data.results.length - 1].formatted_address;
     setLocationName(formattedAddress);
+    console.log("location name: ", locationName);
   }
   async function geocode(address) {
     const result = await fetch(
@@ -75,7 +76,7 @@ function MapComponent() {
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <select
-            value={user?.country?.fullName}
+            value={geocode(selectedLocation)}
             className="settingsInput"
             onChange={(e) => {
               const selectedName =
@@ -89,7 +90,7 @@ function MapComponent() {
               height: "30px",
             }}
           >
-            <option>Select Country</option>
+            <option disabled>Choose a country from the list</option>
             {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}

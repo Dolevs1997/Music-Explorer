@@ -16,7 +16,7 @@ button[type="cancel"],
 button[type="close"],
 button[type="delete"] {
   border: 1px solid rgba(220, 50, 50, 0.4);
-  background: rgba(220, 50, 50, 0.1);
+  background: var(--color-button-delete);
   color: #e05555;
   font-size: 0.9rem;
   cursor: pointer;
@@ -29,7 +29,7 @@ button[type="delete"] {
 button[type="cancel"]:hover:not(:disabled),
 button[type="close"]:hover:not(:disabled),
 button[type="delete"]:hover:not(:disabled) {
-  background: rgba(220, 50, 50, 0.2);
+  background: var(--color-button-delete-hover);
   border-color: rgba(220, 50, 50, 0.7);
   transform: scale(1.02);
 }
@@ -61,26 +61,24 @@ button[type="send"]:hover:not(:disabled),
 button[type="login"]:hover:not(:disabled),
 button[type="register"]:hover:not(:disabled) {
   background: var(--color-button-send-hover);
-  border-color: var(--color-button-send-hover);
+  border-color: #7700ff;
   transform: scale(1.02);
 }
 
 button[type="accept"] {
-  border: 1px solid var(--color-button-accept);
+  border: 1px solid #359a64;
   background: var(--color-button-accept);
   color: white;
   font-size: 0.9rem;
   cursor: pointer;
   width: fit-content;
-  transition-duration: 1s;
   transition:
     background 0.2s ease,
     border-color 0.2s ease;
 }
 button[type="accept"]:hover:not(:disabled) {
   background: var(--color-button-accept-hover);
-  border-color: var(--color-button-accept-hover);
-  transition-duration: 1s;
+  border-color: #359a6f;
   transform: scale(1.02);
 }
 

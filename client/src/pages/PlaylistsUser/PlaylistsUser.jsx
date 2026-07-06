@@ -159,21 +159,20 @@ function PlaylistsUser() {
                 value={playlistName}
                 onChange={(e) => setPlaylistName(e.target.value)}
               />
-              <Button onClick={() => setShowCreateModal(false)} type="cancel">
-                Close
-              </Button>
-              <Button onClick={handleAddPlaylist} type="select">
-                Save changes
-              </Button>
+              <div className="modalActions">
+                <Button onClick={handleAddPlaylist} type="select">
+                  Save changes
+                </Button>
+                <Button onClick={() => setShowCreateModal(false)} type="cancel">
+                  Close
+                </Button>
+              </div>
             </form>
           )}
           {user.playlists.length > 0 ? (
-            <ul>
+            <div className="playlists">
               {user.playlists.map((playlist) => (
-                <li
-                  key={playlist._id || playlist.id}
-                  className="cursor-pointer "
-                >
+                <div key={playlist._id}>
                   {showDeleteModal &&
                     selectedPlaylist &&
                     (selectedPlaylist._id || selectedPlaylist.id) ===
@@ -191,22 +190,24 @@ function PlaylistsUser() {
                             {playlist.name}?
                           </Modal.Body>
                           <Modal.Footer>
-                            <Button
-                              onClick={() => setShowDeleteModal(false)}
-                              type="cancel"
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              onClick={() =>
-                                handleRemovePlaylist(
-                                  playlist._id || playlist.id,
-                                )
-                              }
-                              type="delete"
-                            >
-                              Delete
-                            </Button>
+                            <div className="modalActions">
+                              <Button
+                                type="accept"
+                                onClick={() =>
+                                  handleRemovePlaylist(
+                                    playlist._id || playlist.id,
+                                  )
+                                }
+                              >
+                                Delete
+                              </Button>
+                              <Button
+                                type="cancel"
+                                onClick={() => setShowDeleteModal(false)}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
                           </Modal.Footer>
                         </Modal.Dialog>
                       </div>
@@ -320,6 +321,7 @@ function PlaylistsUser() {
                       )}
                     </CardBody>
                   </Card>
+
                   {showEditModal && (
                     <div className="modalOverlay">
                       <Modal.Dialog>
@@ -331,16 +333,18 @@ function PlaylistsUser() {
                           />
                         </Form.Group>
                         <Modal.Footer>
-                          <Button onClick={handleEditPlaylist} type="submit">
-                            Send
-                          </Button>
+                          <div className="modalActions">
+                            <Button onClick={handleEditPlaylist} type="submit">
+                              Send
+                            </Button>
 
-                          <Button
-                            onClick={(prev) => setShowEditModal(!prev)}
-                            type="cancel"
-                          >
-                            Cancel
-                          </Button>
+                            <Button
+                              onClick={(prev) => setShowEditModal(!prev)}
+                              type="cancel"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
                         </Modal.Footer>
                       </Modal.Dialog>
                     </div>
@@ -360,67 +364,73 @@ function PlaylistsUser() {
                   } */}
                   {showForm && (
                     <div className="modalOverlay">
-                      <form className="formVisible">
-                        <label htmlFor="text">
-                          Generate your image for {playlist.name} playlist
-                        </label>
-                        <textarea
-                          value={input}
-                          maxLength={50}
-                          onChange={(e) => {
-                            setInput(e.target.value);
-                          }}
-                        ></textarea>
-                        <Button
-                          disabled={loading}
-                          onClick={async () => {
-                            setLoading(true);
-                            try {
-                              const data = await updatePlaylist(
-                                playlist,
-                                { prompt: input },
-                                user,
-                              );
-                              // update user/playlist in context
-                              const updatedUser = {
-                                ...user,
-                                playlists: user.playlists.map((p) =>
-                                  p._id == data.playlist._id
-                                    ? (p = data.playlist)
-                                    : p,
-                                ),
-                              };
-                              setUser(updatedUser);
+                      <Modal.Dialog>
+                        <Form.Group controlId="exampleForm.ControlTextarea1">
+                          <Form.Label>
+                            {" "}
+                            Generate your image for {playlist.name} playlist
+                          </Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            onChange={(e) => {
+                              setInput(e.target.value);
+                            }}
+                          />
+                        </Form.Group>
+                        <Modal.Footer>
+                          <div className="modalActions">
+                            <Button
+                              onClick={async () => {
+                                setLoading(true);
+                                try {
+                                  const data = await updatePlaylist(
+                                    playlist,
+                                    { prompt: input },
+                                    user,
+                                  );
+                                  // update user/playlist in context
+                                  const updatedUser = {
+                                    ...user,
+                                    playlists: user.playlists.map((p) =>
+                                      p._id == data.playlist._id
+                                        ? (p = data.playlist)
+                                        : p,
+                                    ),
+                                  };
+                                  setUser(updatedUser);
 
-                              toast.success("Playlist image generated!");
-                              setShowForm(false);
-                            } catch (err) {
-                              toast.error("Image generation failed.", err);
-                            } finally {
-                              setLoading(false);
-                            }
-                          }}
-                          type="submit"
-                          loading={loading ? true : false}
-                        >
-                          Send
-                        </Button>
-                        <Button
-                          onClick={(prev) => {
-                            setShowForm(!prev);
-                            setInput("");
-                          }}
-                          type="cancel"
-                        >
-                          Cancel
-                        </Button>
-                        {loading && <Spinner />}
-                      </form>
+                                  toast.success("Playlist image generated!");
+                                  setShowForm(false);
+                                } catch (err) {
+                                  toast.error("Image generation failed.", err);
+                                } finally {
+                                  setLoading(false);
+                                }
+                              }}
+                              type="submit"
+                              loading={loading ? true : false}
+                            >
+                              Send
+                            </Button>
+                            <Button
+                              type="cancel"
+                              onClick={(prev) => {
+                                setShowForm(!prev);
+                                setInput("");
+                              }}
+                              loading={loading}
+                            >
+                              Cancel
+                            </Button>
+                            {loading && <Spinner />}
+                          </div>
+                        </Modal.Footer>
+                      </Modal.Dialog>
                     </div>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>No playlists available.</p>
           )}
@@ -439,12 +449,14 @@ function PlaylistsUser() {
                   />
                 </Form.Group>
                 <Modal.Footer>
-                  <Button onClick={() => setModalOverlay(false)} type="close">
-                    Close
-                  </Button>
-                  <Button onClick={handleUploadImage} type="submit">
-                    Save changes
-                  </Button>
+                  <div className="modalActions">
+                    <Button onClick={handleUploadImage} type="submit">
+                      Save changes
+                    </Button>
+                    <Button onClick={() => setModalOverlay(false)} type="close">
+                      Close
+                    </Button>
+                  </div>
                 </Modal.Footer>
               </Modal.Dialog>
             </div>

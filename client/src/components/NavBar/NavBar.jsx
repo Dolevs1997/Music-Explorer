@@ -36,22 +36,24 @@ function NavBar() {
   }
 
   return (
-    <div>
-      <nav className={styles.navbar}>
-        <Toaster />
-        <NavDropdown title="Menu" menuVariant="dark">
-          <NavDropdown.Item onClick={() => navigate("/profile")}>
-            Profile
-          </NavDropdown.Item>
-          <NavDropdown.Item onClick={() => navigate("/myplaylists")}>
-            Playlists
-          </NavDropdown.Item>
-          <NavDropdown.Divider />
+    <nav className={styles.navbar}>
+      <Toaster />
+      <NavDropdown
+        title={<img src={user?.avatar} />}
+        menuVariant="dark"
+        id="nav-dropdown-dark-example"
+      >
+        <NavDropdown.Item onClick={() => navigate("/profile")}>
+          Profile
+        </NavDropdown.Item>
+        <NavDropdown.Item onClick={() => navigate("/myplaylists")}>
+          Playlists
+        </NavDropdown.Item>
+        <NavDropdown.Divider />
 
-          <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
-        </NavDropdown>
-      </nav>
-    </div>
+        <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+      </NavDropdown>
+    </nav>
   );
 }
 

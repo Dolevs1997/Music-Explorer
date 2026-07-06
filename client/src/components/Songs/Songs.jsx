@@ -7,7 +7,6 @@ function Songs({ songSuggestions, onRemoveSong }) {
 
   return (
     <div>
-      <h2>Song Results</h2>
       {songSuggestions.length > 1 ? (
         <div className="homeContainer">
           <div className="playlists">

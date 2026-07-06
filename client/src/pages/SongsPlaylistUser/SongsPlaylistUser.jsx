@@ -24,58 +24,79 @@ function SongsPlaylistUser() {
   if (!user) {
     console.error("User not found in local storage or state.");
   }
+  async function fetchPlaylistSongs() {
+    if (!user?.token || !playlistId) return;
+
+    try {
+      const response = await fetch(
+        `http://${
+          import.meta.env.VITE_SERVER_URL
+        }/music-explorer/playlist/?id=${playlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        setSongs([]);
+        throw new Error("Failed to fetch playlist songs");
+      }
+      const data = await response.json();
+      setSongs(
+        (data.songs || []).map((songObj) => songObj.song).filter(Boolean),
+      );
+    } catch (error) {
+      console.error("Error fetching playlist songs:", error);
+    }
+  }
+
   function handleRemoveSong(removedSong, videoId) {
-    // Update local songs state
     setSongs((prevSongs) =>
-      prevSongs.filter(
-        (song) => song !== removedSong && song.videoId !== videoId,
-      ),
+      prevSongs.filter((songItem) => {
+        const itemValue =
+          typeof songItem === "object" && songItem !== null
+            ? songItem.song || songItem.title || songItem.name || songItem._id
+            : songItem;
+        const removedValue =
+          typeof removedSong === "object" && removedSong !== null
+            ? removedSong.song ||
+              removedSong.title ||
+              removedSong.name ||
+              removedSong._id
+            : removedSong;
+        const itemVideoId =
+          typeof songItem === "object" && songItem !== null
+            ? songItem.videoId || songItem._id || songItem.id
+            : null;
+
+        return itemVideoId !== videoId && itemValue !== removedValue;
+      }),
     );
+
     const updatedUser = {
       ...user,
       playlists: user.playlists.map((p) =>
         p._id === playlistId || p.id === playlistId
           ? {
               ...p,
-              songs: (p.songs || []).filter(
-                (s) => s.videoId !== videoId && s.song !== removedSong,
-              ),
+              songs: (p.songs || []).filter((s) => {
+                const songTitle = s?.song || s?.title || s?.name;
+                const songVideoId = s?.videoId || s?._id || s?.id;
+                return songVideoId !== videoId && songTitle !== removedSong;
+              }),
             }
           : p,
       ),
     };
 
     setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   }
+
   useEffect(() => {
-    async function fetchPlaylistSongs() {
-      try {
-        const response = await fetch(
-          `http://${
-            import.meta.env.VITE_SERVER_URL
-          }/music-explorer/playlist/?id=${playlistId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          },
-        );
-        if (!response.ok) {
-          setSongs([]);
-          throw new Error("Failed to fetch playlist songs");
-        }
-        const data = await response.json();
-        setSongs(
-          data.songs.map((songObj) => {
-            return songObj.song;
-          }),
-        );
-      } catch (error) {
-        console.error("Error fetching playlist songs:", error);
-      }
-    }
     fetchPlaylistSongs();
-  }, [playlistId, user.token]);
+  }, [playlistId, user?.token]);
 
   return (
     <div className="app-container">
