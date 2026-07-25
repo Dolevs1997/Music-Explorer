@@ -33,9 +33,9 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app); // Initialize Firestore if needed
 export const auth = getAuth(app); // Initialize Firebase Auth if needed
 
-if (!admin.apps.length) {
+if (!admin.getApps().length) {
   admin.initializeApp({
-    credential: admin.credential.cert({
+    credential: admin.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),

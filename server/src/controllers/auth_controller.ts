@@ -1,7 +1,7 @@
 import jwt, { PrivateKey, PublicKey } from "jsonwebtoken";
 import { userSchemaZod, UserModel } from "../schemas/User_schema";
 import { Request, Response } from "express";
-import { app, admin, actionCodeSettings } from "../config/firebase_config";
+import { app, actionCodeSettings } from "../config/firebase_config";
 import { updatePasswordForUser } from "../models/Firestore/userAuth";
 import { deleteAllSongs } from "../models/Firestore/songVideo";
 import {
@@ -16,6 +16,7 @@ import {
   signInWithCredential,
   sendPasswordResetEmail,
 } from "firebase/auth";
+import { getAuth as getAdminAuth } from "firebase-admin/auth";
 import PlaylistSchema from "../schemas/Playlist_schema";
 import Song_schema from "../schemas/Song_schema";
 
@@ -73,7 +74,7 @@ const register = async (req: Request, res: Response) => {
         // If the user already exists with Google login, allow setting a password
         // on the same Firebase account so manual login works later.
         try {
-          await admin.auth().updateUser(existedUser.uid, { password });
+          await getAdminAuth().updateUser(existedUser.uid, { password });
 
           const tokens = await generateTokens(existedUser as any);
           return res.status(200).json({
@@ -328,7 +329,7 @@ const deleteAccount = async (req: Request, res: Response) => {
 
         // Delete from Firebase Auth using Admin SDK — no re-auth needed
         if (foundUser.uid) {
-          await admin.auth().deleteUser(foundUser.uid);
+          await getAdminAuth().deleteUser(foundUser.uid);
         }
         await deleteAllSongs(foundUser._id.toString());
         // Delete all user's playlists from MongoDB
