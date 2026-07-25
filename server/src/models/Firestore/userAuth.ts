@@ -17,13 +17,19 @@ const updatePasswordForUser = async (
     // Verify current password
     console.log("foundUser.email: ", foundUser.email);
     console.log("currentPassword: ", currentPassword);
-    const userCredential = await signInWithEmailAndPassword(auth, foundUser.email, currentPassword);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      foundUser.email,
+      currentPassword,
+    );
     const userAuth = userCredential.user;
     console.log("userAuth: ", userAuth);
-    
+
     // Update password using admin SDK
     if (foundUser.uid) {
-      await admin.auth().updateUser(foundUser.uid, { password: newPassword });
+      await (admin as any)
+        .auth()
+        .updateUser(foundUser.uid, { password: newPassword });
     } else {
       throw new Error("User has no Firebase UID");
     }
@@ -32,7 +38,5 @@ const updatePasswordForUser = async (
     throw error;
   }
 };
-
-
 
 export { updatePasswordForUser };

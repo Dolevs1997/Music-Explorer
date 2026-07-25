@@ -1,5 +1,6 @@
-import { deleteDoc, doc } from "firebase/firestore";
-import { admin, db } from "../../config/firebase_config";
+// import { deleteDoc, doc } from "firebase/firestore";
+// import { db } from "../../config/firebase_config";
+import * as admin from "firebase-admin";
 export type SongVideo = {
   title: string;
   videoId: string;
@@ -7,7 +8,9 @@ export type SongVideo = {
 
 const addSongVideo = async (userId: string, songVideo: SongVideo) => {
   try {
-    const col = admin.firestore().collection(`users/${userId}/song-video`);
+    const col = (admin as any)
+      .firestore()
+      .collection(`users/${userId}/song-video`);
     const snapshot = await col
       .where("song", "==", songVideo.title)
       .where("videoId", "==", songVideo.videoId)
@@ -19,7 +22,7 @@ const addSongVideo = async (userId: string, songVideo: SongVideo) => {
     const docRef = await col.add({
       song: songVideo.title,
       videoId: songVideo.videoId,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: (admin as any).firestore.FieldValue.serverTimestamp(),
     });
     console.log("Song video added with ID: ", docRef.id);
   } catch (error) {
@@ -28,13 +31,15 @@ const addSongVideo = async (userId: string, songVideo: SongVideo) => {
 };
 const getRecentSongVideos = async (userId: string, limit: number) => {
   try {
-    const col = admin.firestore().collection(`users/${userId}/song-video`);
+    const col = (admin as any)
+      .firestore()
+      .collection(`users/${userId}/song-video`);
     const querySnapshot = await col
       .orderBy("createdAt", "desc")
       .limit(limit)
       .get();
 
-    const allSongs: SongVideo[] = querySnapshot.docs.map((doc) => ({
+    const allSongs: SongVideo[] = querySnapshot.docs.map((doc: any) => ({
       title: doc.data().song,
       videoId: doc.data().videoId,
     }));
@@ -52,10 +57,12 @@ const getRecentSongVideos = async (userId: string, limit: number) => {
 };
 
 const deleteAllSongs = async (userId: string) => {
-  const col = admin.firestore().collection(`users/${userId}/song-video`);
+  const col = (admin as any)
+    .firestore()
+    .collection(`users/${userId}/song-video`);
   const querySnapshot = await col.get();
   for (const song of querySnapshot.docs) {
-    await deleteDoc(doc(db, `users/${userId}/song-video`, song.id));
+    await song.ref.delete(); // admin SDK method
   }
 };
 

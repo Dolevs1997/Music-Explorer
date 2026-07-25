@@ -2,3 +2,4 @@
 .env
 openssl-secret.txt
 dist/
+env.json
