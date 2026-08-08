@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import * as admin from "firebase-admin";
+import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file
@@ -43,4 +44,5 @@ if (!admin.getApps().length) {
   });
 }
 
+export const adminDb = getAdminFirestore();
 export { admin, actionCodeSettings };

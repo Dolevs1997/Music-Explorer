@@ -9,7 +9,7 @@ import {
   getDetectedLanguage,
 } from "../../utils/voice_search_song";
 import { useNavigate } from "react-router";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { SearchContext } from "../../Contexts/SearchContext";
 import { BarsScaleMiddleIcon } from "../../components/icons/svg-spinners-bars-scale-middle";
 import MicrophoneAnimation from "../../components/icons/MicrophoneAnimation";
@@ -31,7 +31,13 @@ export default function Search() {
     isVoiceSearch,
   } = useContext(SearchContext);
   const navigate = useNavigate();
-  const userData = JSON.parse(localStorage.getItem("user"));
+  const userData = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  }, []);
   const [secondsLeft, setSecondsLeft] = useState(10);
   const [proccessRecording, setProccessRecording] = useState(false);
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
@@ -53,25 +59,49 @@ export default function Search() {
       navigate("/home");
     }
   }, [resultRecord, resultVoice, navigate]);
-  function handleSecondsLeft(seconds) {
-    setInterval(function () {
-      if (seconds > 0) setSecondsLeft(() => seconds - 1);
+
+  const stopRecordingAndReset = useCallback(() => {
+    setIsRecording(false);
+    handleStopRecording(
+      userData,
+      setSongSuggestions,
+      setProccessRecording,
+      setResultRecord,
+    );
+    setIsVoiceSearch(false);
+    setIsMapVisible(false);
+    setFormVisible(false);
+  }, [
+    setFormVisible,
+    setIsMapVisible,
+    setIsRecording,
+    setIsVoiceSearch,
+    setSongSuggestions,
+    userData,
+  ]);
+
+  useEffect(() => {
+    if (!isRecording) {
+      setSecondsLeft(10);
+      return;
+    }
+
+    setSecondsLeft(10);
+
+    const countdownInterval = window.setInterval(() => {
+      setSecondsLeft((prevSeconds) => {
+        if (prevSeconds <= 1) {
+          window.clearInterval(countdownInterval);
+          stopRecordingAndReset();
+          return 0;
+        }
+
+        return prevSeconds - 1;
+      });
     }, 1000);
-  }
-  function handleTimeOut() {
-    setTimeout(() => {
-      setIsRecording(false);
-      handleStopRecording(
-        userData,
-        setSongSuggestions,
-        setProccessRecording,
-        setResultRecord,
-      );
-      setIsVoiceSearch(false);
-      setIsMapVisible(false);
-      setFormVisible(false);
-    }, 10000);
-  }
+
+    return () => window.clearInterval(countdownInterval);
+  }, [isRecording, stopRecordingAndReset]);
   return (
     <>
       <div className={styles.searchBar}>
@@ -132,20 +162,8 @@ export default function Search() {
         {isRecording && (
           <span
             className={styles.recordingSpinner}
-            onClick={() => {
-              setIsRecording(false);
-              handleStopRecording(
-                userData,
-                setSongSuggestions,
-                setProccessRecording,
-                setResultRecord,
-              );
-              setIsVoiceSearch(false);
-              setIsMapVisible(false);
-              setFormVisible(false);
-            }}
+            onClick={stopRecordingAndReset}
           >
-            {handleTimeOut()}
             <div className={styles.recordingSpinner}>
               <BarsScaleMiddleIcon
                 width={40}
@@ -154,7 +172,6 @@ export default function Search() {
                 stroke="#ffffff"
               />
               <Spinner />
-              {handleSecondsLeft(secondsLeft)}
               Please wait {secondsLeft} seconds...
             </div>
           </span>
