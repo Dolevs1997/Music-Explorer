@@ -31,7 +31,7 @@ function SongsPlaylistUser() {
       const response = await fetch(
         `http://${
           import.meta.env.VITE_SERVER_URL
-        }/music-explorer/playlist/?id=${playlistId}`,
+        }/api/playlist/?id=${playlistId}`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`,

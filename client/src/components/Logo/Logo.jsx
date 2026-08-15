@@ -16,7 +16,7 @@ export default function Logo() {
     <div>
       <div>
         <img
-          src="/music-explorer/logo-app.png"
+          src="/public/logo-app.png"
           alt="logo"
           className={styles.logo}
           onClick={handleLogoClick}

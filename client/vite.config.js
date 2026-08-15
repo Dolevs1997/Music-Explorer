@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/music-explorer",
+  // base: "/music-explorer",
   // Source - https://stackoverflow.com/a/75719691
   // Posted by Zahid Hassan Shaikot, modified by community. See post 'Timeline' for change history
   // Retrieved 2026-07-25, License - CC BY-SA 4.0

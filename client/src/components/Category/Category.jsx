@@ -11,7 +11,7 @@ function Category({ category, token, country, location }) {
     const response = await fetch(
       `http://${
         import.meta.env.VITE_SERVER_URL
-      }/music-explorer/categories/category/?name=${name}&country=${country}&location=${location}`,
+      }/api/categories/category/?name=${name}&country=${country}&location=${location}`,
       {
         method: "GET",
         headers: {
