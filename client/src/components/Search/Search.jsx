@@ -146,7 +146,7 @@ export default function Search() {
               }}
               disabled={proccessVoiceSearch}
             >
-              <img src="/music-explorer/mic_i.png" />
+              <img src="/public/mic_i.png" />
               {proccessVoiceSearch && (
                 <div className={styles.recordingSpinner}>
                   <Spinner />
@@ -191,7 +191,7 @@ export default function Search() {
               }}
               disabled={proccessRecording}
             >
-              <img src="/music-explorer/record_i.png" />
+              <img src="/public/record_i.png" />
               {proccessRecording && (
                 <div className={styles.recordingSpinner}>
                   <Spinner />
@@ -212,7 +212,7 @@ export default function Search() {
               />
             )}
             <img
-              src="/music-explorer/chat_i.png"
+              src="/public/chat_i.png"
               onClick={() => {
                 setIsVoiceSearch(false);
                 setIsRecording(false);
@@ -229,7 +229,7 @@ export default function Search() {
               navigate("/global");
             }}
           >
-            <img src="/music-explorer/earth_i.png" />
+            <img src="/public/earth_i.png" />
           </span>
         </TooltipComponent>
       </div>

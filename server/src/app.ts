@@ -37,13 +37,13 @@ const initApp = async () => {
     app.use(urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, "public")));
     app.use("/auth", authRouter);
-    app.use("/music-explorer/recommends", recommendRouter);
-    app.use("/music-explorer/categories", categoriesRouter);
-    app.use("/music-explorer/videoSong", songRouter);
-    app.use("/music-explorer/playlist", playlistRouter);
-    app.use("/music-explorer/upload", uploadRouter);
-    app.use("/api", openaiRouter);
-    app.use("/music-explorer/userActivity", userActivityRouter);
+    app.use("/api/recommends", recommendRouter);
+    app.use("/api/categories", categoriesRouter);
+    app.use("/api/videoSong", songRouter);
+    app.use("/api/playlist", playlistRouter);
+    app.use("/api/upload", uploadRouter);
+    app.use("/api/userActivity", userActivityRouter);
+    app.use("/api/openai", openaiRouter);
 
     return app;
   } catch (e: unknown) {
