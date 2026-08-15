@@ -26,7 +26,9 @@ const googleLogin = async (req: Request, res: Response) => {
   const credential = GoogleAuthProvider.credential(idToken);
   const userCredential = await signInWithCredential(auth, credential);
   const firebaseUser = userCredential.user;
-  let dbUser = await UserModel.findOne({ email: firebaseUser.email });
+  let dbUser = await UserModel.findOne({ email: firebaseUser.email }).populate(
+    "playlists",
+  );
   let message = "";
   if (!dbUser) {
     dbUser = new UserModel({
@@ -214,6 +216,7 @@ const login = async (req: Request, res: Response) => {
           return res.status(400).send("BAD REQUEST: Invalid user data");
 
         const tokens = await generateTokens(user);
+        console.log("user in login:", user);
         res.status(200).json({
           email: user.email,
           country: user.country,
