@@ -1,7 +1,7 @@
 import axios from "axios";
 async function addSongToPlaylist(song, state, user, playlist) {
   const response = await axios.post(
-    `http://${import.meta.env.VITE_SERVER_URL}/api/playlist/addSong?id=${playlist._id || playlist.id}`,
+    `/api/playlist/addSong?id=${playlist._id || playlist.id}`,
     {
       song: song,
       videoId: state.videoId,
@@ -19,7 +19,7 @@ async function addSongToPlaylist(song, state, user, playlist) {
 }
 async function createPlaylist(playlistName, user) {
   const response = await axios.post(
-    `http://${import.meta.env.VITE_SERVER_URL}/api/playlist/create`,
+    `/api/playlist/create`,
     {
       playlistName: playlistName,
       user: user,
@@ -35,31 +35,25 @@ async function createPlaylist(playlistName, user) {
 }
 
 async function removeSongFromPlaylist(videoId, user, playlistId) {
-  const response = await axios.delete(
-    `http://${import.meta.env.VITE_SERVER_URL}/api/videoSong/song/${videoId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      data: {
-        user: user,
-        playlistId: playlistId,
-      },
+  const response = await axios.delete(`/api/videoSong/song/${videoId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${user.token}`,
     },
-  );
+    data: {
+      user: user,
+      playlistId: playlistId,
+    },
+  });
   return response.data;
 }
 
 async function removePlaylist(playlistId, user) {
-  const response = await axios.delete(
-    `http://${import.meta.env.VITE_SERVER_URL}/api/playlist/?id=${playlistId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
+  const response = await axios.delete(`/api/playlist/?id=${playlistId}`, {
+    headers: {
+      Authorization: `Bearer ${user.token}`,
     },
-  );
+  });
 
   return response.data;
 }
@@ -67,9 +61,7 @@ async function removePlaylist(playlistId, user) {
 async function updatePlaylist(playlist, updatedData, user) {
   if (updatedData instanceof FormData) {
     const response = await axios.put(
-      `http://${import.meta.env.VITE_SERVER_URL}/api/playlist/?id=${
-        playlist._id || playlist.id
-      }`,
+      `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
       {
         headers: {
@@ -80,9 +72,7 @@ async function updatePlaylist(playlist, updatedData, user) {
     return response.data;
   } else {
     const response = await axios.put(
-      `http://${import.meta.env.VITE_SERVER_URL}/api/playlist/?id=${
-        playlist._id || playlist.id
-      }`,
+      `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
       {
         headers: {
@@ -94,21 +84,6 @@ async function updatePlaylist(playlist, updatedData, user) {
     return response.data;
   }
 }
-
-// const isFormData = updatedData instanceof FormData;
-// const response = await axios.put(
-//   `http://${import.meta.env.VITE_SERVER_URL}/api/playlist/?id=${playlist._id || playlist.id}`,
-
-//   prompt ? { ...updatedData, prompt } : updatedData,
-
-//   {
-//     headers: {
-//       ...(isFormData ? {} : { "Content-Type": "application/json" }),
-//       Authorization: `Bearer ${user.token}`,
-//     },
-//   },
-// );
-// return response.data;
 
 export {
   addSongToPlaylist,

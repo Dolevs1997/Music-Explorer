@@ -1,9 +1,9 @@
 import axios from "axios";
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const updateUserActivity = async (user, fields) => {
   try {
     const response = await axios.put(
-      `http://${SERVER_URL}/api/userActivity/update?id=${user._id}`,
+      `/api/userActivity/update?id=${user._id}`,
       { activity: fields },
       {
         headers: {
@@ -22,7 +22,7 @@ const updateUserActivity = async (user, fields) => {
 const changeUserPassword = async (user, currentPassword, newPassword) => {
   try {
     const response = await axios.put(
-      `http://${SERVER_URL}/auth/changePassword?id=${user._id}`,
+      `/auth/changePassword?id=${user._id}`,
       { currentPassword, newPassword },
       {
         headers: {
@@ -42,12 +42,9 @@ const changeUserPassword = async (user, currentPassword, newPassword) => {
 };
 const deleteAccount = async (user) => {
   try {
-    const response = await axios.delete(
-      `http://${SERVER_URL}/auth/account?id=${user._id}`,
-      {
-        headers: { Authorization: `Bearer ${user.token}` },
-      },
-    );
+    const response = await axios.delete(`/auth/account?id=${user._id}`, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error deleting account:", error);
@@ -58,7 +55,7 @@ const deleteAccount = async (user) => {
 const deleteSongsHistory = async (user) => {
   try {
     const response = await axios.delete(
-      `http://${SERVER_URL}/api/userActivity/songsHistory?id=${user._id}`,
+      `/api/userActivity/songsHistory?id=${user._id}`,
       {
         headers: { Authorization: `Bearer ${user.token}` },
       },
@@ -74,7 +71,7 @@ const addSongToHistory = async (user, song) => {
   console.log("song: ", song);
   try {
     const response = await axios.post(
-      `http://${SERVER_URL}/api/userActivity/songsHistory?id=${user._id}`,
+      `/api/userActivity/songsHistory?id=${user._id}`,
       { song },
       {
         headers: { Authorization: `Bearer ${user.token}` },

@@ -27,16 +27,13 @@ export async function handleStopRecording(
     const formData = new FormData();
     formData.append("audioFile", audioBlob, "sample.wav");
     try {
-      const res = await fetch(
-        `http://${import.meta.env.VITE_SERVER_URL}/api/videoSong/recognize-audio`,
-        {
-          body: formData,
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${userData.token}`,
-          },
+      const res = await fetch(`/api/videoSong/recognize-audio`, {
+        body: formData,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userData.token}`,
         },
-      );
+      });
 
       const data = await res.json();
 

@@ -9,9 +9,7 @@ function Category({ category, token, country, location }) {
   const [, setPlaylistsCategory] = useState([]);
   async function handleClickCategory(name) {
     const response = await fetch(
-      `http://${
-        import.meta.env.VITE_SERVER_URL
-      }/api/categories/category/?name=${name}&country=${country}&location=${location}`,
+      `/api/categories/category/?name=${name}&country=${country}&location=${location}`,
       {
         method: "GET",
         headers: {

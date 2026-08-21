@@ -19,9 +19,7 @@ function SongsPlaylist() {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://${
-            import.meta.env.VITE_SERVER_URL
-          }/api/categories/category/playlist-songs/?id=${playlistId}&country=${country}`,
+          `/api/categories/category/playlist-songs/?id=${playlistId}&country=${country}`,
           {
             method: "GET",
             headers: {

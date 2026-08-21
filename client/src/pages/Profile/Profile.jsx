@@ -59,7 +59,7 @@ function Profile() {
       setHistoryLoading(true);
       try {
         const response = await fetch(
-          `http://${import.meta.env.VITE_SERVER_URL}/api/userActivity/songsHistory?id=${user._id}`,
+          `/api/userActivity/songsHistory?id=${user._id}`,
           { headers: { Authorization: `Bearer ${user.token}` } },
         );
         if (!response.ok) throw new Error("Failed to fetch history");

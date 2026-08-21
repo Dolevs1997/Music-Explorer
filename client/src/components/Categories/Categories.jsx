@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { countryToLocale } from "../../utils/countryLocalMap";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Categories({ formVisible }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -42,7 +42,7 @@ function Categories({ formVisible }) {
       async function fetchGenres() {
         try {
           const response = await axios.get(
-            `http://${SERVER_URL}/api/categories/getAll?limit=${limit}&locale=${locale}`,
+            `/api/categories/getAll?limit=${limit}&locale=${locale}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -81,7 +81,7 @@ function Categories({ formVisible }) {
       limit = showMore ? 6 : 50;
 
       const response = await axios.get(
-        `http://${SERVER_URL}/api/categories/getAll?limit=${limit}`,
+        `/api/categories/getAll?limit=${limit}`,
         {
           headers: {
             "Content-Type": "application/json",

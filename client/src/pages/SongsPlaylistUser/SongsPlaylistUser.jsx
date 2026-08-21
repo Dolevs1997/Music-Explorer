@@ -27,16 +27,11 @@ function SongsPlaylistUser() {
     if (!user?.token || !playlistId) return;
 
     try {
-      const response = await fetch(
-        `http://${
-          import.meta.env.VITE_SERVER_URL
-        }/api/playlist/?id=${playlistId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
+      const response = await fetch(`/api/playlist/?id=${playlistId}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
         },
-      );
+      });
       if (!response.ok) {
         setSongs([]);
         throw new Error("Failed to fetch playlist songs");
