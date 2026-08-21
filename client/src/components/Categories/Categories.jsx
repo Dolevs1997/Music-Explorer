@@ -117,11 +117,12 @@ function Categories({ formVisible }) {
   }
 
   return (
-    <div className={formVisible ? "homeContainerWithForm" : "homeContainer"}>
-      <h1 className="pageTitle">Categories</h1>
-
+    <>
+      <div className={formVisible ? "homeContainerWithForm" : "homeContainer"}>
+        <h1 className="pageTitle">Categories</h1>
+      </div>
       <ToastContainer />
-      <div className={styles.categories}>
+      <div className={showMore ? styles.categories : styles.categoriesShowLess}>
         {categories
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((category) => (
@@ -149,7 +150,7 @@ function Categories({ formVisible }) {
           Show Less
         </Link>
       )}
-    </div>
+    </>
   );
 }
 

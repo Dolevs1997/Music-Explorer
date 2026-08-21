@@ -61,7 +61,7 @@ export default function Home({ user }) {
         <NavBar />
       </header>
       <main className="home">
-        <div className="homeContainer">
+        <>
           {/* {formVisible && !isMapVisible && (
                 <Form
                   setSongSuggestions={setSongSuggestions}
@@ -83,7 +83,7 @@ export default function Home({ user }) {
             isVoiceSearch && <Songs songSuggestions={songSuggestions} />}
 
           {isMapVisible && <MapComponent />}
-        </div>
+        </>
       </main>
     </div>
   );
