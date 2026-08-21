@@ -27,7 +27,20 @@ const recognizeAudio = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "Audio file missing" });
   }
-  await uploadAudioToCloudinary(req.file.buffer, req.file.originalname);
+  try {
+    await uploadAudioToCloudinary(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+    );
+  } catch (error: Error | any) {
+    const isUnsupportedFormat = error.message?.startsWith(
+      "Unsupported audio format",
+    );
+    return res
+      .status(isUnsupportedFormat ? 415 : 500)
+      .json({ error: error.message || "Audio upload failed" });
+  }
   const data: Buffer = req.file.buffer;
 
   if (!data) {

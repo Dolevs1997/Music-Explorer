@@ -3,17 +3,24 @@
   gap: 10px;
   z-index: 100;
   align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  position: relative;
+  width: 100%;
 }
 
+/* ===== DESKTOP ICONS ===== */
 .searchBar img {
   width: 60px;
   height: 60px;
-}
-.searchBar img:hover {
+  transition: transform 0.1s;
   cursor: pointer;
-  transform: scale(1.1);
-  transition: all 0.1s;
 }
+
+.searchBar img:hover {
+  transform: scale(1.1);
+}
+
 .searchBar img:active {
   transform: scale(0.9);
 }
@@ -22,6 +29,170 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  align-items: end;
-  margin-top: 0px;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+}
+/* ===== TABLET ===== */
+@media screen and (max-width: 1024px) {
+  .searchBar {
+    gap: 10px;
+  }
+
+  .searchBar img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  color: white;
+  padding: 5px;
+  z-index: 200;
+  transition: transform 0.2s;
+  width: 40px;
+  height: 40px;
+}
+
+.hamburger:hover {
+  transform: scale(1.15);
+}
+
+/* Show on mobile */
+@media screen and (max-width: 767px) {
+  .hamburger {
+    display: flex;
+    margin-left: 226px;
+  }
+  .searchBar,
+  .languageSelect,
+  .countrySelect {
+    display: none;
+  }
+}
+/* Tablet and desktop */
+@media (min-width: 768px) {
+  .hamburger {
+    display: none;
+  }
+
+  .searchBar,
+  .languageSelect,
+  .countrySelect {
+    display: flex;
+  }
+}
+/* ===== MOBILE MENU DROPDOWN ===== */
+.mobileMenu {
+  display: none;
+  position: absolute;
+  top: 75px;
+  left: 0;
+  background: #2d2b30;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0;
+  z-index: 150;
+  min-width: 250px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mobileMenu.open {
+  display: flex;
+}
+
+/* Language select at top of menu */
+.mobileMenu .languageSelect {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #444;
+  border-radius: 0;
+  padding: 12px 15px;
+  background: #1a1a1a;
+  font-size: 0.9rem;
+}
+
+.mobileMenu .languageSelect:focus {
+  outline: none;
+  border-bottom: 2px solid #6246ea;
+}
+
+/* Menu items */
+.mobileMenu button {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  padding: 15px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #444;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.mobileMenu button:last-child {
+  border-bottom: none;
+}
+
+.mobileMenu button:active {
+  background: #1a1a1a;
+}
+
+.mobileMenu button img {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.mobileMenu button span {
+  flex: 1;
+}
+
+.mobileMenu .recordingButton {
+  min-height: 60px;
+}
+
+.mobileMenu .recordingButton > img {
+  flex: 0 0 30px;
+}
+
+.mobileMenu .recordingButton > span:not(.recordingSpinnerRight) {
+  text-align: left;
+}
+
+.mobileMenu .recordingSpinnerRight {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+/* Spinner in menu */
+.mobileMenu .spinner {
+  margin-left: 10px;
+  font-size: 0.8rem;
+}
+
+/* Hide menu on desktop */
+@media screen and (min-width: 1025px) {
+  .mobileMenu {
+    display: none !important;
+  }
+
+  .hamburger {
+    display: none !important;
+  }
 }

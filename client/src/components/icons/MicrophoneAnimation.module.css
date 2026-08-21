@@ -1,0 +1,50 @@
+.animation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  min-width: 96px;
+  margin-top: -10px;
+  color: white;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.animation > div {
+  width: 72px;
+  height: 72px;
+}
+
+.animation span {
+  white-space: nowrap;
+}
+
+.mobile {
+  width: 100%;
+  min-width: 0;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.mobile > div {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .animation {
+    width: 72px;
+    min-width: 72px;
+  }
+
+  .animation > div {
+    width: 52px;
+    height: 52px;
+  }
+}

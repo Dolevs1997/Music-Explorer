@@ -20,11 +20,19 @@ import { addSongToHistory } from "../../utils/userActivity";
 
 // import { generateImagePlaylist } from "../../services/OpenAI_service";
 const opts = {
-  height: "300",
-  width: "400",
+  height: "200",
+  width: "250",
   playerVars: {
     // https://developers.google.com/youtube/player_parameters
-    autoplay: 1,
+    autoplay: 1, // Don't autoplay on mobile (battery/data)
+    controls: 1, // ✅ Show controls (important!)
+    modestbranding: 0, // Show full YouTube branding
+    rel: 0, // Don't suggest other videos
+    showinfo: 1,
+    iv_load_policy: 3, // Hide annotations
+    fs: 1, // Allow fullscreen
+    playsinline: 1, // ✅ CRITICAL for iOS - plays inline instead of fullscreen
+
     color: "white",
   },
 };

@@ -45,7 +45,6 @@ export default function Home({ user }) {
     <div className="app-container">
       <header className="header">
         <Logo />
-
         <Search
           setFormVisible={setFormVisible}
           formVisible={formVisible}

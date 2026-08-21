@@ -1,3 +1,5 @@
+/* NavBar.module.css - COMPLETE UPDATE */
+
 .modal {
   position: fixed;
   width: 20%;
@@ -7,11 +9,19 @@
   transform: translate(-50%, -50%);
   opacity: 0.8;
 }
+
 .playlistDropdown {
   justify-self: start;
   margin-left: 5px;
   color: white;
   width: 100%;
+}
+
+/* Desktop - 70x70px avatar */
+nav {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 nav img {
@@ -20,4 +30,36 @@ nav img {
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
+  transition: transform 0.2s;
+}
+
+nav img:hover {
+  transform: scale(1.05);
+}
+
+/* Tablet - 60x60px */
+@media screen and (max-width: 1024px) {
+  nav img {
+    width: 60px;
+    height: 60px;
+    margin-right: 8px;
+  }
+}
+
+/* Mobile - 50x50px */
+@media screen and (max-width: 768px) {
+  nav img {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+  }
+}
+
+/* Small mobile - 40x40px */
+@media screen and (max-width: 480px) {
+  nav img {
+    width: 40px;
+    height: 40px;
+    margin-right: 3px;
+  }
 }

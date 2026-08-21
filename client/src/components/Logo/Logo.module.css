@@ -1,15 +1,65 @@
+.logoButton {
+  position: absolute;
+  top: 23px;
+  left: 10px;
+  z-index: 1100;
+  display: block;
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .logo {
   width: 80px;
   height: 80px;
   border-radius: 60%;
   object-fit: contain;
-  cursor: pointer;
   transition: transform 0.3s ease-in-out;
-  position: absolute;
-  top: 23px;
-  left: 10px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 
 .logo:hover {
+  cursor: pointer;
   transform: scale(1.1);
+}
+/* Tablet - 60x60px */
+@media screen and (max-width: 1024px) {
+  .logoButton {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo {
+    margin-right: 8px;
+  }
+}
+
+/* Mobile - 50x50px */
+@media screen and (max-width: 1024px) {
+  .logoButton {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo {
+    margin-right: 5px;
+  }
+}
+
+/* Small mobile - 40x40px */
+@media screen and (max-width: 768px) {
+  .logoButton {
+    width: 50px;
+    height: 50px;
+  }
+
+  .logo {
+    margin-right: 3px;
+  }
 }

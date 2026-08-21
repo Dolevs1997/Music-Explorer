@@ -8,10 +8,29 @@
   padding: 20px;
   text-align: center;
 }
-.playlistMenu {
-  position: relative;
+.playlistMenuContainer {
   display: inline-block;
-  vertical-align: middle;
+  position: relative;
+}
+.playlistMenu {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 6px;
+  min-width: 160px;
+}
+@media screen and (max-width: 768px) {
+  .playlistMenuContainer {
+    display: block;
+    margin: 0 auto;
+    margin-left: 10px;
+  }
 }
 
 .menuItem {
@@ -19,10 +38,9 @@
   cursor: pointer;
   color: #e3e3e3;
   border-radius: 6px;
+  border: 1px solid #fff;
 }
-.menuItem:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
+
 .playlistHeader {
   display: flex;
   flex-direction: column;
