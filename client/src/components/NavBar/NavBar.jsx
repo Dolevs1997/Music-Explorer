@@ -15,15 +15,12 @@ function NavBar() {
 
   async function handleLogout() {
     try {
-      const response = await axios.get(
-        `http://${import.meta.env.VITE_SERVER_URL}/auth/logout`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.refreshToken}`,
-          },
+      const response = await axios.get(`/auth/logout`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.refreshToken}`,
         },
-      );
+      });
       if (response.status === 204) {
         setUser(null);
         setTimeout(() => {

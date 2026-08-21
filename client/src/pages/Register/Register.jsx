@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import BackgroundMusic from "../../components/BackgroundMusic";
 import countryList from "react-select-country-list";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Register() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -44,15 +44,11 @@ function Register() {
       },
     };
 
-    const response = await axios.post(
-      `http://${SERVER_URL}/auth/register`,
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await axios.post(`/auth/register`, payload, {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
     if (response.status == 200) {
       toast.success("Registration successful! Redirecting to login...");
       setTimeout(() => {

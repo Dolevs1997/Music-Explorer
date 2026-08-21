@@ -10,7 +10,7 @@ import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 import { GoogleLogin } from "@react-oauth/google";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +28,7 @@ function Login() {
     const idToken = credentialResponse.credential;
     try {
       const response = await axios.post(
-        `http://${SERVER_URL}/auth/googleLogin`,
+        `/auth/googleLogin`,
         { idToken },
         {
           headers: {
@@ -67,15 +67,11 @@ function Login() {
         email: email,
         password: password,
       };
-      const response = await axios.post(
-        `http://${SERVER_URL}/auth/login`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await axios.post(`/auth/login`, payload, {
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
       console.log("response", response);
       if (response.status === 200) {
         toast.success("Login successful! Redirecting to home...");
