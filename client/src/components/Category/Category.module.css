@@ -28,3 +28,20 @@
   align-items: center;
   justify-content: center;
 }
+
+@media screen and (max-width: 1024px) {
+  .category {
+    width: 140px;
+    height: 100px;
+  }
+
+  .category img {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 4px;
+  }
+
+  .category p {
+    font-size: 14px;
+  }
+}

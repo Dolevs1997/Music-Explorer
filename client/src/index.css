@@ -298,7 +298,9 @@ h2:hover {
   gap: 20px;
   align-items: center;
 } */
-
+.countrySelector {
+  margin-left: -4px;
+}
 /* Language dropdown - Desktop only */
 .languageSelect,
 .countrySelector,
