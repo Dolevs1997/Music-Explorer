@@ -4,12 +4,14 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
 import { useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
 function NavBar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
+  const { currentLocation } = useContext(CurrentLocationContext);
 
   async function handleLogout() {
     try {
@@ -43,6 +45,9 @@ function NavBar() {
         menuVariant="dark"
         id="nav-dropdown-dark-example"
       >
+        <NavDropdown.Item>
+          <span className="countrySelector">{currentLocation}</span>
+        </NavDropdown.Item>
         <NavDropdown.Item onClick={() => navigate("/profile")}>
           Profile
         </NavDropdown.Item>

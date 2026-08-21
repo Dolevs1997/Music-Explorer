@@ -67,6 +67,7 @@ async function handleVoiceSearch(
   timeoutMs = 10000,
   setResultVoice,
   language = null,
+  setRecognition = null,
 ) {
   return new Promise((resolve, reject) => {
     if (!userData || !userData.token) {
@@ -76,6 +77,7 @@ async function handleVoiceSearch(
     }
 
     const recognition = voiceSearchSong(language);
+    setRecognition?.(recognition);
 
     let finalTranscript = "";
 
@@ -101,6 +103,7 @@ async function handleVoiceSearch(
     }, timeoutMs);
 
     recognition.onerror = (event) => {
+      setRecognition?.(null);
       console.error("Speech recognition error:", event.error);
       clearTimeout(stopTimer);
       try {
@@ -112,6 +115,7 @@ async function handleVoiceSearch(
     };
 
     recognition.onend = async () => {
+      setRecognition?.(null);
       clearTimeout(stopTimer);
       const transcript = finalTranscript.trim();
       if (!transcript) {

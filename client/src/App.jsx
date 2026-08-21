@@ -39,7 +39,7 @@ function App() {
       <CurrentLocationContext.Provider
         value={{ currentLocation, setCurrentLocation }}
       >
-        <BrowserRouter basename="/music-explorer">
+        <BrowserRouter>
           <SearchContext.Provider
             value={{
               songSuggestions,

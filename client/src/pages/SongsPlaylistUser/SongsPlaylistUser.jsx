@@ -7,7 +7,6 @@ import Songs from "../../components/Songs/Songs";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
 import UserContext from "../../Contexts/UserContext";
-import styles from "./SongsPlaylistUser.module.css";
 
 import { Toaster } from "react-hot-toast";
 
@@ -109,23 +108,19 @@ function SongsPlaylistUser() {
           <NavBar />
         </header>
 
-        <main className="homeContainer">
-          <Toaster />
-          <div className="playlist-songs">
-            <div className={styles.playlistHeader}>
-              <h1>{playlist.name} Playlist</h1>
-            </div>
-            {songs.length === 0 && <p>No songs in this playlist.</p>}
-
-            {songs.length > 0 && (
-              <Songs
-                songSuggestions={songs}
-                user={user}
-                onRemoveSong={handleRemoveSong}
-              />
-            )}
-          </div>
-        </main>
+        <div className="homeContainer">
+          <h1>{playlist.name} Playlist</h1>
+        </div>
+        <Toaster />
+        <div className="playlist-songs"></div>
+        {songs.length === 0 && <p>No songs in this playlist.</p>}
+        {songs.length > 0 && (
+          <Songs
+            songSuggestions={songs}
+            user={user}
+            onRemoveSong={handleRemoveSong}
+          />
+        )}
       </removeBtn.Provider>
     </div>
   );

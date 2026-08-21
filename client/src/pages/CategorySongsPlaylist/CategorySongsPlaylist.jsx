@@ -55,29 +55,28 @@ function SongsPlaylist() {
         <Search />
         <NavBar />
       </header>
-      <main className="homeContainer">
-        <div className="playlist-songs">
-          <h2>{playlistName}</h2>
-          {playlist.length > 0 ? (
-            <div className="playlists">
-              {playlist.map((song, index) => (
-                <Song
-                  key={index}
-                  song={song.searchQuery || song.title}
-                  country={location.state.country}
-                  playingVideoId={playingVideoId}
-                  setPlayingVideoId={setPlayingVideoId}
-                  playlistId={playlistId}
-                />
-              ))}
-            </div>
-          ) : isLoading ? (
-            <Spinner />
-          ) : (
-            <p>No playlist found</p>
-          )}
-        </div>
-      </main>
+
+      <div className="playlist-songs">
+        <h2>{playlistName}</h2>
+        {playlist.length > 0 ? (
+          <div className="playlists">
+            {playlist.map((song, index) => (
+              <Song
+                key={index}
+                song={song.searchQuery || song.title}
+                country={location.state.country}
+                playingVideoId={playingVideoId}
+                setPlayingVideoId={setPlayingVideoId}
+                playlistId={playlistId}
+              />
+            ))}
+          </div>
+        ) : isLoading ? (
+          <Spinner />
+        ) : (
+          <p>No playlist found</p>
+        )}
+      </div>
     </div>
   );
 }
