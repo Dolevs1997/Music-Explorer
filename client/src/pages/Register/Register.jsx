@@ -81,6 +81,7 @@ function Register() {
         />
         <label htmlFor="country">Country</label>
         <select
+          className="country-select-register"
           value={countryShortName}
           onChange={(e) => {
             setCountryShortName(e.target.value);
@@ -88,7 +89,6 @@ function Register() {
               options.find((opt) => opt.value === e.target.value)?.label || "";
             setCountryFullName(selectedName);
           }}
-          style={{ backgroundColor: "var(--color-background-100)" }}
         >
           <option value="" disabled selected>
             Select your country
@@ -164,7 +164,7 @@ function Register() {
           </li>
         </ol>
         <Link to="/login">
-          <Button type="register" onClick={handleRegisteration}>
+          <Button onClick={handleRegisteration} type="register">
             Register
           </Button>
         </Link>

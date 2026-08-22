@@ -99,6 +99,15 @@ body {
   background-color: unset;
   font-size: 0.9rem;
 }
+.country-select-register {
+  background-color: var(--color-background-100);
+}
+@media screen and (max-width: 768px) {
+  .country-select-register {
+    width: 90%;
+  }
+}
+
 form {
   gap: 5px;
   padding: 30px;
@@ -154,6 +163,12 @@ form input {
 
 form input:focus {
   border-color: var(--color-button, #6246ea);
+}
+@media screen and (max-width: 768px) {
+  form {
+    width: 90%;
+    padding: 20px;
+  }
 }
 textarea {
   resize: none;
@@ -217,7 +232,7 @@ h2:hover {
     overflow-x: scroll;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     scrollbar-width: thin;
     padding: 20px 12px;
   }
@@ -240,7 +255,7 @@ h2:hover {
       overflow-x: scroll;
       overscroll-behavior-x: contain;
       scroll-snap-type: x proximity;
-      touch-action: pan-x;
+      touch-action: pan-x pan-y;
       scrollbar-width: thin;
       padding: 20px 12px;
     }
