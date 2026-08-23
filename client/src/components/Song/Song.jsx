@@ -214,12 +214,7 @@ function Song({
           // NOW globalUsedVideoIds is guaranteed to have the videoId from previous components!
           const excludedIds = Array.from(globalUsedVideoIds);
 
-          const data = await fetchSongYT(
-            songTitle,
-            country,
-            user,
-            excludedIds,
-          );
+          const data = await fetchSongYT(songTitle, country, user, excludedIds);
 
           if (!data?.videoId) {
             hasFetchedRef.current = false; // Reset if API failed to find anything
@@ -409,9 +404,7 @@ function Song({
           )}
         </ListGroup>
       )}
-      {state.videoId && (
-        <span className={styles.songDetails}>{songTitle}</span>
-      )}
+      {state.videoId && <span className={styles.songDetails}>{songTitle}</span>}
       {state.videoId &&
         // lazy-mount player only for the active/playing song to avoid multiple iframe loads
         (playingVideoId === state.videoId ? (

@@ -38,9 +38,7 @@ function SongsPlaylistUser() {
         throw new Error("Failed to fetch playlist songs");
       }
       const data = await response.json();
-      setSongs(
-        (data.songs || []).filter((songObj) => songObj?.song),
-      );
+      setSongs((data.songs || []).filter((songObj) => songObj?.song));
     } catch (error) {
       console.error("Error fetching playlist songs:", error);
     }
