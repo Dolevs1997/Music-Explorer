@@ -83,7 +83,6 @@ function reducer(state, action) {
   }
 }
 const globalUsedVideoIds = new Set();
-let fetchQueuePromise = Promise.resolve(); // <-- The magical gatekeeper tracker
 function Song({
   song,
   country = "US",
@@ -208,48 +207,39 @@ function Song({
       // Mark it right away to prevent secondary component updates from re-triggering
       hasFetchedRef.current = true;
 
-      // FORCE this component to wait its turn in line
-      fetchQueuePromise = fetchQueuePromise.then(async () => {
-        try {
-          // NOW globalUsedVideoIds is guaranteed to have the videoId from previous components!
-          const excludedIds = Array.from(globalUsedVideoIds);
+      try {
+        const excludedIds = Array.from(globalUsedVideoIds);
+        const data = await fetchSongYT(songTitle, country, user, excludedIds);
 
-          const data = await fetchSongYT(songTitle, country, user, excludedIds);
-
-          if (!data?.videoId) {
-            hasFetchedRef.current = false; // Reset if API failed to find anything
-            dispatch({
-              type: "SET_ERROR",
-              payload: { error: "Song video could not be fetched." },
-            });
-            return;
-          }
-
-          // Lock this ID down immediately before the next queue item executes
-          if (!globalUsedVideoIds.has(data.videoId)) {
-            globalUsedVideoIds.add(data.videoId);
-          }
-
-          songRef.current = data;
-
-          dispatch({
-            type: "SET_VIDEO_SONG",
-            payload: {
-              videoId: data.videoId,
-              regionCode: data.regionCode,
-              song: data.song,
-              playlists: [],
-            },
-          });
-        } catch (error) {
-          hasFetchedRef.current = false; // Reset on error so retry is possible
-          console.error("Error fetching song", error);
+        if (!data?.videoId) {
+          hasFetchedRef.current = false;
           dispatch({
             type: "SET_ERROR",
-            payload: { error: "Failed to fetch song " },
+            payload: { error: "Song video could not be fetched." },
           });
+          return;
         }
-      });
+
+        globalUsedVideoIds.add(data.videoId);
+        songRef.current = data;
+
+        dispatch({
+          type: "SET_VIDEO_SONG",
+          payload: {
+            videoId: data.videoId,
+            regionCode: data.regionCode,
+            song: data.song,
+            playlists: [],
+          },
+        });
+      } catch (error) {
+        hasFetchedRef.current = false;
+        console.error("Error fetching song", error);
+        dispatch({
+          type: "SET_ERROR",
+          payload: { error: "Failed to fetch song " },
+        });
+      }
     }
 
     processQueue();

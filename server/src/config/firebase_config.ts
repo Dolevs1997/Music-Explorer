@@ -6,7 +6,7 @@ import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file
-const URL = "http://localhost:5173/music-explorer/login";
+const URL = "https://music-explorer.com/login";
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,

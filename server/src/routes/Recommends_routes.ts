@@ -6,7 +6,8 @@ RecommendRouter.get(
   "/",
   authenticate,
 
-  recommends_controller.getAll
+  recommends_controller.getAll,
 );
+RecommendRouter.post("/batch", authenticate, recommends_controller.getBatch);
 
 export default RecommendRouter;

@@ -14,4 +14,18 @@ async function fetchSongYT(song, country, user, excludedVideoIds = []) {
   return response.data;
 }
 
-export { fetchSongYT };
+async function fetchSongsYT(songs, country, user, excludedVideoIds = []) {
+  const response = await axios.post(
+    `/api/recommends/batch`,
+    { songs, country, excludedVideoIds },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    },
+  );
+  return response.data;
+}
+
+export { fetchSongYT, fetchSongsYT };

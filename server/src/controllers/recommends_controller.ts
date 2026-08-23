@@ -44,4 +44,37 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
-export default { getAll };
+const getBatch = async (req: Request, res: Response) => {
+  const songs = req.body?.songs;
+  const country = (req.body?.country || "US") as string;
+  const excludedVideoIds = new Set<string>(req.body?.excludedVideoIds || []);
+
+  if (!Array.isArray(songs) || songs.length === 0) {
+    return res.status(400).json({ error: "Songs must be a non-empty array" });
+  }
+
+  try {
+    const results: { song: string; videoId: string; regionCode: string }[] = [];
+    for (const song of songs) {
+      if (typeof song !== "string" || !song.trim()) continue;
+
+      const songData = await fetchSong(song, country, [...excludedVideoIds]);
+      if (!songData?.videoId || excludedVideoIds.has(songData.videoId)) {
+        continue;
+      }
+
+      excludedVideoIds.add(songData.videoId);
+      results.push({
+        song: songData.title,
+        videoId: songData.videoId,
+        regionCode: country,
+      });
+    }
+
+    return res.status(200).json(results);
+  } catch (err: Error | any) {
+    return res.status(400).json({ error: err.message });
+  }
+};
+
+export default { getAll, getBatch };

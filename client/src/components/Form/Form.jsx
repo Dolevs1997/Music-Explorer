@@ -7,6 +7,7 @@ import propTypes from "prop-types";
 import { Toaster, toast } from "react-hot-toast";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
 import Button from "../Button/Button";
+import { fetchSongsYT } from "../../services/YouTube_service";
 
 function Form({ setSongSuggestions, setFormVisible, formVisible }) {
   const [text, setText] = useState("I want you to generate ");
@@ -28,10 +29,15 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
     try {
       const response = await getSongSuggestions(payload, user.token);
       const uniqueSongs = deduplicateSongs(response);
-      setSongSuggestions(uniqueSongs);
+      const recommendations = await fetchSongsYT(
+        uniqueSongs,
+        user.country?.shortName || "US",
+        user,
+      );
+      setSongSuggestions(recommendations);
       setFormVisible(!formVisible);
       setText("");
-      if (uniqueSongs.length === 0) {
+      if (recommendations.length === 0) {
         alert("No song suggestions found. Please try again.");
       } else {
         navigate("/home/songSuggestions");

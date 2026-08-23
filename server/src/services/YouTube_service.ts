@@ -240,7 +240,11 @@ async function fetchSong(
     excludedVideoIds.map((id) => id.trim()).filter(Boolean),
   );
   const cachedSong = await getCachedSong(song, country);
-  if (cachedSong && (cachedSong as any).videoId) {
+  if (
+    cachedSong &&
+    (cachedSong as any).videoId &&
+    !excludedVideoSet.has((cachedSong as any).videoId)
+  ) {
     // console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
