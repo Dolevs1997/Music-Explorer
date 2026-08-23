@@ -176,6 +176,46 @@ form input:focus {
     font-size: 1rem;
   }
 }
+.registerForm {
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  .registerForm {
+    width: calc(100% - 24px);
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    padding: 16px;
+    font-size: 1rem;
+  }
+
+  .registerForm h2 {
+    font-size: 1.6rem;
+    margin: 0 0 8px;
+    padding: 4px;
+  }
+
+  .registerForm input,
+  .registerForm select,
+  .registerForm .passwordInputContainer {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .registerForm ol {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 4px 0;
+    padding-left: 24px;
+  }
+
+  .registerForm li,
+  .registerForm p {
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+}
 textarea {
   resize: none;
 

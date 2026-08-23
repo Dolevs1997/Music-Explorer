@@ -12,7 +12,7 @@ function Songs({ songSuggestions, onRemoveSong }) {
           <div className="playlists">
             {songSuggestions.map((song) => (
               <Song
-                key={song}
+                key={typeof song === "object" ? song.videoId : song}
                 song={song}
                 playingVideoId={playingVideoId}
                 setPlayingVideoId={setPlayingVideoId}
@@ -35,7 +35,15 @@ function Songs({ songSuggestions, onRemoveSong }) {
   );
 }
 Songs.propTypes = {
-  songSuggestions: propTypes.arrayOf(propTypes.string.isRequired).isRequired,
+  songSuggestions: propTypes.arrayOf(
+    propTypes.oneOfType([
+      propTypes.string,
+      propTypes.shape({
+        song: propTypes.string.isRequired,
+        videoId: propTypes.string,
+      }),
+    ]),
+  ).isRequired,
   onRemoveSong: propTypes.func.isRequired,
 };
 

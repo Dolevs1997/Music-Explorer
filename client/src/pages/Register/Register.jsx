@@ -66,7 +66,7 @@ function Register() {
   return (
     <>
       <BackgroundMusic />
-      <form>
+      <form className="registerForm" style={{ opacity: 0.9 }}>
         <h2>Register</h2>
         <Toaster />
 

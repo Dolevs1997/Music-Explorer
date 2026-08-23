@@ -69,6 +69,13 @@ const deletebyVideoId = async (req: Request, res: Response) => {
   const { videoId } = req.params;
   const user = req.body.user;
   const playlistId = req.body.playlistId;
+  console.log(
+    "Deleting song with videoId:",
+    videoId,
+
+    "from playlist:",
+    playlistId,
+  );
   if (!videoId || !user || !playlistId) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -79,6 +86,7 @@ const deletebyVideoId = async (req: Request, res: Response) => {
   }
   try {
     const song = await SongSchema.findOne({ videoId: videoId });
+    console.log("Found song:", song);
     if (!song) {
       return res.status(404).json({ message: "Song not found" });
     }

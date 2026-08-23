@@ -93,6 +93,8 @@ function Song({
   onRemoveSong,
 }) {
   const navigate = useNavigate();
+  const songTitle = typeof song === "object" ? song.song : song;
+  const storedVideoId = typeof song === "object" ? song.videoId : null;
   const [playlistName, setPlaylistName] = useState("");
   const [state, dispatch] = useReducer(reducer, initialSong);
   const songRef = useRef(null);
@@ -170,8 +172,24 @@ function Song({
 
   useEffect(() => {
     async function processQueue() {
-      if (!song || !user.token) return;
+      if (!songTitle || !user.token) return;
       if (hasFetchedRef.current) return;
+      if (storedVideoId) {
+        songRef.current = {
+          videoId: storedVideoId,
+          song: songTitle,
+        };
+        dispatch({
+          type: "SET_VIDEO_SONG",
+          payload: {
+            videoId: storedVideoId,
+            song: songTitle,
+            regionCode: country,
+            playlists: [],
+          },
+        });
+        return;
+      }
       if (songRef.current && state.videoId === songRef.current.videoId) return;
       if (songRef.current?.videoId) {
         dispatch({
@@ -196,7 +214,12 @@ function Song({
           // NOW globalUsedVideoIds is guaranteed to have the videoId from previous components!
           const excludedIds = Array.from(globalUsedVideoIds);
 
-          const data = await fetchSongYT(song, country, user, excludedIds);
+          const data = await fetchSongYT(
+            songTitle,
+            country,
+            user,
+            excludedIds,
+          );
 
           if (!data?.videoId) {
             hasFetchedRef.current = false; // Reset if API failed to find anything
@@ -235,7 +258,7 @@ function Song({
     }
 
     processQueue();
-  }, [song, user.token, country, playlistId]);
+  }, [songTitle, storedVideoId, user.token, country, playlistId]);
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
     if (onRemoveSong) {
@@ -386,7 +409,9 @@ function Song({
           )}
         </ListGroup>
       )}
-      {state.videoId && <span className={styles.songDetails}>{song}</span>}
+      {state.videoId && (
+        <span className={styles.songDetails}>{songTitle}</span>
+      )}
       {state.videoId &&
         // lazy-mount player only for the active/playing song to avoid multiple iframe loads
         (playingVideoId === state.videoId ? (
@@ -418,7 +443,13 @@ function Song({
 }
 
 Song.propTypes = {
-  song: propTypes.string.isRequired,
+  song: propTypes.oneOfType([
+    propTypes.string,
+    propTypes.shape({
+      song: propTypes.string.isRequired,
+      videoId: propTypes.string,
+    }),
+  ]).isRequired,
   country: propTypes.string,
   playingVideoId: propTypes.string,
   setPlayingVideoId: propTypes.func,

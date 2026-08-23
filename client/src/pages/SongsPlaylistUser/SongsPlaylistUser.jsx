@@ -39,7 +39,7 @@ function SongsPlaylistUser() {
       }
       const data = await response.json();
       setSongs(
-        (data.songs || []).map((songObj) => songObj.song).filter(Boolean),
+        (data.songs || []).filter((songObj) => songObj?.song),
       );
     } catch (error) {
       console.error("Error fetching playlist songs:", error);
