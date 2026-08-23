@@ -21,7 +21,7 @@ import { addSongToHistory } from "../../utils/userActivity";
 // import { generateImagePlaylist } from "../../services/OpenAI_service";
 const opts = {
   height: "200",
-  width: "250",
+  width: "200",
   playerVars: {
     // https://developers.google.com/youtube/player_parameters
     autoplay: 1, // Don't autoplay on mobile (battery/data)
@@ -238,17 +238,18 @@ function Song({
   }, [song, user.token, country, playlistId]);
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
-    await removeSongFromPlaylist(videoId, user, playlistId);
-    try {
-      if (onRemoveSong) {
-        onRemoveSong(state.song || song, videoId);
+    if (onRemoveSong) {
+      onRemoveSong(song, videoId);
+    } else {
+      console.warn("onRemoveSong is undefined!");
+    }
 
-        toast.success("Song removed from playlist");
-      } else {
-        console.warn("onRemoveSong is undefined!");
-      }
+    try {
+      await removeSongFromPlaylist(videoId, user, playlistId);
+      toast.success("Song removed from playlist");
     } catch (error) {
       console.error("Error removing song from playlist:", error);
+      toast.error("Failed to remove song from playlist");
     }
   }
 
@@ -258,9 +259,10 @@ function Song({
 
   return (
     <div className="homeContainer">
-      <div>
+      <div className={styles.menuContainer}>
         <Toaster />
-        <span
+        <button
+          type="button"
           className={styles.optionsBtn}
           onClick={(e) => {
             e.stopPropagation();
@@ -296,7 +298,7 @@ function Song({
               )}
             </>
           )}
-        </span>
+        </button>
       </div>
       {menuOpen && !remove && (
         <ListGroup defaultActiveKey>
@@ -309,12 +311,13 @@ function Song({
         </ListGroup>
       )}
       {menuOpen && remove && (
-        <ListGroup defaultActiveKey>
+        <ListGroup className={styles.removeMenu} defaultActiveKey>
           <ListGroup.Item
             action
-            onClick={() =>
-              handleRemoveSongFromPlaylist(state.videoId, remove.playlistId)
-            }
+            onClick={(e) => {
+              e.stopPropagation();
+              handleRemoveSongFromPlaylist(state.videoId, remove.playlistId);
+            }}
           >
             Remove from Playlist
           </ListGroup.Item>

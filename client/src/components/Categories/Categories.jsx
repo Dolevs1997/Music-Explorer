@@ -122,7 +122,7 @@ function Categories({ formVisible }) {
         <h1 className="pageTitle">Categories</h1>
       </div>
       <ToastContainer />
-      <div className={showMore ? styles.categories : styles.categoriesShowLess}>
+      <div className={styles.categories}>
         {categories
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((category) => (

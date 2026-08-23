@@ -17,6 +17,7 @@ function SongsPlaylistUser() {
   const location = useLocation();
   let playlist = location.state?.playlist;
   const [songs, setSongs] = useState(location.state?.songs || []);
+  console.log(user);
   if (!playlist) {
     console.error("Playlist not found for ID:", playlistId);
   }
@@ -105,10 +106,10 @@ function SongsPlaylistUser() {
 
         <div className="homeContainer">
           <h1>{playlist.name} Playlist</h1>
+          {songs.length === 0 && <p>No songs in this playlist.</p>}
         </div>
         <Toaster />
         <div className="playlist-songs"></div>
-        {songs.length === 0 && <p>No songs in this playlist.</p>}
         {songs.length > 0 && (
           <Songs
             songSuggestions={songs}

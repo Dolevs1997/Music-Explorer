@@ -80,10 +80,26 @@
 }
 
 .optionsBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   background: none;
   color: var(--color-text);
   border: none;
   cursor: pointer;
+  padding: 4px;
+  touch-action: manipulation;
+}
+.menuContainer {
+  position: relative;
+  z-index: 20;
+}
+.removeMenu {
+  position: relative;
+  z-index: 30;
+  touch-action: manipulation;
 }
 .optionItem {
   cursor: pointer;

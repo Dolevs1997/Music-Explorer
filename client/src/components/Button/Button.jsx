@@ -1,8 +1,13 @@
 /* eslint-disable react/prop-types */
-import "./Button.module.css";
+import styles from "./Button.module.css";
 function Button({ children, onClick, type, loading }) {
   return (
-    <button onClick={onClick} type={type} disabled={loading}>
+    <button
+      className={styles.button}
+      onClick={onClick}
+      type={type}
+      disabled={loading}
+    >
       {children}
     </button>
   );

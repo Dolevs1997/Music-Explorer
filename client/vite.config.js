@@ -9,7 +9,20 @@ export default defineConfig({
   // Source - https://stackoverflow.com/a/75719691
   // Posted by Zahid Hassan Shaikot, modified by community. See post 'Timeline' for change history
   // Retrieved 2026-07-25, License - CC BY-SA 4.0
-
+  server: {
+    proxy: {
+      // Whenever React asks for /api/..., forward it to your local Node server
+      "/api": {
+        target: "http://localhost:3001", // Change 3000 to your backend port if it's different
+        changeOrigin: true,
+      },
+      // Whenever React asks for /auth/..., forward it to your local Node server
+      "/auth": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {
