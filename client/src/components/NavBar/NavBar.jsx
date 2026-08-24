@@ -12,7 +12,7 @@ function NavBar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const { currentLocation } = useContext(CurrentLocationContext);
-
+  console.log("user: ", user);
   async function handleLogout() {
     try {
       const response = await axios.get(`/auth/logout`, {
@@ -38,7 +38,7 @@ function NavBar() {
     <nav className={styles.navbar}>
       <Toaster />
       <NavDropdown
-        title={<img src={user?.avatar} />}
+        title={<img src={user?.avatar || "/default-avatar-user.jpg"} />}
         menuVariant="dark"
         id="nav-dropdown-dark-example"
       >

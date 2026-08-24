@@ -31,9 +31,6 @@ export default function Home({ user }) {
     localStorage.removeItem("user");
     navigate("/login");
   });
-  useEffect(() => {
-    document.title = "Music Explorer | Home";
-  }, []);
 
   useEffect(() => {
     if (isMapVisible) {

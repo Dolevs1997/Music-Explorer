@@ -1,8 +1,6 @@
 node_modules
 .git
 .gitignore
-
-.env.local
 build
 .vscode
 .idea

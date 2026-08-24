@@ -1,9 +1,16 @@
-import { BrowserRouter, Route, Routes, Navigate } from "react-router";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+} from "react-router";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import AppIntro from "./pages/AppIntro";
 import CategoryPlaylists from "./pages/CategoryPlaylists/CategoryPlaylists";
 import { useEffect, useState } from "react";
+import { useContext } from "react";
 import Register from "./pages/Register/Register";
 import CategorySongsPlaylist from "./pages/CategorySongsPlaylist/CategorySongsPlaylist";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
@@ -19,6 +26,33 @@ import { CurrentLocationContext } from "./Contexts/CurrentLocationContext";
 import PlaylistsUser from "./pages/PlaylistsUser/PlaylistsUser";
 import Profile from "./pages/Profile/Profile";
 import "@heroui/react/styles";
+import UserContext from "./Contexts/UserContext";
+import { Toaster, toast } from "react-hot-toast";
+import propTypes from "prop-types";
+
+function ProtectedRoute({ children }) {
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.token) return undefined;
+
+    toast.error("Please sign in to continue.");
+    const redirectTimer = setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 1500);
+
+    return () => clearTimeout(redirectTimer);
+  }, [user, navigate]);
+
+  if (!user?.token) return null;
+
+  return children;
+}
+
+ProtectedRoute.propTypes = {
+  children: propTypes.node,
+};
 
 function App() {
   const [songSuggestions, setSongSuggestions] = useState([]);
@@ -36,6 +70,7 @@ function App() {
 
   return (
     <UserProvider>
+      <Toaster />
       <CurrentLocationContext.Provider
         value={{ currentLocation, setCurrentLocation }}
       >
@@ -59,7 +94,14 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
-              <Route path="/home" element={<Home user={user} />}>
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <Home user={user} />
+                  </ProtectedRoute>
+                }
+              >
                 <Route
                   path="categories"
                   element={<Categories formVisible={formVisible} user={user} />}
@@ -69,35 +111,70 @@ function App() {
                   element={<Navigate to="/home" replace />}
                 />
               </Route>
-              <Route path="/profile" element={<Profile />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/category/playlists"
-                element={<CategoryPlaylists />}
+                element={
+                  <ProtectedRoute>
+                    <CategoryPlaylists />
+                  </ProtectedRoute>
+                }
               ></Route>
               <Route
                 path="/category/playlists/:playlistId/songs"
-                element={<CategorySongsPlaylist />}
+                element={
+                  <ProtectedRoute>
+                    <CategorySongsPlaylist />
+                  </ProtectedRoute>
+                }
               />
-              <Route path="/myplaylists" element={<PlaylistsUser />} />
+              <Route
+                path="/myplaylists"
+                element={
+                  <ProtectedRoute>
+                    <PlaylistsUser />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/myplaylists/:playlistId"
-                element={<SongsPlaylistUser />}
+                element={
+                  <ProtectedRoute>
+                    <SongsPlaylistUser />
+                  </ProtectedRoute>
+                }
               />
-              <Route path="/global" element={<Home user={user} />} />
+              <Route
+                path="/global"
+                element={
+                  <ProtectedRoute>
+                    <Home user={user} />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/global/categories/:country"
                 element={
-                  <div className="home">
-                    <div className="header">
-                      <Logo />
-                      <Search />
-                      <NavBar />
+                  <ProtectedRoute>
+                    <div className="home">
+                      <div className="header">
+                        <Logo />
+                        <Search />
+                        <NavBar />
+                      </div>
+                      <div className="homeContainer">
+                        <Categories />
+                      </div>
                     </div>
-                    <div className="homeContainer">
-                      <Categories />
-                    </div>
-                  </div>
+                  </ProtectedRoute>
                 }
               />
 

@@ -1,0 +1,5 @@
+# First, inherit everything from standard gitignore
+#!include:.gitignore
+
+# BUT, make an exception and ALLOW the .env file to be uploaded to Google Cloud
+!.env
