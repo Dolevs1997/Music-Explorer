@@ -157,7 +157,7 @@
   padding: 8px 16px;
 }
 .card {
-  background-color: var(--color-background-app);
+  background-color: var(--color-background-app) !important;
   border-radius: 8px;
   padding: 10px;
   text-align: center;
@@ -173,7 +173,7 @@
 
 .playlistGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
@@ -181,19 +181,8 @@
 @media (max-width: 600px) {
   @media screen and (max-width: 1024px) {
     .playlistGrid {
-      width: 100%;
       min-width: 0;
-      box-sizing: border-box;
-      grid-template-columns: none;
-      grid-template-rows: repeat(3, minmax(180px, auto));
-      grid-auto-columns: minmax(180px, 42vw);
-      grid-auto-flow: column;
-      overflow-x: scroll;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x proximity;
-      touch-action: pan-x;
-      scrollbar-width: thin;
-      padding: 20px 12px;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
   }
 }
