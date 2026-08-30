@@ -39,3 +39,23 @@
 .skipButton:active {
   transform: scale(0.98);
 }
+/* Mobile */
+@media (max-width: 768px) {
+  .video {
+    object-fit: contain;
+  }
+
+  .skipButton {
+    top: 12px;
+    right: 12px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  .video {
+    object-fit: cover;
+  }
+}
