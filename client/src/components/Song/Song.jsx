@@ -122,7 +122,7 @@ function Song({
     dispatch({ type: "PLAY", payload: { playing: true } });
   }
   async function handleAddSongToPlaylist(playlist) {
-    const response = await addSongToPlaylist(song, state, user, playlist);
+    const response = await addSongToPlaylist(songTitle, state, user, playlist);
     if (response.status == 200) toast.success(`${response.data.message}`);
     else if (response.status != 200) toast.error(`${response.data.message}`);
     const data = response.data;

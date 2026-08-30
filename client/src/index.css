@@ -269,16 +269,31 @@ h2:hover {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: 1fr 1fr 1fr;
   }
-
-  @media screen and (max-width: 1024px) {
-    .playlists-user {
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
+}
+@media screen and (max-width: 1024px) {
+  .playlists-user {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media screen and (max-width: 765px) {
+  .playlists {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 765px) {
+  .playlists-user {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    grid-template-columns: 1fr 1fr;
   }
 }
 

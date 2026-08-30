@@ -113,6 +113,7 @@ const createPlaylist = async (req: Request, res: Response) => {
 };
 
 const addSongToPlaylist = async (req: Request, res: Response) => {
+  console.log("body: ", req.body);
   const { song, videoId } = req.body;
   const playlistId = req.query.id;
   if (!song || !videoId || !playlistId) {
