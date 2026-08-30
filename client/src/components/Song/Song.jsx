@@ -104,7 +104,7 @@ function Song({
   const { user, setUser } = useContext(UserContext);
   const hasFetchedRef = useRef(false); // ← add this ref
 
-  console.log("song: ", song);
+  // console.log("song: ", song);
   // console.log("song ref: ", songRef);
   // console.log("song video state: ", state.videoId);
   if (!user.token) {

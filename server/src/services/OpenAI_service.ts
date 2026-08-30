@@ -42,7 +42,6 @@ const SongSuggestions = async (text: Message) => {
   const songSuggestions = suggestions
     .substring(suggestions.indexOf("1.").valueOf())
     .split("\n");
-  console.log("Song Suggestions:", songSuggestions); // Debugging line
   return songSuggestions;
 };
 

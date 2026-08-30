@@ -178,12 +178,11 @@
   margin-top: 1.5rem;
 }
 
-@media (max-width: 600px) {
-  @media screen and (max-width: 1024px) {
-    .playlistGrid {
-      min-width: 0;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
+@media screen and (max-width: 1024px) {
+  .playlistGrid {
+    min-width: 0;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 50px;
   }
 }
 

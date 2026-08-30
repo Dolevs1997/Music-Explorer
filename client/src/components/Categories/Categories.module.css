@@ -7,8 +7,12 @@
   gap: 20px;
 }
 /*screen for tablets */
-
 @media screen and (max-width: 1024px) {
+  .categories {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media screen and (max-width: 765px) {
   .categories {
     grid-template-columns: 1fr 1fr;
   }

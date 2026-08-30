@@ -59,13 +59,6 @@ export default function Home({ user }) {
       </header>
       <main className="home">
         <>
-          {/* {formVisible && !isMapVisible && (
-                <Form
-                  setSongSuggestions={setSongSuggestions}
-                  setFormVisible={setFormVisible}
-                  formVisible={formVisible}
-                />
-              )} */}
           {songSuggestions.length == 0 && !isMapVisible && (
             <Categories formVisible={formVisible} user={user} />
           )}

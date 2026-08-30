@@ -5,7 +5,25 @@ import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 import Song from "../../components/Song/Song";
 import { Spinner } from "../../components/ui/spinner";
-function SongsPlaylist() {
+
+function getUniqueSongs(songs) {
+  const seen = new Set();
+
+  return songs.filter((song) => {
+    const title = song?.song || song?.searchQuery || song?.title || song;
+    const identity = song?.videoId || title?.trim().toLowerCase();
+
+    if (!identity || seen.has(identity)) {
+      console.log("song already exists in the playlist?: ", seen.has(identity));
+      return false;
+    }
+
+    seen.add(identity);
+    return true;
+  });
+}
+
+function CategorySongsPlaylist() {
   const { playlistId } = useParams();
   const location = useLocation();
   const { playlistName, token, country } = location.state || {};
@@ -33,8 +51,8 @@ function SongsPlaylist() {
         }
         const data = await response.json();
         setIsLoading(false);
-        // console.log("data: ", data);
-        setPlaylist(data);
+        console.log("data: ", data);
+        setPlaylist(getUniqueSongs(data));
       } catch (error) {
         console.error("Error fetching playlist:", error);
       }
@@ -58,11 +76,20 @@ function SongsPlaylist() {
         <h2>{playlistName}</h2>
         {playlist.length > 0 ? (
           <div className="playlists">
-            {playlist.map((song, index) => (
+            {playlist.map((song) => (
               <Song
-                key={index}
-                song={song.searchQuery || song.title}
-                country={location.state.country}
+                key={
+                  song.videoId || song.song || song.searchQuery || song.title
+                }
+                song={
+                  typeof song === "object"
+                    ? {
+                        ...song,
+                        song: song.song || song.searchQuery || song.title,
+                      }
+                    : song
+                }
+                country={country}
                 playingVideoId={playingVideoId}
                 setPlayingVideoId={setPlayingVideoId}
                 playlistId={playlistId}
@@ -79,4 +106,4 @@ function SongsPlaylist() {
   );
 }
 
-export default SongsPlaylist;
+export default CategorySongsPlaylist;

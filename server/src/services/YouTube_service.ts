@@ -7,6 +7,29 @@ import {
 } from "./Redis_service";
 dotenv.config();
 const API_KEY = process.env.YOUTUBE_API_KEY;
+// id: playlist.id,
+//       title: playlist.name,
+//       description: playlist.description || "",
+//       thumbnail: playlist.images?.[0]?.url || "",
+//       owner: playlist.owner?.display_name || "",
+//       totalTracks: playlist.tracks?.total || 0,
+
+type spotifyPlaylistObject = {
+  playlists: {
+    items: [
+      id: string,
+      name: string,
+      image: [{ url: string; width: number; height: number }],
+      description: string,
+      owner: {
+        display_name: string;
+      },
+      tracks: {
+        total: number;
+      },
+    ];
+  };
+};
 
 export type YouTubePlaylistItem = {
   id: {
@@ -129,7 +152,6 @@ async function fetchPlaylists(
     spotifyToken,
   );
   results = [...searchResults];
-
   if (genreIds) {
     // ── Option 2: hardcoded editorial playlists ────────────────────────────
     const hardcodedResults = await fetchSpotifyPlaylistsByIds(
@@ -156,7 +178,7 @@ async function fetchSpotifyPlaylistsByIds(
   country: string,
   token: string,
 ): Promise<any[]> {
-  const fetchPromises = ids.map((id) => {
+  const fetchPromises = ids.map(async (id) => {
     return fetch(
       `https://api.spotify.com/v1/playlists/${id}?market=${country}&fields=id,name,description,images,owner,tracks.total`,
       { headers: { Authorization: `Bearer ${token}` } },
@@ -192,8 +214,10 @@ async function fetchSpotifyPlaylistsBySearch(
     `top ${genre} ${location}`,
     `${genre} playlist ${new Date().getFullYear()}`,
   ];
-
-  const fetchPromises = queries.map((q) =>
+  // console.log(encodeURIComponent(queries[0]));
+  // console.log(encodeURIComponent(queries[1]));
+  // console.log(encodeURIComponent(queries[2]));
+  const fetchPromises = queries.map(async (q) =>
     fetch(
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=playlist&market=${country}&limit=50`,
       { headers: { Authorization: `Bearer ${token}` } },
@@ -201,8 +225,8 @@ async function fetchSpotifyPlaylistsBySearch(
       .then((res) => res.json())
       .catch(() => ({ playlists: { items: [] } })),
   );
-
-  const results = await Promise.all(fetchPromises);
+  const results: spotifyPlaylistObject[] = await Promise.all(fetchPromises);
+  console.log("results: ", results[0]?.playlists.items);
   const unique = new Map<string, any>();
   const genreLower = genre.toLowerCase();
 
@@ -248,7 +272,7 @@ async function fetchSong(
     // console.log("Returning cached song:", cachedSong);
     return cachedSong;
   }
-  console.log("Fetching song from YouTube API:", song);
+  // console.log("Fetching song from YouTube API:", song);
 
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song} official music video`,
@@ -257,7 +281,7 @@ async function fetchSong(
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    console.log("YouTube API response data:", data); // Debugging line
+    // console.log("YouTube API response data:", data.items); // Debugging line
     if (!data || !data.items || data.items.length === 0) {
       return null; // No results found
     }
@@ -344,7 +368,7 @@ async function fetchPlaylistSongs(
       }
 
       const data = await response.json();
-
+      console.log("data in YouTube_service: ", data);
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {

@@ -21,7 +21,7 @@ function Category({ category, token, country, location }) {
     const data = await response.json();
     if (response.ok) {
       setPlaylistsCategory(data);
-      toast.success("Redirecting to playlists...");
+      // toast.success("Redirecting to playlists...");
       navigate("/category/playlists", {
         state: {
           playlistsCategory: data,

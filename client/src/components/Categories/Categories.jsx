@@ -95,12 +95,6 @@ function Categories({ formVisible }) {
         console.error("Error fetching categories:", response.statusText);
       } else {
         setCategories(response.data.categories.items);
-        // if (showMore === true) {
-        //   navigate("/home");
-        // }
-        // if (showMore === false) {
-        //   navigate("/home/categories");
-        // }
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
