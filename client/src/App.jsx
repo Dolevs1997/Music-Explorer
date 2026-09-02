@@ -9,8 +9,7 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import AppIntro from "./pages/AppIntro";
 import CategoryPlaylists from "./pages/CategoryPlaylists/CategoryPlaylists";
-import { useEffect, useState } from "react";
-import { useContext } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
 import Register from "./pages/Register/Register";
 import CategorySongsPlaylist from "./pages/CategorySongsPlaylist/CategorySongsPlaylist";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
@@ -60,35 +59,46 @@ function App() {
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const [initialUser] = useState(() => {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  });
   const [currentLocation, setCurrentLocation] = useState(
-    user?.country?.fullName || "United States",
+    initialUser?.country?.fullName || "United States",
   );
   useEffect(() => {
     document.title = "music-explorer | Home";
   }, []);
+  // 1. Memoize the Current Location Context Value
+  const locationContextValue = useMemo(
+    () => ({
+      currentLocation,
+      setCurrentLocation,
+    }),
+    [currentLocation],
+  );
 
+  // 2. Memoize the massive Search Context Value
+  const searchContextValue = useMemo(
+    () => ({
+      songSuggestions,
+      setSongSuggestions,
+      isRecording,
+      setIsRecording,
+      isMapVisible,
+      setIsMapVisible,
+      formVisible,
+      setFormVisible,
+      isVoiceSearch,
+      setIsVoiceSearch,
+    }),
+    [songSuggestions, isRecording, isMapVisible, formVisible, isVoiceSearch],
+  );
   return (
     <UserProvider>
       <Toaster />
-      <CurrentLocationContext.Provider
-        value={{ currentLocation, setCurrentLocation }}
-      >
+      <CurrentLocationContext.Provider value={locationContextValue}>
         <BrowserRouter>
-          <SearchContext.Provider
-            value={{
-              songSuggestions,
-              setSongSuggestions,
-              isRecording,
-              setIsRecording,
-              isMapVisible,
-              setIsMapVisible,
-              formVisible,
-              setFormVisible,
-              isVoiceSearch,
-              setIsVoiceSearch,
-            }}
-          >
+          <SearchContext.Provider value={searchContextValue}>
             <Routes>
               <Route path="/" element={<AppIntro />} />
               <Route path="/login" element={<Login />} />
@@ -98,13 +108,15 @@ function App() {
                 path="/home"
                 element={
                   <ProtectedRoute>
-                    <Home user={user} />
+                    <Home user={initialUser} />
                   </ProtectedRoute>
                 }
               >
                 <Route
                   path="categories"
-                  element={<Categories formVisible={formVisible} user={user} />}
+                  element={
+                    <Categories formVisible={formVisible} user={initialUser} />
+                  }
                 />
                 <Route
                   path="songSuggestions"
@@ -156,7 +168,7 @@ function App() {
                 path="/global"
                 element={
                   <ProtectedRoute>
-                    <Home user={user} />
+                    <Home user={initialUser} />
                   </ProtectedRoute>
                 }
               />

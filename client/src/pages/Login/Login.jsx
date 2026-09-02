@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router";
 import Button from "../../components/Button/Button";
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 import UserContext from "../../Contexts/UserContext";
@@ -18,12 +18,14 @@ function Login() {
   const { setUser } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
-  const message = useRef(location.state);
   const { setCurrentLocation } = useContext(CurrentLocationContext);
-  if (location.state) {
-    toast(message.current);
-    location.state = null;
-  }
+  useEffect(() => {
+    if (location.state) {
+      toast(location.state);
+      // Safely clear the state from the history API so it doesn't toast again if the user refreshes the page
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
   async function handleSuccess(credentialResponse) {
     const idToken = credentialResponse.credential;
     try {
@@ -123,11 +125,9 @@ function Login() {
           />
         </div>
 
-        <Link to="/home">
-          <Button type="login" onClick={(e) => handleLogin(e)}>
-            Login
-          </Button>
-        </Link>
+        <Button type="login" onClick={(e) => handleLogin(e)}>
+          Login
+        </Button>
 
         <GoogleLogin onSuccess={handleSuccess} />
 
