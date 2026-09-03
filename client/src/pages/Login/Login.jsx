@@ -40,8 +40,11 @@ function Login() {
       );
       // console.log("response google: ", response);
       if (response.status === 200) {
-        setUser(response.data);
-        setCurrentLocation(response.data.country.fullName || "United States");
+        setUser(response.data.user);
+        setCurrentLocation(
+          response.data.user?.country?.fullName || "United States",
+        );
+        localStorage.setItem("user", JSON.stringify(response.data.user));
 
         setTimeout(() => {
           navigate("/home");
@@ -74,7 +77,11 @@ function Login() {
       if (response.status === 200) {
         // toast.success("Login successful! Redirecting to home...");
         setUser(response.data);
-        setCurrentLocation(response.data.country.fullName || "United States");
+        setCurrentLocation(
+          response.data.user?.country.fullName || "United States",
+        );
+        localStorage.setItem("user", JSON.stringify(response.data));
+
         setTimeout(() => {
           navigate("/home");
         }, 2000); // Redirect after 2 seconds

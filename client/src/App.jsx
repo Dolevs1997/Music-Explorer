@@ -28,13 +28,16 @@ import "@heroui/react/styles";
 import UserContext from "./Contexts/UserContext";
 import { Toaster, toast } from "react-hot-toast";
 import propTypes from "prop-types";
+import axios from "axios";
 
+// Always send cookies
+axios.defaults.withCredentials = true;
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-
+  console.log("user: ", user);
   useEffect(() => {
-    if (user?.token) return undefined;
+    if (user?._id) return undefined;
 
     toast.error("Please sign in to continue.");
     const redirectTimer = setTimeout(() => {
@@ -44,7 +47,7 @@ function ProtectedRoute({ children }) {
     return () => clearTimeout(redirectTimer);
   }, [user, navigate]);
 
-  if (!user?.token) return null;
+  if (!user?._id) return null;
 
   return children;
 }

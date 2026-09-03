@@ -17,7 +17,7 @@ import { json, urlencoded } from "body-parser";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config();
-
+const allowedOrigins = ["http://localhost:5173", "https://music-explorer.com"];
 const initApp = async () => {
   console.log("Initializing app");
   try {
@@ -32,7 +32,12 @@ const initApp = async () => {
 
     // Initialize Express app
     const app = express();
-    app.use(cors()); // Enable CORS for all routes
+    app.use(
+      cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+      }),
+    ); // Enable CORS for all routes
     app.use(json());
     app.use(urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, "public")));

@@ -46,16 +46,23 @@ const googleLogin = async (req: Request, res: Response) => {
   }
 
   const tokens = await generateTokens(dbUser as any);
-
-  res.status(200).json({
-    email: dbUser.email,
-    country: dbUser.country,
-    _id: dbUser._id,
-    playlists: dbUser.playlists,
-    avatar: dbUser.avatar,
-    message: message,
-    ...tokens,
+  res.cookie("accessToken", tokens.token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 1000, // 1 hour
   });
+  res.cookie("refreshToken", tokens.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 1000, // 24 hours
+  });
+  if (message) {
+    return res.status(200).json({ message, user: dbUser });
+  }
+
+  res.status(200).json({ user: dbUser });
 };
 
 const register = async (req: Request, res: Response) => {
@@ -79,15 +86,22 @@ const register = async (req: Request, res: Response) => {
           await getAdminAuth().updateUser(existedUser.uid, { password });
 
           const tokens = await generateTokens(existedUser as any);
+          res.cookie("accessToken", tokens.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 1000, // 1 hour
+          });
+          res.cookie("refreshToken", tokens.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 1000, // 24 hours
+          });
           return res.status(200).json({
             message:
               "Password set successfully for existing Google login account.",
-            email: existedUser.email,
-            country: existedUser.country,
-            _id: existedUser._id,
-            playlists: existedUser.playlists,
-            avatar: existedUser.avatar,
-            ...tokens,
+            existingUser: existedUser,
           });
         } catch (error: any) {
           console.error(
@@ -177,13 +191,22 @@ const generateTokens = async (user: jwt.JwtPayload) => {
   const token = jwt.sign(
     { id: user?._id },
     process.env.ACCESS_TOKEN_SECRET as PrivateKey,
+    { expiresIn: "15m" },
   );
   const refreshToken = jwt.sign(
     { id: user._id },
     process.env.REFRESH_TOKEN_SECRET as PrivateKey,
+    { expiresIn: "7d" },
   );
-  if (user.refreshTokens == null) user.refreshTokens = [refreshToken];
-  else user.refreshTokens.push(refreshToken);
+  // Initialize array if it doesn't exist
+  if (!user.refreshTokens) {
+    user.refreshTokens = [];
+  } else user.refreshTokens.push(refreshToken);
+  // OPTIMIZATION: Prevent the array from growing infinitely (Limit to 5 active sessions)
+  if (user.refreshTokens.length > 5) {
+    // Removes the oldest token from the beginning of the array
+    user.refreshTokens.shift();
+  }
   await user.save();
   return { token, refreshToken };
 };
@@ -216,15 +239,20 @@ const login = async (req: Request, res: Response) => {
           return res.status(400).send("BAD REQUEST: Invalid user data");
 
         const tokens = await generateTokens(user);
-        console.log("user in login:", user);
-        res.status(200).json({
-          email: user.email,
-          country: user.country,
-          _id: user._id,
-          playlists: user.playlists,
-          avatar: user.avatar,
-          ...tokens,
+        res.cookie("accessToken", tokens.token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 1000, // 1 hour
         });
+        res.cookie("refreshToken", tokens.refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 1000, // 24 hours
+        });
+
+        res.status(200).json(user);
       })
       .catch((error) => {
         const errorCode = error.code;
