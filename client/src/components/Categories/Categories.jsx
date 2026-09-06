@@ -27,7 +27,6 @@ function Categories({ formVisible }) {
 
   // Determine locale based on country code
   const locale = getLocaleForCountry(country);
-  console.log("locale: ", locale);
   let limit = categories.length === 0 ? 6 : categories.length;
   useEffect(() => {
     if (userData == null) navigate("/login");
@@ -44,12 +43,6 @@ function Categories({ formVisible }) {
         try {
           const response = await axios.get(
             `/api/categories/getAll?limit=${limit}&locale=${locale}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${userData.token}`,
-              },
-            },
           );
 
           setCategories(response.data.categories.items);
@@ -68,7 +61,7 @@ function Categories({ formVisible }) {
       }
       fetchGenres();
     },
-    [limit, locale, userData.token],
+    [limit, locale],
   );
 
   async function handleShowCategories(show) {
@@ -81,16 +74,7 @@ function Categories({ formVisible }) {
 
       limit = showMore ? 6 : 50;
 
-      const response = await axios.get(
-        `/api/categories/getAll?limit=${limit}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-
-            Authorization: `Bearer ${userData.token}`,
-          },
-        },
-      );
+      const response = await axios.get(`/api/categories/getAll?limit=${limit}`);
       if (response.status !== 200) {
         console.error("Error fetching categories:", response.statusText);
       } else {
@@ -124,7 +108,6 @@ function Categories({ formVisible }) {
             <Category
               key={category.id}
               category={category}
-              token={userData.token}
               country={country}
               location={currentLocation}
             />

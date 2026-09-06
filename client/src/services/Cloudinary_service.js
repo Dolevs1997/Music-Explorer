@@ -1,11 +1,7 @@
 import axios from "axios";
-async function uploadImageToCloudinary(formData, token) {
+async function uploadImageToCloudinary(formData) {
   try {
-    const response = await axios.post(`/api/upload/`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.post(`/api/upload/`, formData);
     return response;
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);

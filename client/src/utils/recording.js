@@ -1,3 +1,5 @@
+import axios from "axios";
+
 let mediaRecorder;
 let audioChunks = [];
 export async function handleStartRecording() {
@@ -11,7 +13,6 @@ export async function handleStartRecording() {
   mediaRecorder.start();
 }
 export async function handleStopRecording(
-  userData,
   setSongSuggestions,
   setProccessRecording,
   setResultRecord,
@@ -27,15 +28,10 @@ export async function handleStopRecording(
     const formData = new FormData();
     formData.append("audioFile", audioBlob, "sample.wav");
     try {
-      const res = await fetch(`/api/videoSong/recognize-audio`, {
-        body: formData,
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${userData.token}`,
-        },
-      });
+      const res = await axios.post(`/api/videoSong/recognize-audio`, formData);
 
-      const data = await res.json();
+      console.log("Recognition response:", res);
+      const data = await res.data;
 
       if (data.error || !data.artists?.[0]?.name || !data.title) {
         console.error("Song recognition failed:", data.error || data);
@@ -43,8 +39,8 @@ export async function handleStopRecording(
         return;
       }
 
-      const songRecognized = `${data.artists[0].name} - ${data.title}`;
-
+      // const songRecognized = `${data.artists[0].name} - ${data.title}`;
+      const songRecognized = { title: data.title, artist: data.artists[0].name };
       setSongSuggestions([songRecognized]);
       setResultRecord(data);
     } catch (error) {

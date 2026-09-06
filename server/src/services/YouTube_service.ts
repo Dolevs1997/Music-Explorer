@@ -226,7 +226,6 @@ async function fetchSpotifyPlaylistsBySearch(
       .catch(() => ({ playlists: { items: [] } })),
   );
   const results: spotifyPlaylistObject[] = await Promise.all(fetchPromises);
-  console.log("results: ", results[0]?.playlists.items);
   const unique = new Map<string, any>();
   const genreLower = genre.toLowerCase();
 

@@ -44,7 +44,6 @@ function MapContent() {
     geocoder.geocode({ location: clickedCoord }, (results, status) => {
       if (status === "OK" && results && results.length > 0) {
         const countryResult = results[results.length - 1];
-        console.log("country result: ", countryResult);
         const shortName =
           countryResult.address_components[0]?.short_name || "US";
         const formattedAddress = countryResult?.formatted_address;
@@ -72,7 +71,6 @@ function MapContent() {
         const shortName =
           countryResult.address_components[0]?.short_name || "US";
         const formattedAddress = results[0].formatted_address;
-        console.log("short name: ", shortName);
         setSelectedLocation(location);
         setDialogLocation(location);
         setCountryShortName(shortName);

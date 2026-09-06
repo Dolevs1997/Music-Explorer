@@ -58,11 +58,13 @@ const googleLogin = async (req: Request, res: Response) => {
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 1000, // 24 hours
   });
+  const safeUser = dbUser.toObject();
+  delete safeUser.refreshTokens;
   if (message) {
-    return res.status(200).json({ message, user: dbUser });
+    return res.status(200).json({ message, user: safeUser });
   }
 
-  res.status(200).json({ user: dbUser });
+  res.status(200).json({ user: safeUser });
 };
 
 const register = async (req: Request, res: Response) => {
@@ -98,10 +100,14 @@ const register = async (req: Request, res: Response) => {
             sameSite: "lax",
             maxAge: 60 * 60 * 24 * 1000, // 24 hours
           });
+
+          const safeUser = existedUser.toObject();
+          delete safeUser.refreshTokens;
+
           return res.status(200).json({
             message:
               "Password set successfully for existing Google login account.",
-            existingUser: existedUser,
+            existingUser: safeUser,
           });
         } catch (error: any) {
           console.error(
@@ -159,7 +165,9 @@ const register = async (req: Request, res: Response) => {
               refreshTokens: [],
             });
             const newUser = await user.save();
-            res.status(200).send(newUser);
+            const safeNewUser = newUser.toObject();
+            delete safeNewUser.refreshTokens;
+            res.status(200).send(safeNewUser);
           })
           .catch((error) => {
             console.error("Error sending verification email:", error);
@@ -251,8 +259,9 @@ const login = async (req: Request, res: Response) => {
           sameSite: "lax",
           maxAge: 60 * 60 * 24 * 1000, // 24 hours
         });
-
-        res.status(200).json(user);
+        const safeUser = user.toObject();
+        delete safeUser.refreshTokens;
+        res.status(200).json(safeUser);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -283,7 +292,7 @@ const login = async (req: Request, res: Response) => {
 
 // This function is used to logout the user by removing the refresh token from the database
 const logout = async (req: Request, res: Response) => {
-  const refreshToken = req.headers["authorization"]?.split(" ")[1];
+  const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken) return res.sendStatus(401);
   const auth = getAuth(app);
   signOut(auth)
@@ -291,7 +300,7 @@ const logout = async (req: Request, res: Response) => {
       jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET as PublicKey,
-        async (err, user) => {
+        async (err: any, user: any) => {
           if (!user || typeof user === "string")
             return res.status(401).send("UNAUTHORIZED: Invalid token");
           if (err) return res.sendStatus(403);
@@ -303,6 +312,8 @@ const logout = async (req: Request, res: Response) => {
             (token) => token !== refreshToken,
           );
           await foundUser.save();
+          res.clearCookie("accessToken");
+          res.clearCookie("refreshToken");
           res.sendStatus(204);
         },
       );
@@ -316,40 +327,50 @@ const logout = async (req: Request, res: Response) => {
 // This function is used to refresh the access token using the refresh token
 // The refresh token is sent in the request headers and is verified.
 const refreshToken = async (req: Request, res: Response) => {
-  const refreshToken = req.headers["authorization"]?.split(" ")[1];
+  const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken) return res.sendStatus(401);
 
   jwt.verify(
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET as PublicKey,
-    async (err, user) => {
+    async (err: any, user: any) => {
+      if (err) return res.sendStatus(403);
       if (!user || typeof user === "string")
         return res.status(401).send("UNAUTHORIZED: Invalid token");
-      if (err) return res.sendStatus(403);
-      const foundUser = await UserModel.findById(user.id);
+      const foundUser = await UserModel.findById(user.id).populate("playlists");
       if (!foundUser) return res.sendStatus(401);
       if (!foundUser.refreshTokens?.includes(refreshToken))
         return res.sendStatus(403);
       const tokens = await generateTokens(foundUser);
-      res.status(200).json({
-        email: foundUser.email,
-        _id: foundUser._id,
-        ...tokens,
+      res.cookie("accessToken", tokens.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000,
       });
+      res.cookie("refreshToken", tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 1000,
+      });
+      const safeUser = foundUser.toObject();
+      delete safeUser.refreshTokens;
+      res.status(200).json(safeUser);
     },
   );
 };
 
 const deleteAccount = async (req: Request, res: Response) => {
   // Uses the regular access token (not refresh token)
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const token = req.cookies?.accessToken;
 
   if (!token) return res.sendStatus(401);
 
   jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET as PublicKey,
-    async (err, decoded) => {
+    async (err: any, decoded: any) => {
       if (!decoded || typeof decoded === "string")
         return res.status(401).send("UNAUTHORIZED: Invalid token");
       if (err) return res.sendStatus(403);
@@ -371,6 +392,9 @@ const deleteAccount = async (req: Request, res: Response) => {
         });
         // Delete the user from MongoDB
         await foundUser.deleteOne();
+        // Clear the user's cookies
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
         res.sendStatus(204);
       } catch (error: any) {
         console.error("Error deleting account:", error);

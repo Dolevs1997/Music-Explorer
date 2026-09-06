@@ -7,39 +7,20 @@ async function addSongToPlaylist(song, state, user, playlist) {
       videoId: state.videoId,
       user: user,
     },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    },
   );
 
   return response;
 }
 async function createPlaylist(playlistName, user) {
-  const response = await axios.post(
-    `/api/playlist/create`,
-    {
-      playlistName: playlistName,
-      user: user,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    },
-  );
+  const response = await axios.post(`/api/playlist/create`, {
+    playlistName: playlistName,
+    user: user,
+  });
   return response;
 }
 
 async function removeSongFromPlaylist(videoId, user, playlistId) {
   const response = await axios.delete(`/api/videoSong/song/${videoId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${user.token}`,
-    },
     data: {
       user: user,
       playlistId: playlistId,
@@ -48,38 +29,23 @@ async function removeSongFromPlaylist(videoId, user, playlistId) {
   return response.data;
 }
 
-async function removePlaylist(playlistId, user) {
-  const response = await axios.delete(`/api/playlist/?id=${playlistId}`, {
-    headers: {
-      Authorization: `Bearer ${user.token}`,
-    },
-  });
-
+async function removePlaylist(playlistId) {
+  const response = await axios.delete(`/api/playlist/?id=${playlistId}`);
+  console.log("removePlaylist response:", response);
   return response.data;
 }
 
-async function updatePlaylist(playlist, updatedData, user) {
+async function updatePlaylist(playlist, updatedData) {
   if (updatedData instanceof FormData) {
     const response = await axios.put(
       `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      },
     );
     return response.data;
   } else {
     const response = await axios.put(
       `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      },
     );
     return response.data;
   }

@@ -1,4 +1,3 @@
-import SongSchema from "../schemas/Song_schema";
 import { fetchSong } from "../services/YouTube_service";
 import { Request, Response } from "express";
 

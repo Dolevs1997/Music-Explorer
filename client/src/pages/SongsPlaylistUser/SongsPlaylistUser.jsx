@@ -9,6 +9,7 @@ import { useLocation } from "react-router";
 import UserContext from "../../Contexts/UserContext";
 
 import { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 function SongsPlaylistUser() {
   const { user, setUser } = useContext(UserContext);
@@ -25,19 +26,15 @@ function SongsPlaylistUser() {
     console.error("User not found in local storage or state.");
   }
   async function fetchPlaylistSongs() {
-    if (!user?.token || !playlistId) return;
+    if (!playlistId) return;
 
     try {
-      const response = await fetch(`/api/playlist/?id=${playlistId}`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      if (!response.ok) {
+      const response = await axios.get(`/api/playlist/?id=${playlistId}`);
+      if (response.status !== 200) {
         setSongs([]);
         throw new Error("Failed to fetch playlist songs");
       }
-      const data = await response.json();
+      const data = await response.data;
       setSongs((data.songs || []).filter((songObj) => songObj?.song));
     } catch (error) {
       console.error("Error fetching playlist songs:", error);
@@ -89,7 +86,7 @@ function SongsPlaylistUser() {
 
   useEffect(() => {
     fetchPlaylistSongs();
-  }, [playlistId, user?.token]);
+  }, [playlistId]);
 
   return (
     <div className="app-container">

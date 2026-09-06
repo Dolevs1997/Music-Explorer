@@ -92,7 +92,7 @@ const addHistorySong = async (req: Request, res: Response) => {
     title: song?.song,
     videoId: song?.videoId,
   };
-  const idToken = req.header("Authorization")?.split(" ")[1];
+  const idToken = req.cookies?.accessToken;
   if (!idToken) {
     return res.status(401).json({ message: "Authorization token is required" });
   }

@@ -4,29 +4,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import toast, { Toaster } from "react-hot-toast";
 import { Card } from "@heroui/card";
-function Category({ category, token, country, location }) {
+import axios from "axios";
+function Category({ category, country, location }) {
   const navigate = useNavigate();
   const [, setPlaylistsCategory] = useState([]);
   async function handleClickCategory(name) {
-    const response = await fetch(
+    const response = await axios.get(
       `/api/categories/category/?name=${name}&country=${country}&location=${location}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      },
     );
-    const data = await response.json();
-    if (response.ok) {
+    const data = await response.data;
+    if (response.status === 200) {
       setPlaylistsCategory(data);
       // toast.success("Redirecting to playlists...");
       navigate("/category/playlists", {
         state: {
           playlistsCategory: data,
           categoryName: name,
-          token: token,
           country: country,
           location: location,
         },

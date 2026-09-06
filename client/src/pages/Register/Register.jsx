@@ -44,11 +44,7 @@ function Register() {
       },
     };
 
-    const response = await axios.post(`/auth/register`, payload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.post(`/auth/register`, payload);
     if (response.status == 200) {
       toast.success("Registration successful! Redirecting to login...");
       setTimeout(() => {

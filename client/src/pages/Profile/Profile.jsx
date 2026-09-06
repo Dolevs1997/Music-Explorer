@@ -16,11 +16,14 @@ import Song from "../../components/Song/Song";
 import Account from "../../components/Settings/Account/Account";
 import Preferences from "../../components/Settings/Preferences/Preferences";
 import Privacy from "../../components/Settings/Privacy/Privacy";
+import axios from "axios";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
-
+  const [songObj, setSongObj] = useState({
+    title: "",
+    videoId: "",
+  });
   const [activeTab, setActiveTab] = useState("playlists");
-  console.log(user);
   //Avatar states
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -58,12 +61,11 @@ function Profile() {
     async function fetchHistory() {
       setHistoryLoading(true);
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `/api/userActivity/songsHistory?id=${user._id}`,
-          { headers: { Authorization: `Bearer ${user.token}` } },
         );
-        if (!response.ok) throw new Error("Failed to fetch history");
-        const data = await response.json();
+        if (response.status !== 200) throw new Error("Failed to fetch history");
+        const data = await response.data;
         setRecentSongs(data.recentSongs || []);
         setHistoryFetched(true);
       } catch (error) {
@@ -95,10 +97,7 @@ function Profile() {
       const formData = new FormData();
       formData.append("image", avatarFile); // multer expects "image"
 
-      const uploadResponse = await uploadImageToCloudinary(
-        formData,
-        user.token,
-      );
+      const uploadResponse = await uploadImageToCloudinary(formData);
       // upload_route.ts returns { imageUrl }
       const avatarUrl = uploadResponse.data?.imageUrl || user.avatar;
 
@@ -118,6 +117,7 @@ function Profile() {
   }
   // ── History
   function handlePlaySong(song) {
+    console.log("song: ", song);
     // Reset first so Song unmounts and remounts fresh for the new song
     setPlayingVideoId(null);
     setSongTitle(null);
@@ -126,6 +126,7 @@ function Profile() {
     setTimeout(() => {
       setSongTitle(song.title);
       setPlayingVideoId(song.videoId);
+      setSongObj({ title: song.title, videoId: song.videoId });
     }, 50);
   }
 
@@ -135,7 +136,6 @@ function Profile() {
 
   const currentAvatar =
     avatarPreview || user.avatar || "public/default-avatar-user.jpg";
-  console.log("current avatar: ", currentAvatar);
   return (
     <div className="app-container">
       <header className="header">
@@ -314,10 +314,10 @@ function Profile() {
                 )}
                 {playingVideoId && songTitle && (
                   <Song
-                    key={playingVideoId} // ← forces remount on every new song
-                    song={songTitle}
+                    song={songObj}
                     playingVideoId={playingVideoId}
                     setPlayingVideoId={setPlayingVideoId}
+                    key={playingVideoId} // ← forces remount on every new song
                   />
                 )}
               </div>

@@ -28,7 +28,7 @@ const getById = async (req: Request, res: Response) => {
   const country = (req.query.country as string) || "US";
   const locationName = (req.query.location as string) || "United States";
   const spotifyToken = req.headers["spotify-token"] as string;
-
+  console.log("category name:", name);
   if (!name) {
     return res
       .status(400)

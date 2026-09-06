@@ -30,12 +30,9 @@ import { Toaster, toast } from "react-hot-toast";
 import propTypes from "prop-types";
 import axios from "axios";
 
-// Always send cookies
-axios.defaults.withCredentials = true;
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  console.log("user: ", user);
   useEffect(() => {
     if (user?._id) return undefined;
 
@@ -62,15 +59,30 @@ function App() {
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
-  const [initialUser] = useState(() => {
-    return JSON.parse(localStorage.getItem("user")) || null;
-  });
+  const [initialUser, setInitialUser] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(
     initialUser?.country?.fullName || "United States",
   );
   useEffect(() => {
     document.title = "music-explorer | Home";
   }, []);
+  useEffect(() => {
+    const silentLogin = async () => {
+      try {
+        // Ping the server. The browser automatically sends the httpOnly cookie!
+        const response = await axios.get("/auth/refresh");
+        // If successful, save the user data
+        setInitialUser(response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
+      } catch (e) {
+        console.error("Silent login failed: ", e.response?.status);
+        localStorage.removeItem("user");
+      }
+    };
+
+    silentLogin();
+  }, []);
+
   // 1. Memoize the Current Location Context Value
   const locationContextValue = useMemo(
     () => ({
@@ -96,6 +108,10 @@ function App() {
     }),
     [songSuggestions, isRecording, isMapVisible, formVisible, isVoiceSearch],
   );
+  // if (isCheckingAuth) {
+  //   // Shows a black screen for a split second so the ProtectedRoute doesn't kick them out too early
+  //   return <div style={{ height: "100vh", backgroundColor: "#000" }} />;
+  // }
   return (
     <UserProvider>
       <Toaster />

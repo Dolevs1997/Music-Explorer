@@ -70,9 +70,9 @@ async function handleVoiceSearch(
   setRecognition = null,
 ) {
   return new Promise((resolve, reject) => {
-    if (!userData || !userData.token) {
-      console.error("User data or token is missing");
-      reject("User data or token is missing");
+    if (!userData) {
+      console.error("User data is missing");
+      reject("User data  is missing");
       return;
     }
 
@@ -128,7 +128,7 @@ async function handleVoiceSearch(
       };
 
       try {
-        const response = await getSongSuggestions(payload, userData.token);
+        const response = await getSongSuggestions(payload);
         resolve(response);
         setResultVoice(response);
       } catch (error) {

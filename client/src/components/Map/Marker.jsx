@@ -4,7 +4,7 @@ function PoiMarker({ position }) {
   return (
     <>
       <AdvancedMarker position={position}>
-        <Pin background={"#181997"} glyphColor={"#fff"} borderColor={"#000"} />
+        <Pin glyphColor={"#ffffff"} borderColor={"#000"} />
       </AdvancedMarker>
     </>
   );
@@ -17,5 +17,5 @@ PoiMarker.propTypes = {
   }).isRequired,
 };
 
-<Pin background={"#181997"} glyphColor={"#fff"} borderColor={"#000"} />;
+<Pin glyphColor={"#fff"} borderColor={"#000"} />;
 export default PoiMarker;

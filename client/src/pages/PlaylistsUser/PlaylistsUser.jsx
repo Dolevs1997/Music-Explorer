@@ -46,7 +46,7 @@ function PlaylistsUser() {
 
   async function handleRemovePlaylist(playlistId) {
     try {
-      await removePlaylist(playlistId, user);
+      await removePlaylist(playlistId);
 
       const updatedPlaylists = user.playlists.filter(
         (p) => p.id !== playlistId && p._id !== playlistId,
@@ -63,11 +63,9 @@ function PlaylistsUser() {
   async function handleEditPlaylist() {
     if (!selectedPlaylist) return;
     try {
-      const updatedPlaylist = await updatePlaylist(
-        selectedPlaylist,
-        { name: playlistName },
-        user,
-      );
+      const updatedPlaylist = await updatePlaylist(selectedPlaylist, {
+        name: playlistName,
+      });
 
       const updatedUser = {
         ...user,
@@ -107,7 +105,7 @@ function PlaylistsUser() {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const data = await updatePlaylist(selectedPlaylist, formData, user);
+      const data = await updatePlaylist(selectedPlaylist, formData);
       // Update the user state with the new playlist data
       const updatedUser = {
         ...user,
@@ -169,8 +167,8 @@ function PlaylistsUser() {
         )}
         {user.playlists.length > 0 ? (
           <div className="playlists-user">
-            {user.playlists.map((playlist) => (
-              <div key={playlist._id}>
+            {user.playlists.map((playlist, index) => (
+              <div key={playlist._id || index}>
                 {showDeleteModal &&
                   selectedPlaylist &&
                   (selectedPlaylist._id || selectedPlaylist.id) ===

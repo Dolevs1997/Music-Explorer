@@ -18,7 +18,7 @@ function CategoryPlaylists() {
   }, []);
   useEffect(() => {
     const { state } = location;
-    if (state && state.playlistsCategory && state.categoryName && state.token) {
+    if (state && state.playlistsCategory && state.categoryName) {
       setPlaylistsCategory(state.playlistsCategory);
       setCategoryName(state.categoryName);
     }
@@ -40,7 +40,6 @@ function CategoryPlaylists() {
               <PlaylistCategory
                 playlist={playlist}
                 key={playlist.id}
-                token={location.state.token}
                 shortName={location.state.country}
               />
             ))}

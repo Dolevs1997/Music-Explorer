@@ -2,7 +2,7 @@
 import styles from "./PlaylistCategory.module.css";
 import { useNavigate } from "react-router";
 
-function PlaylistCategory({ playlist, token, shortName }) {
+function PlaylistCategory({ playlist, shortName }) {
   const navigate = useNavigate();
   return (
     <div
@@ -11,7 +11,6 @@ function PlaylistCategory({ playlist, token, shortName }) {
         navigate(`/category/playlists/${playlist.id}/songs`, {
           state: {
             playlistName: playlist.title,
-            token: token,
             country: shortName,
           },
         })

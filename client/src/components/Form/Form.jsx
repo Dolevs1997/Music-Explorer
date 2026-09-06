@@ -10,7 +10,7 @@ import Button from "../Button/Button";
 import { fetchSongsYT } from "../../services/YouTube_service";
 
 function Form({ setSongSuggestions, setFormVisible, formVisible }) {
-  const [text, setText] = useState("I want you to generate ");
+  const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -27,7 +27,7 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
       role: "user",
     };
     try {
-      const response = await getSongSuggestions(payload, user.token);
+      const response = await getSongSuggestions(payload);
       const uniqueSongs = deduplicateSongs(response);
       const recommendations = await fetchSongsYT(
         uniqueSongs,
@@ -56,9 +56,14 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
 
   return (
     <form className={formVisible ? styles.formVisible : ""}>
-      <label htmlFor="text">What is your mood today?</label>
+      <label htmlFor="text">What would you like to listen?</label>
 
-      <textarea id="text" value={text} onChange={handleChange} />
+      <textarea
+        id="text"
+        placeholder="Describe your tracks"
+        value={text}
+        onChange={handleChange}
+      />
       <div className="modalActions">
         <Button
           type="submit"

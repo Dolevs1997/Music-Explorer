@@ -5,7 +5,7 @@ import Search from "../../components/Search/Search";
 import NavBar from "../../components/NavBar/NavBar";
 import Song from "../../components/Song/Song";
 import { Spinner } from "../../components/ui/spinner";
-
+import axios from "axios";
 function getUniqueSongs(songs) {
   const seen = new Set();
 
@@ -26,7 +26,7 @@ function getUniqueSongs(songs) {
 function CategorySongsPlaylist() {
   const { playlistId } = useParams();
   const location = useLocation();
-  const { playlistName, token, country } = location.state || {};
+  const { playlistName, country } = location.state || {};
   const [playlist, setPlaylist] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,34 +36,26 @@ function CategorySongsPlaylist() {
     const fetchPlaylist = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
+        const response = await axios.get(
           `/api/categories/category/playlist-songs/?id=${playlistId}&country=${country}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
         );
-        if (!response.ok) {
+        if (response.status !== 200) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
+        const data = await response.data;
         setIsLoading(false);
-        console.log("data: ", data);
         setPlaylist(getUniqueSongs(data));
       } catch (error) {
         console.error("Error fetching playlist:", error);
       }
     };
 
-    if (playlistId && token && country) {
+    if (playlistId && country) {
       fetchPlaylist();
     } else {
-      console.warn("Missing required params:", { playlistId, token, country });
+      console.warn("Missing required params:", { playlistId, country });
     }
-  }, [playlistId, token, country]);
+  }, [playlistId, country]);
   return (
     <div className="app-container">
       <header className="header">

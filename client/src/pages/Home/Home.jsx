@@ -9,7 +9,7 @@ import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
 import { SearchContext } from "../../Contexts/SearchContext";
 import { useInactivity } from "../../hooks/useInactivity";
-
+import axios from "axios";
 import propTypes from "prop-types";
 export default function Home({ user }) {
   const {
@@ -26,10 +26,16 @@ export default function Home({ user }) {
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
   // Add inactivity detection
-  useInactivity(30 * 60 * 1000, () => {
+  useInactivity(30 * 60 * 1000, async () => {
     // 30 minutes
-    localStorage.removeItem("user");
-    navigate("/login");
+    try {
+      await axios.post("/auth/logout");
+    } catch (error) {
+      console.error("Failed to log out on the backend", error);
+    } finally {
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
   });
 
   useEffect(() => {
@@ -82,7 +88,6 @@ export default function Home({ user }) {
 Home.propTypes = {
   user: propTypes.shape({
     email: propTypes.string.isRequired,
-    token: propTypes.string.isRequired,
     playlists: propTypes.arrayOf(
       propTypes.shape({
         _id: propTypes.string,

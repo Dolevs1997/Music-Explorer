@@ -76,7 +76,6 @@ export default function Search() {
   const stopRecordingAndReset = useCallback(async () => {
     setIsRecording(false);
     handleStopRecording(
-      userData,
       setSongSuggestions,
       setProccessRecording,
       setResultRecord,
@@ -90,7 +89,6 @@ export default function Search() {
     setIsRecording,
     setIsVoiceSearch,
     setSongSuggestions,
-    userData,
   ]);
 
   useEffect(() => {

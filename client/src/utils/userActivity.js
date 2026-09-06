@@ -5,12 +5,6 @@ const updateUserActivity = async (user, fields) => {
     const response = await axios.put(
       `/api/userActivity/update?id=${user._id}`,
       { activity: fields },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + user.token,
-        },
-      },
     );
     return response.data;
   } catch (error) {
@@ -21,16 +15,10 @@ const updateUserActivity = async (user, fields) => {
 
 const changeUserPassword = async (user, currentPassword, newPassword) => {
   try {
-    const response = await axios.put(
-      `/auth/changePassword?id=${user._id}`,
-      { currentPassword, newPassword },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + user.token,
-        },
-      },
-    );
+    const response = await axios.put(`/auth/changePassword?id=${user._id}`, {
+      currentPassword,
+      newPassword,
+    });
     return response.data;
   } catch (error) {
     console.error("Error changing user password:", error);
@@ -42,9 +30,7 @@ const changeUserPassword = async (user, currentPassword, newPassword) => {
 };
 const deleteAccount = async (user) => {
   try {
-    const response = await axios.delete(`/auth/account?id=${user._id}`, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
+    const response = await axios.delete(`/auth/account?id=${user._id}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting account:", error);
@@ -56,9 +42,6 @@ const deleteSongsHistory = async (user) => {
   try {
     const response = await axios.delete(
       `/api/userActivity/songsHistory?id=${user._id}`,
-      {
-        headers: { Authorization: `Bearer ${user.token}` },
-      },
     );
     return response;
   } catch (error) {
@@ -68,14 +51,10 @@ const deleteSongsHistory = async (user) => {
 };
 
 const addSongToHistory = async (user, song) => {
-  console.log("song: ", song);
   try {
     const response = await axios.post(
       `/api/userActivity/songsHistory?id=${user._id}`,
       { song },
-      {
-        headers: { Authorization: `Bearer ${user.token}` },
-      },
     );
     return response;
   } catch (error) {

@@ -1,6 +1,5 @@
 import styles from "./Song.module.css";
 import { useState, useEffect, useReducer, useRef, useContext } from "react";
-import { useNavigate } from "react-router";
 import YouTube from "react-youtube";
 import propTypes from "prop-types";
 import { fetchSongYT } from "../../services/YouTube_service";
@@ -91,9 +90,7 @@ function Song({
   playlistId,
   onRemoveSong,
 }) {
-  const navigate = useNavigate();
-  const songTitle = typeof song === "object" ? song.song : song;
-  const storedVideoId = typeof song === "object" ? song.videoId : null;
+  const songTitle = typeof song === "object" ? song.song || song.title : song;
   const [playlistName, setPlaylistName] = useState("");
   const [state, dispatch] = useReducer(reducer, initialSong);
   const songRef = useRef(null);
@@ -103,13 +100,9 @@ function Song({
   const remove = useContext(removeBtn);
   const { user, setUser } = useContext(UserContext);
   const hasFetchedRef = useRef(false); // ← add this ref
+  const storedVideoId =
+    typeof song === "object" ? song.videoId || songRef?.current?.videoId : null;
 
-  // console.log("song: ", song);
-  // console.log("song ref: ", songRef);
-  // console.log("song video state: ", state.videoId);
-  if (!user.token) {
-    navigate("/login");
-  }
   if (!user.playlists) {
     user.playlists = [];
     localStorage.setItem("user", JSON.stringify(user));
@@ -171,7 +164,7 @@ function Song({
 
   useEffect(() => {
     async function processQueue() {
-      if (!songTitle || !user.token) return;
+      if (!songTitle) return;
       if (hasFetchedRef.current) return;
       if (storedVideoId) {
         songRef.current = {
@@ -209,7 +202,7 @@ function Song({
 
       try {
         const excludedIds = Array.from(globalUsedVideoIds);
-        const data = await fetchSongYT(songTitle, country, user, excludedIds);
+        const data = await fetchSongYT(songTitle, country, excludedIds);
 
         if (!data?.videoId) {
           hasFetchedRef.current = false;
@@ -243,7 +236,7 @@ function Song({
     }
 
     processQueue();
-  }, [songTitle, storedVideoId, user.token, country, playlistId]);
+  }, [songTitle, storedVideoId, country, playlistId]);
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
     if (onRemoveSong) {
@@ -368,7 +361,7 @@ function Song({
                           playlistName,
                           user,
                         );
-
+                        console.log("response playlist: ", response);
                         if (response.status === 200) {
                           const newPlaylist = response.data.playlist;
                           toast.success(`${response.data.message}`);

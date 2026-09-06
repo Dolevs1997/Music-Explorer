@@ -29,15 +29,7 @@ function Login() {
   async function handleSuccess(credentialResponse) {
     const idToken = credentialResponse.credential;
     try {
-      const response = await axios.post(
-        `/auth/googleLogin`,
-        { idToken },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const response = await axios.post(`/auth/googleLogin`, { idToken });
       // console.log("response google: ", response);
       if (response.status === 200) {
         setUser(response.data.user);
@@ -68,11 +60,7 @@ function Login() {
         email: email,
         password: password,
       };
-      const response = await axios.post(`/auth/login`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(`/auth/login`, payload);
       console.log("response", response);
       if (response.status === 200) {
         // toast.success("Login successful! Redirecting to home...");

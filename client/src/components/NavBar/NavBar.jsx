@@ -12,15 +12,9 @@ function NavBar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const { currentLocation } = useContext(CurrentLocationContext);
-  console.log("user: ", user);
   async function handleLogout() {
     try {
-      const response = await axios.get(`/auth/logout`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.refreshToken}`,
-        },
-      });
+      const response = await axios.get(`/auth/logout`);
       if (response.status === 204) {
         setUser(null);
         setTimeout(() => {

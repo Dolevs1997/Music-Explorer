@@ -1,6 +1,6 @@
 // Description: This file is the entry point of the application.
 import { connectRedis } from "./services/Redis_service";
-
+import cookieParser from "cookie-parser";
 import express from "express";
 import mongoose from "mongoose";
 import categoriesRouter from "./routes/Categories_routes";
@@ -39,6 +39,7 @@ const initApp = async () => {
       }),
     ); // Enable CORS for all routes
     app.use(json());
+    app.use(cookieParser());
     app.use(urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, "public")));
     app.use("/auth", authRouter);
