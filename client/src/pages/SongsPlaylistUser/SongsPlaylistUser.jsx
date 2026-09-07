@@ -8,7 +8,6 @@ import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
 import UserContext from "../../Contexts/UserContext";
 
-import { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 function SongsPlaylistUser() {
@@ -103,7 +102,6 @@ function SongsPlaylistUser() {
           <h1>{playlist.name} Playlist</h1>
           {songs.length === 0 && <p>No songs in this playlist.</p>}
         </div>
-        <Toaster />
         <div className="playlist-songs"></div>
         {songs.length > 0 && (
           <Songs

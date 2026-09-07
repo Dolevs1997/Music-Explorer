@@ -4,7 +4,7 @@ import { getSongSuggestions } from "../../services/OpenAI_service";
 import { useNavigate } from "react-router";
 import { Spinner } from "../../components/ui/spinner";
 import propTypes from "prop-types";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
 import Button from "../Button/Button";
 import { fetchSongsYT } from "../../services/YouTube_service";
@@ -86,7 +86,6 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
           <p>Getting song suggestions...</p>
         </>
       )}
-      <Toaster />
     </form>
   );
 }

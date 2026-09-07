@@ -13,7 +13,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "../Button/Button";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import UserContext from "../../Contexts/UserContext";
 import { addSongToHistory } from "../../utils/userActivity";
 
@@ -266,7 +266,6 @@ function Song({
   return (
     <div className="homeContainer">
       <div className={styles.menuContainer}>
-        <Toaster />
         <button
           type="button"
           className={styles.optionsBtn}

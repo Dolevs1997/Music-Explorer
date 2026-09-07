@@ -2,7 +2,7 @@
 import styles from "./Category.module.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Card } from "@heroui/card";
 import axios from "axios";
 function Category({ category, country, location }) {
@@ -31,7 +31,6 @@ function Category({ category, country, location }) {
   }
   return (
     <>
-      <Toaster />
       <div className={styles.category}>
         <Card
           isFooterBlurred

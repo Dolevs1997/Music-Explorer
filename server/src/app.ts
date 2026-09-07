@@ -34,7 +34,7 @@ const initApp = async () => {
     const app = express();
     app.use(
       cors({
-        origin: "http://localhost:5173",
+        origin: allowedOrigins,
         credentials: true,
       }),
     ); // Enable CORS for all routes

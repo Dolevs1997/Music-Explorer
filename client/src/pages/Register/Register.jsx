@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
 import axios from "axios";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import BackgroundMusic from "../../components/BackgroundMusic";
 import countryList from "react-select-country-list";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
@@ -48,10 +48,8 @@ function Register() {
     if (response.status == 200) {
       toast.success("Registration successful! Redirecting to login...");
       setTimeout(() => {
-        navigate("/login", {
-          state:
-            "a link has been sent you your email, verify your email address",
-        });
+        alert("a link has been sent you your email, verify your email address");
+        navigate("/login");
       }, 2000);
     } else if (response.status == 409) {
       toast.error("User already exists! Please login.");
@@ -64,7 +62,6 @@ function Register() {
       <BackgroundMusic />
       <form className="registerForm" style={{ opacity: 0.9 }}>
         <h2>Register</h2>
-        <Toaster />
 
         <label htmlFor="email">Email:</label>
         <input

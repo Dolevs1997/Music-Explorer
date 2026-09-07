@@ -2,7 +2,7 @@
 import styles from "./NavBar.module.css";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
@@ -17,10 +17,8 @@ function NavBar() {
       const response = await axios.get(`/auth/logout`);
       if (response.status === 204) {
         setUser(null);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-        toast.success("Logout successful! Redirecting to login...");
+        navigate("/login", { replace: true });
+        toast.success("Logout successful!", { duration: 2000 });
       }
     } catch (error) {
       console.error("Error during logout:", error);
@@ -30,7 +28,6 @@ function NavBar() {
 
   return (
     <nav className={styles.navbar}>
-      <Toaster />
       <NavDropdown
         title={<img src={user?.avatar || "/default-avatar-user.jpg"} />}
         menuVariant="dark"

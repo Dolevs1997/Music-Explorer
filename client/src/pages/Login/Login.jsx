@@ -1,7 +1,7 @@
-import { Link, useNavigate, useLocation } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
-import { useState, useContext, useEffect } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { useState, useContext } from "react";
+import { toast } from "react-hot-toast";
 import axios from "axios";
 import UserContext from "../../Contexts/UserContext";
 
@@ -17,15 +17,8 @@ function Login() {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
-  const location = useLocation();
   const { setCurrentLocation } = useContext(CurrentLocationContext);
-  useEffect(() => {
-    if (location.state) {
-      toast(location.state);
-      // Safely clear the state from the history API so it doesn't toast again if the user refreshes the page
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
+
   async function handleSuccess(credentialResponse) {
     const idToken = credentialResponse.credential;
     try {
@@ -38,9 +31,8 @@ function Login() {
         );
         localStorage.setItem("user", JSON.stringify(response.data.user));
 
-        setTimeout(() => {
-          navigate("/home");
-        }, 2000); // Redirect after 2 seconds
+        toast.success("Login successful!", { duration: 2000 });
+        navigate("/home");
       }
     } catch (error) {
       console.error("Google login error", error);
@@ -70,9 +62,8 @@ function Login() {
         );
         localStorage.setItem("user", JSON.stringify(response.data));
 
-        setTimeout(() => {
-          navigate("/home");
-        }, 2000); // Redirect after 2 seconds
+        toast.success("Login successful!", { duration: 2000 });
+        navigate("/home");
       } else if (response.status === 403) {
         toast.error(response.data.message);
       } else if (response.status === 404) {
@@ -92,7 +83,6 @@ function Login() {
     >
       <BackgroundMusic />
       <form style={{ opacity: 0.9 }}>
-        <Toaster />
         <h2>Login</h2>
         <label htmlFor="email">Email:</label>
         <input

@@ -22,7 +22,7 @@ import { BarsScaleMiddleIcon } from "../../components/icons/svg-spinners-bars-sc
 import MicrophoneAnimation from "../../components/icons/MicrophoneAnimation";
 import { Spinner } from "../../components/ui/spinner";
 import Form from "../Form/Form";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import TooltipComponent from "../TooltipComponent";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
 export default function Search() {
@@ -438,7 +438,6 @@ export default function Search() {
         </button>
       </div>
 
-      <Toaster />
     </>
   );
 }
