@@ -40,7 +40,10 @@ export async function handleStopRecording(
       }
 
       // const songRecognized = `${data.artists[0].name} - ${data.title}`;
-      const songRecognized = { title: data.title, artist: data.artists[0].name };
+      const songRecognized = {
+        title: data.title,
+        artists: data.artists[0].name,
+      };
       setSongSuggestions([songRecognized]);
       setResultRecord(data);
     } catch (error) {

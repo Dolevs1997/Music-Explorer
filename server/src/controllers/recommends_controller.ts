@@ -47,24 +47,28 @@ const getBatch = async (req: Request, res: Response) => {
   const songs = req.body?.songs;
   const country = (req.body?.country || "US") as string;
   const excludedVideoIds = new Set<string>(req.body?.excludedVideoIds || []);
-
   if (!Array.isArray(songs) || songs.length === 0) {
     return res.status(400).json({ error: "Songs must be a non-empty array" });
   }
 
   try {
-    const results: { song: string; videoId: string; regionCode: string }[] = [];
+    const results: {
+      songDetail: string;
+      videoId: string;
+      regionCode: string;
+    }[] = [];
     for (const song of songs) {
-      if (typeof song !== "string" || !song.trim()) continue;
-
-      const songData = await fetchSong(song, country, [...excludedVideoIds]);
+      const songDetails = song.title + " - " + song.artists;
+      const songData = await fetchSong(songDetails, country, [
+        ...excludedVideoIds,
+      ]);
       if (!songData?.videoId || excludedVideoIds.has(songData.videoId)) {
         continue;
       }
 
       excludedVideoIds.add(songData.videoId);
       results.push({
-        song: songData.title,
+        songDetail: songData.title,
         videoId: songData.videoId,
         regionCode: country,
       });

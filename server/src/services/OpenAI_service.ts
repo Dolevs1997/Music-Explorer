@@ -12,37 +12,82 @@ interface Message {
   role: MessageRole;
   content: string;
 }
+
+interface SongSuggestion {
+  song: {
+    title: string;
+    artists: string;
+  };
+}
+
 const SongSuggestions = async (text: Message) => {
   console.log("SongSuggestions input:", text); // Debugging line
   const completion = await openai.chat.completions.create({
     model: "gpt-4.1",
     temperature: 0.0,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "song_suggestions",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            songs: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  song: {
+                    type: "object",
+                    properties: {
+                      title: { type: "string" },
+                      artists: { type: "string" },
+                    },
+                    required: ["title", "artists"],
+                    additionalProperties: false,
+                  },
+                },
+                required: ["song"],
+                additionalProperties: false,
+              },
+            },
+          },
+          required: ["songs"],
+          additionalProperties: false,
+        },
+      },
+    },
 
     messages: [
       {
         role: "system",
         content:
-          "You are a strict music assistant. Return ONLY song suggestions that clearly match the user's description. Output each suggestion on its own line in exactly this format: Artist - Song Title. Exclude any results that are live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, or any non-music/video content. Do NOT include duplicates, numbering, bullets, commentary, links, or extra text and the max ammount of songs is up to 50. If no relevant songs exist, return an empty response.",
+          "You are a strict music assistant. Return only song suggestions that clearly match the user's description. Return valid JSON with a songs array containing up to 50 objects. Each object must have exactly this shape: { song: { title: string, artists: string } }. Exclude live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, and non-music/video content. Do not include duplicates. If no relevant songs exist, return { songs: [] }.",
       },
       {
         role: text.role,
         content:
           "Provide me with a list of song suggestions based on the following description: " +
           text.content +
-          " music only: artist name - song name. return it without any other information and not in a numbered list. I don't want any duplicates and only results which relate to the given text.  If NO relevant songs exist || you can't provide suggestions || if it's NOT a song, return an empty response",
+          " Return only the requested JSON structure. If no relevant songs exist, return { songs: [] }.",
       },
     ],
     store: true,
   });
 
-  const suggestions: string | null = completion.choices[0].message.content;
+  const suggestions = completion.choices[0].message.content;
   if (!suggestions) {
     return [];
   }
-  const songSuggestions = suggestions
-    .substring(suggestions.indexOf("1.").valueOf())
-    .split("\n");
-  return songSuggestions;
+
+  const parsedSuggestions = JSON.parse(suggestions) as {
+    songs?: SongSuggestion[];
+  };
+  console.log("Parsed suggestions:", parsedSuggestions); // Debugging line
+  return Array.isArray(parsedSuggestions.songs)
+    ? parsedSuggestions.songs.map(({ song }) => song)
+    : [];
 };
 
 const SongSuggestionsVoice = async () => {

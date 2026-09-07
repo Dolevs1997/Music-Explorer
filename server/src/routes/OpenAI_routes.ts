@@ -12,6 +12,7 @@ openaiRouter.post("/", authenticate, async (req, res) => {
     const suggestions = await SongSuggestions(req.body);
     res.status(200).json(suggestions);
   } catch (error: Error | any) {
+    console.error("OpenAI song suggestions error:", error);
     res.status(500).json({ error: error.message });
   }
 });

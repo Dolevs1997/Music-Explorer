@@ -5,14 +5,19 @@
  */
 function deduplicateSongs(songs) {
   if (!Array.isArray(songs)) return [];
-
   const seenSongs = new Set();
   return songs.filter((song) => {
-    const normalized = song?.trim().toLowerCase();
-    if (!normalized || seenSongs.has(normalized)) {
+    console.log("deduplicateSongs processing song:", song); // Log the song being processed
+    const normalizedTitle = song?.title?.trim()?.toLowerCase();
+    const normalizedArtist = song?.artists?.trim()?.toLowerCase();
+    if (
+      !normalizedTitle ||
+      !normalizedArtist ||
+      seenSongs.has(normalizedArtist + " - " + normalizedTitle)
+    ) {
       return false;
     }
-    seenSongs.add(normalized);
+    seenSongs.add(normalizedArtist + " - " + normalizedTitle);
     return true;
   });
 }

@@ -32,8 +32,8 @@ function Form({ setSongSuggestions, setFormVisible, formVisible }) {
       const recommendations = await fetchSongsYT(
         uniqueSongs,
         user.country?.shortName || "US",
-        user,
       );
+      console.log("recommendations: ", recommendations);
       setSongSuggestions(recommendations);
       setFormVisible(!formVisible);
       setText("");

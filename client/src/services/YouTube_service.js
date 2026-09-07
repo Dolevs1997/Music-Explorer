@@ -4,7 +4,6 @@ async function fetchSongYT(song, country, excludedVideoIds = []) {
   const response = await axios.get(`/api/recommends/`, {
     params: { song, country, excludedVideoIds: excludedVideoIds.join(",") },
   });
-  console.log("fetchSongYT response:", response.data); // Log the response data
   return response.data;
 }
 

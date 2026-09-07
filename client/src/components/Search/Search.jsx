@@ -220,23 +220,30 @@ export default function Search() {
               onClick={async () => {
                 setIsVoiceSearch(true);
                 setProccessVoiceSearch(true);
-                const response = await handleVoiceSearch(
-                  userData,
-                  10000,
-                  setResultVoice,
-                  selectedLanguage,
-                );
-                if (!response) return;
-                else if (response?.length == 0)
-                  toast.error("No available songs, please try again..");
-                setProccessVoiceSearch(false);
-                setSongSuggestions(deduplicateSongs(response));
-                setIsVoiceSearch(false);
-                setIsMapVisible(false);
-                setIsRecording(false);
-                setFormVisible(false);
+                try {
+                  const response = await handleVoiceSearch(
+                    userData,
+                    10000,
+                    setResultVoice,
+                    selectedLanguage,
+                  );
+                  if (!response) return;
+                  else if (response?.length == 0)
+                    toast.error("No available songs, please try again..");
+                  const uniqueSongs = deduplicateSongs(response);
+                  setProccessVoiceSearch(false);
+                  setSongSuggestions(uniqueSongs);
+                  setIsVoiceSearch(false);
+                  setIsMapVisible(false);
+                  setIsRecording(false);
+                  setFormVisible(false);
 
-                navigate("/home");
+                  navigate("/home");
+                } catch (e) {
+                  console.error("Error in speech detecting: ", e);
+                  toast.error("Speech recognition error");
+                  setProccessVoiceSearch(false);
+                }
               }}
               disabled={proccessVoiceSearch}
             >

@@ -90,7 +90,7 @@ function Song({
   playlistId,
   onRemoveSong,
 }) {
-  const songTitle = typeof song === "object" ? song.song || song.title : song;
+  const songDetails = song.songDetail || song.artists + " - " + song.title;
   const [playlistName, setPlaylistName] = useState("");
   const [state, dispatch] = useReducer(reducer, initialSong);
   const songRef = useRef(null);
@@ -102,7 +102,6 @@ function Song({
   const hasFetchedRef = useRef(false); // ← add this ref
   const storedVideoId =
     typeof song === "object" ? song.videoId || songRef?.current?.videoId : null;
-
   if (!user.playlists) {
     user.playlists = [];
     localStorage.setItem("user", JSON.stringify(user));
@@ -115,7 +114,12 @@ function Song({
     dispatch({ type: "PLAY", payload: { playing: true } });
   }
   async function handleAddSongToPlaylist(playlist) {
-    const response = await addSongToPlaylist(songTitle, state, user, playlist);
+    const response = await addSongToPlaylist(
+      songDetails,
+      state,
+      user,
+      playlist,
+    );
     if (response.status == 200) toast.success(`${response.data.message}`);
     else if (response.status != 200) toast.error(`${response.data.message}`);
     const data = response.data;
@@ -164,18 +168,18 @@ function Song({
 
   useEffect(() => {
     async function processQueue() {
-      if (!songTitle) return;
+      if (!songDetails) return;
       if (hasFetchedRef.current) return;
       if (storedVideoId) {
         songRef.current = {
           videoId: storedVideoId,
-          song: songTitle,
+          song: songDetails,
         };
         dispatch({
           type: "SET_VIDEO_SONG",
           payload: {
             videoId: storedVideoId,
-            song: songTitle,
+            song: songDetails,
             regionCode: country,
             playlists: [],
           },
@@ -202,7 +206,7 @@ function Song({
 
       try {
         const excludedIds = Array.from(globalUsedVideoIds);
-        const data = await fetchSongYT(songTitle, country, excludedIds);
+        const data = await fetchSongYT(songDetails, country, excludedIds);
 
         if (!data?.videoId) {
           hasFetchedRef.current = false;
@@ -236,7 +240,7 @@ function Song({
     }
 
     processQueue();
-  }, [songTitle, storedVideoId, country, playlistId]);
+  }, [songDetails, storedVideoId, country, playlistId]);
 
   async function handleRemoveSongFromPlaylist(videoId, playlistId) {
     if (onRemoveSong) {
@@ -372,7 +376,9 @@ function Song({
           )}
         </ListGroup>
       )}
-      {state.videoId && <span className={styles.songDetails}>{songTitle}</span>}
+      {state.videoId && (
+        <span className={styles.songDetails}>{songDetails}</span>
+      )}
       {state.videoId &&
         // lazy-mount player only for the active/playing song to avoid multiple iframe loads
         (playingVideoId === state.videoId ? (
