@@ -1,6 +1,6 @@
 // import { deleteDoc, doc } from "firebase/firestore";
 // import { db } from "../../config/firebase_config";
-import { FieldValue, getFirestore } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "../../config/firebase_config";
 export type SongVideo = {
   title: string;

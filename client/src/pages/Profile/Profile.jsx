@@ -126,7 +126,7 @@ function Profile() {
     setTimeout(() => {
       setSongTitle(song.title);
       setPlayingVideoId(song.videoId);
-      setSongObj({ title: song.title, videoId: song.videoId });
+      setSongObj({ songDetail: song.title, videoId: song.videoId });
     }, 50);
   }
 

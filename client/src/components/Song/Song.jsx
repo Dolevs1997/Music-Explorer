@@ -90,7 +90,8 @@ function Song({
   playlistId,
   onRemoveSong,
 }) {
-  const songDetails = song.songDetail || song.artists + " - " + song.title;
+  const songDetails =
+    song.song || song.songDetail || song.artists + " - " + song.title;
   const [playlistName, setPlaylistName] = useState("");
   const [state, dispatch] = useReducer(reducer, initialSong);
   const songRef = useRef(null);
