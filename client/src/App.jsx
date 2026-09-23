@@ -60,10 +60,10 @@ function App() {
   const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
   const [initialUser, setInitialUser] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [currentLocation, setCurrentLocation] = useState(
-    initialUser?.country?.fullName || "United States",
+    () => user?.country?.fullName || "United States",
   );
-  console.log("current location: ", currentLocation);
   useEffect(() => {
     document.title = "music-explorer | Home";
   }, []);
