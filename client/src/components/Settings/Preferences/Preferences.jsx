@@ -37,6 +37,7 @@ function Preferences({ setSettingsView }) {
       await updateUserActivity(user, { country });
       setUser({ ...user, country });
       setCountryOptionSelected(false);
+      console.log("country full name: ", countryFullName);
       setCurrentLocation(countryFullName);
       toast.success("Preferences updated successfully.");
     } catch (error) {

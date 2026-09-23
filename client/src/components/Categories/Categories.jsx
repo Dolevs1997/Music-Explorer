@@ -19,23 +19,12 @@ function Categories({ formVisible }) {
   const userData = JSON.parse(localStorage.getItem("user"));
   const country = params.country || userData?.country?.shortName || "US";
   const { currentLocation } = useContext(CurrentLocationContext);
-  // const [currentLocation, setCurrentLocation] = useState(
-  //   location.state?.locationName ||
-  //     userData?.country?.fullName ||
-  //     "United States",
-  // );
-
   // Determine locale based on country code
   const locale = getLocaleForCountry(country);
   let limit = categories.length === 0 ? 6 : categories.length;
   useEffect(() => {
     if (userData == null) navigate("/login");
   });
-  // useEffect(() => {
-  //   if (location.state?.locationName) {
-  //     setCurrentLocation(location.state.locationName);
-  //   }
-  // }, [location.state]);
 
   useEffect(
     function () {

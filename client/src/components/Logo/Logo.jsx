@@ -1,6 +1,5 @@
 import styles from "./Logo.module.css";
 import { useNavigate } from "react-router";
-import propTypes from "prop-types";
 
 export default function Logo() {
   const navigate = useNavigate();
@@ -24,7 +23,3 @@ export default function Logo() {
     </button>
   );
 }
-
-Logo.propTypes = {
-  currentCountry: propTypes.string,
-};

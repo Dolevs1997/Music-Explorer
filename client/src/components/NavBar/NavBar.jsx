@@ -12,6 +12,7 @@ function NavBar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const { currentLocation } = useContext(CurrentLocationContext);
+  console.log("current location: ", currentLocation);
   async function handleLogout() {
     try {
       const response = await axios.get(`/auth/logout`);

@@ -63,6 +63,7 @@ function App() {
   const [currentLocation, setCurrentLocation] = useState(
     initialUser?.country?.fullName || "United States",
   );
+  console.log("current location: ", currentLocation);
   useEffect(() => {
     document.title = "music-explorer | Home";
   }, []);
@@ -82,15 +83,6 @@ function App() {
 
     silentLogin();
   }, []);
-
-  // 1. Memoize the Current Location Context Value
-  const locationContextValue = useMemo(
-    () => ({
-      currentLocation,
-      setCurrentLocation,
-    }),
-    [currentLocation],
-  );
 
   // 2. Memoize the massive Search Context Value
   const searchContextValue = useMemo(
@@ -115,7 +107,9 @@ function App() {
   return (
     <UserProvider>
       <Toaster />
-      <CurrentLocationContext.Provider value={locationContextValue}>
+      <CurrentLocationContext.Provider
+        value={{ currentLocation, setCurrentLocation }}
+      >
         <BrowserRouter>
           <SearchContext.Provider value={searchContextValue}>
             <Routes>

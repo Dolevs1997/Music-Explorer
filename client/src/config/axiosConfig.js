@@ -52,9 +52,7 @@ axios.interceptors.response.use(
       try {
         // 1. Attempt a silent refresh.
         // The browser automatically attaches the httpOnly refreshToken cookie here.
-        const response = await axios.get("/auth/refresh");
-        console.log("originalRequest:", originalRequest);
-        console.log("Silent refresh successful:", response.data);
+        await axios.get("/auth/refresh");
         // 4. Refresh succeeded! Release the waiting room and retry all queued requests
         processQueue(null, "success");
         return axios(originalRequest);
