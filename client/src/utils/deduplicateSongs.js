@@ -7,7 +7,6 @@ function deduplicateSongs(songs) {
   if (!Array.isArray(songs)) return [];
   const seenSongs = new Set();
   return songs.filter((song) => {
-    console.log("deduplicateSongs processing song:", song); // Log the song being processed
     const normalizedTitle = song?.title?.trim()?.toLowerCase();
     const normalizedArtist = song?.artists?.trim()?.toLowerCase();
     if (

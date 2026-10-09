@@ -1,0 +1,4 @@
+.languageSelect,
+.countrySelect {
+  display: flex;
+}

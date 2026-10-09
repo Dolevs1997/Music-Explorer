@@ -1,0 +1,161 @@
+import styles from "./Record.module.css";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router";
+import { Spinner } from "../../components/ui/spinner";
+import { SearchContext } from "../../Contexts/SearchContext";
+import {
+  handleStartRecording,
+  handleStopRecording,
+} from "../../utils/recording";
+import propTypes from "prop-types";
+import { AudioLines } from "lucide-react";
+function Record({ setSongSuggestions }) {
+  const [secondsLeft, setSecondsLeft] = useState(10);
+  const [proccessRecording, setProccessRecording] = useState(false);
+  const [resultRecord, setResultRecord] = useState(null);
+  const navigate = useNavigate();
+  const {
+    setFormVisible,
+
+    setIsMapVisible,
+    isRecording,
+    setIsRecording,
+    setIsVoiceSearch,
+  } = useContext(SearchContext);
+  useEffect(() => {
+    setSecondsLeft(10);
+  }, []);
+  useEffect(() => {
+    if (resultRecord?.error) {
+      toast.error("Voice record failed! Please try again.");
+    } else if (resultRecord) {
+      toast.success("Voice record successful! Redirecting to home...");
+      navigate("/home");
+    }
+  }, [resultRecord, navigate]);
+
+  const stopRecordingAndReset = useCallback(async () => {
+    setIsRecording(false);
+    handleStopRecording(
+      setSongSuggestions,
+      setProccessRecording,
+      setResultRecord,
+    );
+    setIsVoiceSearch(false);
+    setIsMapVisible(false);
+  }, [setIsMapVisible, setIsRecording, setIsVoiceSearch, setSongSuggestions]);
+
+  useEffect(() => {
+    if (!isRecording) {
+      setSecondsLeft(10);
+      return;
+    }
+
+    setSecondsLeft(10);
+
+    const countdownInterval = window.setInterval(() => {
+      setSecondsLeft((prevSeconds) => {
+        if (prevSeconds <= 1) {
+          window.clearInterval(countdownInterval);
+          stopRecordingAndReset();
+          return 0;
+        }
+
+        return prevSeconds - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(countdownInterval);
+  }, [isRecording, stopRecordingAndReset]);
+
+  const handleRecordClick = () => {
+    if (proccessRecording) {
+      stopRecordingAndReset();
+      return;
+    }
+
+    setIsRecording(true);
+    setProccessRecording(true);
+    handleStartRecording();
+    clearTimeout();
+    setSecondsLeft(10);
+    setIsVoiceSearch(false);
+    setIsMapVisible(false);
+    setFormVisible(false);
+  };
+
+  return (
+    <div>
+      {!isRecording && (
+        <button
+          onClick={async () => {
+            setIsRecording(true);
+            setProccessRecording(true);
+            handleStartRecording();
+            clearTimeout();
+            setSecondsLeft(10);
+            setIsVoiceSearch(false);
+            setIsMapVisible(false);
+            setFormVisible(false);
+          }}
+          disabled={proccessRecording}
+        >
+          {proccessRecording && (
+            <div className={styles.recordingSpinner}>
+              <Spinner />
+              Proccessing...
+            </div>
+          )}
+        </button>
+      )}
+      {/* Identify Song */}
+      <button
+        className={styles.recordingButton}
+        onClick={handleRecordClick}
+        disabled={proccessRecording && !isRecording}
+      >
+        <div className="search-tool-wraper">
+          <AudioLines
+            size={28}
+            strokeWidth={1.5}
+            style={{ cursor: "pointer" }}
+          />
+
+          {!isRecording && (
+            <>
+              <span>Identify Song</span>
+              {proccessRecording && (
+                <Spinner />
+                // <span className={styles.recordingSpinnerRight}>
+                // </span>
+              )}
+            </>
+          )}
+
+          {isRecording && (
+            <>
+              <Spinner />
+              Please wait {secondsLeft} seconds...
+            </>
+            // <>
+            //   <BarsScaleMiddleIcon
+            //     width={20}
+            //     height={30}
+            //     fill="none"
+            //     stroke="#ffffff"
+            //   />
+            //   <span>Identify Song</span>
+            // </>
+          )}
+        </div>
+      </button>
+    </div>
+  );
+}
+
+Record.propTypes = {
+  setSongSuggestions: propTypes.func,
+};
+
+export default Record;

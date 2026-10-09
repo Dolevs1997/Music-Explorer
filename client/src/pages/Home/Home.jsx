@@ -48,23 +48,26 @@ export default function Home({ user }) {
     <div className="app-container">
       <header className="header">
         <Logo />
-        <Search
-          setFormVisible={setFormVisible}
-          formVisible={formVisible}
-          isMapVisible={isMapVisible}
-          setIsMapVisible={setIsMapVisible}
-          isRecording={isRecording}
-          setIsRecording={setIsRecording}
-          setSongSuggestions={setSongSuggestions}
-          songSuggestions={songSuggestions}
-          setIsVoiceSearch={setIsVoiceSearch}
-          isVoiceSearch={isVoiceSearch}
-        />
 
         <DropDownComponent />
       </header>
       <main className="home">
         <>
+          <h2>Discover Your Next Vibe</h2>
+          <p>Tell us for you feel, explore new music around the globe</p>
+          <Search
+            setFormVisible={setFormVisible}
+            formVisible={formVisible}
+            isMapVisible={isMapVisible}
+            setIsMapVisible={setIsMapVisible}
+            isRecording={isRecording}
+            setIsRecording={setIsRecording}
+            setSongSuggestions={setSongSuggestions}
+            songSuggestions={songSuggestions}
+            setIsVoiceSearch={setIsVoiceSearch}
+            isVoiceSearch={isVoiceSearch}
+          />
+
           {songSuggestions.length == 0 && !isMapVisible && (
             <Categories formVisible={formVisible} user={user} />
           )}

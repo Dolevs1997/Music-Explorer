@@ -1,29 +1,18 @@
-.searchBar {
-  display: flex;
-  gap: 10px;
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-  position: relative;
+.searchBar input {
   width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 0.9rem;
 }
-
+.searchTools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 /* ===== DESKTOP ICONS ===== */
-.searchBar img {
-  width: 60px;
-  height: 60px;
-  transition: transform 0.1s;
-  cursor: pointer;
-}
-
-.searchBar img:hover {
-  transform: scale(1.1);
-}
-
-.searchBar img:active {
-  transform: scale(0.9);
-}
 
 .recordingSpinner {
   cursor: pointer;
@@ -81,9 +70,7 @@
     display: none;
   }
 
-  .searchBar,
-  .languageSelect,
-  .countrySelect {
+  .searchBar {
     display: flex;
   }
 }

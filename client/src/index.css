@@ -107,8 +107,14 @@ body {
     width: 90%;
   }
 }
-
-form {
+.search-tool-wraper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+/* form {
   gap: 5px;
   padding: 30px;
   border-radius: 5px;
@@ -126,7 +132,7 @@ form {
   transform: translate(50%, -50%);
 
   z-index: 150;
-}
+} */
 .passwordInputContainer {
   position: relative;
   display: flex;
