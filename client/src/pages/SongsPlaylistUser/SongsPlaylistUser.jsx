@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import { useEffect, useState, useContext } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
-import NavBar from "../../components/NavBar/NavBar";
+import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import Songs from "../../components/Songs/Songs";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
 import { useLocation } from "react-router";
@@ -95,7 +95,7 @@ function SongsPlaylistUser() {
         <header className="header">
           <Logo />
           <Search />
-          <NavBar />
+          <DropDownComponent />
         </header>
 
         <div className="homeContainer">

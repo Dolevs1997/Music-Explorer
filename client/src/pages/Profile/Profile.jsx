@@ -1,6 +1,6 @@
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
-import NavBar from "../../components/NavBar/NavBar";
+import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import { useContext, useState, useEffect, useRef } from "react";
 import UserContext from "../../Contexts/UserContext";
 import styles from "./Profile.module.css";
@@ -141,7 +141,7 @@ function Profile() {
       <header className="header">
         <Logo />
         <Search />
-        <NavBar />
+        <DropDownComponent />
       </header>
       <div className={styles.profilePageContainer}>
         <div className={styles.profileHeader}>

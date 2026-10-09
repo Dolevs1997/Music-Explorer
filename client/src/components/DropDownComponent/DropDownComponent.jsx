@@ -1,5 +1,5 @@
 // /* eslint-disable react/prop-types */
-import styles from "./NavBar.module.css";
+import styles from "./DropDownComponent.module.css";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -8,7 +8,7 @@ import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
 import { useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
-function NavBar() {
+function DropDownComponent() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const { currentLocation } = useContext(CurrentLocationContext);
@@ -50,4 +50,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default DropDownComponent;

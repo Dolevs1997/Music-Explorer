@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
-import NavBar from "../../components/NavBar/NavBar";
+import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 
 function CategoryPlaylists() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ function CategoryPlaylists() {
       <header className="header">
         <Logo />
         <Search />
-        <NavBar />
+        <DropDownComponent />
       </header>
       <main className={styles.playlistsContainer}>
         <h1 className={styles.title}>{categoryName} Playlist</h1>

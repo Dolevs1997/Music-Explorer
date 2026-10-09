@@ -1,6 +1,6 @@
 import Logo from "../../components/Logo/Logo.jsx";
 import Search from "../../components/Search/Search.jsx";
-import NavBar from "../../components/NavBar/NavBar.jsx";
+import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import { useNavigate } from "react-router";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -126,7 +126,7 @@ function PlaylistsUser() {
       <header className="header">
         <Logo />
         <Search />
-        <NavBar />
+        <DropDownComponent />
       </header>
       <div className="playlist-songs">
         <div className={styles.playlistHeader}>

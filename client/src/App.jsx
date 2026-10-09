@@ -17,7 +17,7 @@ import SongsPlaylistUser from "./pages/SongsPlaylistUser/SongsPlaylistUser";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Categories from "./components/Categories/Categories";
 import Logo from "./components/Logo/Logo";
-import NavBar from "./components/NavBar/NavBar";
+import DropDownComponent from "./components/DropDownComponent/DropDownComponent";
 import { SearchContext } from "./Contexts/SearchContext";
 import Search from "./components/Search/Search";
 import { UserProvider } from "./Contexts/UserContext";
@@ -193,7 +193,7 @@ function App() {
                       <div className="header">
                         <Logo />
                         <Search />
-                        <NavBar />
+                        <DropDownComponent />
                       </div>
                       <div className="homeContainer">
                         <Categories />

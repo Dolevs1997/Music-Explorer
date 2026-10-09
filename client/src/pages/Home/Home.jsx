@@ -3,7 +3,7 @@ import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import { useEffect, useContext } from "react";
 import Songs from "../../components/Songs/Songs";
-import NavBar from "../../components/NavBar/NavBar";
+import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
@@ -61,7 +61,7 @@ export default function Home({ user }) {
           isVoiceSearch={isVoiceSearch}
         />
 
-        <NavBar />
+        <DropDownComponent />
       </header>
       <main className="home">
         <>

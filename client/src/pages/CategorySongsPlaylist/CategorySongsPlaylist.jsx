@@ -2,7 +2,7 @@ import { useParams, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
-import NavBar from "../../components/NavBar/NavBar";
+import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import Song from "../../components/Song/Song";
 import { Spinner } from "../../components/ui/spinner";
 import axios from "axios";
@@ -61,7 +61,7 @@ function CategorySongsPlaylist() {
       <header className="header">
         <Logo />
         <Search />
-        <NavBar />
+        <DropDownComponent />
       </header>
 
       <div className="playlist-songs">
