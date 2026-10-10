@@ -115,40 +115,43 @@ function Record({ setSongSuggestions }) {
         onClick={handleRecordClick}
         disabled={proccessRecording && !isRecording}
       >
-        <div className="search-tool-wraper">
+        <div className="search-tool">
           <AudioLines
             size={28}
             strokeWidth={1.5}
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: "pointer",
+              color: "#A855F7",
+              filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
+            }}
           />
-
-          {!isRecording && (
-            <>
-              <span>Identify Song</span>
-              {proccessRecording && (
-                <Spinner />
-                // <span className={styles.recordingSpinnerRight}>
-                // </span>
-              )}
-            </>
-          )}
-
-          {isRecording && (
-            <>
-              <Spinner />
-              Please wait {secondsLeft} seconds...
-            </>
-            // <>
-            //   <BarsScaleMiddleIcon
-            //     width={20}
-            //     height={30}
-            //     fill="none"
-            //     stroke="#ffffff"
-            //   />
-            //   <span>Identify Song</span>
-            // </>
-          )}
+          Identify Song
         </div>
+
+        {!isRecording && (
+          <>
+            {proccessRecording && (
+              <Spinner />
+              // <span className={styles.recordingSpinnerRight}>
+              // </span>
+            )}
+          </>
+        )}
+        {isRecording && (
+          <>
+            <Spinner />
+            Please wait {secondsLeft} seconds...
+          </>
+          // <>
+          //   <BarsScaleMiddleIcon
+          //     width={20}
+          //     height={30}
+          //     fill="none"
+          //     stroke="#ffffff"
+          //   />
+          //   <span>Identify Song</span>
+          // </>
+        )}
       </button>
     </div>
   );

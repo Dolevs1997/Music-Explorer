@@ -57,7 +57,6 @@ function App() {
   const [songSuggestions, setSongSuggestions] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   const [isMapVisible, setIsMapVisible] = useState(false);
-  const [formVisible, setFormVisible] = useState(false);
   const [isVoiceSearch, setIsVoiceSearch] = useState(false);
   const [initialUser, setInitialUser] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -93,12 +92,10 @@ function App() {
       setIsRecording,
       isMapVisible,
       setIsMapVisible,
-      formVisible,
-      setFormVisible,
       isVoiceSearch,
       setIsVoiceSearch,
     }),
-    [songSuggestions, isRecording, isMapVisible, formVisible, isVoiceSearch],
+    [songSuggestions, isRecording, isMapVisible, isVoiceSearch],
   );
   // if (isCheckingAuth) {
   //   // Shows a black screen for a split second so the ProtectedRoute doesn't kick them out too early
@@ -125,12 +122,7 @@ function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route
-                  path="categories"
-                  element={
-                    <Categories formVisible={formVisible} user={initialUser} />
-                  }
-                />
+                <Route path="categories" element={<Categories />} />
                 <Route
                   path="songSuggestions"
                   element={<Navigate to="/home" replace />}

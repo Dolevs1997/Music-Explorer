@@ -11,17 +11,9 @@ import { SearchContext } from "../../Contexts/SearchContext";
 import { useInactivity } from "../../hooks/useInactivity";
 import axios from "axios";
 import propTypes from "prop-types";
-export default function Home({ user }) {
-  const {
-    songSuggestions,
-    setSongSuggestions,
-    isRecording,
-    setIsRecording,
-    formVisible,
-    setFormVisible,
-    isVoiceSearch,
-    setIsVoiceSearch,
-  } = useContext(SearchContext);
+export default function Home() {
+  const { songSuggestions, setSongSuggestions, isRecording, isVoiceSearch } =
+    useContext(SearchContext);
   const location = useLocation();
   const { isMapVisible, setIsMapVisible } = useContext(SearchContext);
   const navigate = useNavigate();
@@ -48,29 +40,15 @@ export default function Home({ user }) {
     <div className="app-container">
       <header className="header">
         <Logo />
-
         <DropDownComponent />
       </header>
       <main className="home">
         <>
           <h2>Discover Your Next Vibe</h2>
           <p>Tell us for you feel, explore new music around the globe</p>
-          <Search
-            setFormVisible={setFormVisible}
-            formVisible={formVisible}
-            isMapVisible={isMapVisible}
-            setIsMapVisible={setIsMapVisible}
-            isRecording={isRecording}
-            setIsRecording={setIsRecording}
-            setSongSuggestions={setSongSuggestions}
-            songSuggestions={songSuggestions}
-            setIsVoiceSearch={setIsVoiceSearch}
-            isVoiceSearch={isVoiceSearch}
-          />
+          <Search setSongSuggestions={setSongSuggestions} />
 
-          {songSuggestions.length == 0 && !isMapVisible && (
-            <Categories formVisible={formVisible} user={user} />
-          )}
+          {songSuggestions.length == 0 && !isMapVisible && <Categories />}
           {songSuggestions.length > 0 &&
             !isVoiceSearch &&
             !isMapVisible &&

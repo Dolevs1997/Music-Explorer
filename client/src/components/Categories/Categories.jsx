@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { getLocaleForCountry } from "../../utils/countryLocalMap";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 // const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-function Categories({ formVisible }) {
+function Categories() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [showMore, setShowMore] = useState(false);
@@ -86,7 +86,7 @@ function Categories({ formVisible }) {
 
   return (
     <>
-      <div className={formVisible ? "homeContainerWithForm" : "homeContainer"}>
+      <div>
         <h1 className="pageTitle">Categories</h1>
       </div>
       <ToastContainer />

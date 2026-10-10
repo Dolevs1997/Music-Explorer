@@ -7,8 +7,8 @@
   --color-background-app: #151416;
   --color-background-100: #2d2b30;
   --color-background-800: #181997;
-  --color-button-send: #7700ffb5;
-  --color-button-send-hover: #7700ff;
+  --color-button-send: #a855f7;
+  --color-button-send-hover: #a855f7b5;
   --color-button-accept: #1d673fb5;
   --color-button-accept-hover: #1d673fb6;
   --color-button-delete: rgba(220, 50, 50, 0.1);
@@ -340,7 +340,12 @@ h2:hover {
   height: 100%;
   width: 100%;
 }
-
+.search-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
 /* .settingsSection {
   display: flex;
   flex-direction: column;

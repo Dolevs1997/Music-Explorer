@@ -1,9 +1,6 @@
 import styles from "./Search.module.css";
-
 import { useNavigate } from "react-router";
 import { useContext, useState, useEffect, useRef } from "react";
-import { SearchContext } from "../../Contexts/SearchContext";
-import { Spinner } from "../../components/ui/spinner";
 import { toast } from "react-hot-toast";
 import { getSongSuggestions } from "../../services/OpenAI_service";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
@@ -12,15 +9,10 @@ import propTypes from "prop-types";
 import Voice from "../Voice/Voice";
 import Record from "../Record/Record";
 import UserContext from "../../Contexts/UserContext";
+import Global from "../Global/Global";
+import { ArrowRight } from "lucide-react";
+
 export default function Search({ setSongSuggestions }) {
-  const {
-    formVisible,
-    setFormVisible,
-    isMapVisible,
-    setIsMapVisible,
-    setIsRecording,
-    setIsVoiceSearch,
-  } = useContext(SearchContext);
   const navigate = useNavigate();
   const menuRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,10 +23,12 @@ export default function Search({ setSongSuggestions }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const content = text.trim();
+    if (!content) return;
+
     setIsLoading(true);
-    const text = document.getElementById("text").value;
     const payload = {
-      content: text,
+      content,
       role: "user",
     };
     try {
@@ -46,7 +40,6 @@ export default function Search({ setSongSuggestions }) {
       );
       console.log("recommendations: ", recommendations);
       setSongSuggestions(recommendations);
-      setFormVisible(!formVisible);
       setText("");
       if (recommendations.length === 0) {
         alert("No song suggestions found. Please try again.");
@@ -80,28 +73,29 @@ export default function Search({ setSongSuggestions }) {
     }
   }, [mobileMenuOpen]);
 
-  const handleMapClick = () => {
-    setMobileMenuOpen(false);
-    setIsMapVisible(!isMapVisible);
-    navigate("/global");
-  };
   return (
     <div>
       {/* Text Search */}
-      <form className={styles.searchBar}>
+      <form className={styles.searchBar} onSubmit={handleSubmit}>
         <input
+          type="text"
           placeholder="Describe your tracks"
           value={text}
           onChange={handleChange}
-        ></input>
+        />
+        <button
+          className={styles.submitFormButton}
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? "Searching..." : <ArrowRight />}
+        </button>
       </form>
       <div className={styles.searchTools}>
         <Voice />
         <Record setSongSuggestions={setSongSuggestions} />
+        <Global />
         {/* Explore Global */}
-        <button onClick={handleMapClick}>
-          <img src="/earth_i.png" alt="Explore" />
-        </button>
       </div>
     </div>
   );
