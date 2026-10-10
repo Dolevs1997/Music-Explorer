@@ -6,7 +6,7 @@ import {
   getDetectedLanguage,
 } from "../../utils/voice_search_song";
 import { toast } from "react-hot-toast";
-import { useContext, useState, useMemo, useRef, useEffect } from "react";
+import { useContext, useState, useMemo, useRef } from "react";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
 import { useNavigate } from "react-router";
 import { Spinner } from "../ui/spinner";
@@ -23,7 +23,7 @@ function Voice() {
 
   const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
   const voiceRecognitionRef = useRef(null);
-  const [resultVoice, setResultVoice] = useState(null);
+  const [setResultVoice] = useState(null);
 
   const userData = useMemo(() => {
     try {
@@ -35,14 +35,7 @@ function Voice() {
   const [selectedLanguage, setSelectedLanguage] = useState(
     getDetectedLanguage(),
   );
-  useEffect(() => {
-    if (resultVoice?.error) {
-      toast.error("Voice search failed! Please try again.");
-    } else {
-      toast.success("Voice record successful! Redirecting to home...");
-      navigate("/home");
-    }
-  }, [resultVoice, navigate]);
+
   const handleVoiceSearchClick = async () => {
     if (isVoiceSearch && voiceRecognitionRef.current) {
       voiceRecognitionRef.current.stop();

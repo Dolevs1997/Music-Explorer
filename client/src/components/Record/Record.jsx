@@ -15,14 +15,8 @@ function Record({ setSongSuggestions }) {
   const [proccessRecording, setProccessRecording] = useState(false);
   const [resultRecord, setResultRecord] = useState(null);
   const navigate = useNavigate();
-  const {
-    setFormVisible,
-
-    setIsMapVisible,
-    isRecording,
-    setIsRecording,
-    setIsVoiceSearch,
-  } = useContext(SearchContext);
+  const { setIsMapVisible, isRecording, setIsRecording, setIsVoiceSearch } =
+    useContext(SearchContext);
   useEffect(() => {
     setSecondsLeft(10);
   }, []);
@@ -80,35 +74,10 @@ function Record({ setSongSuggestions }) {
     handleStartRecording();
     clearTimeout();
     setSecondsLeft(10);
-    setIsVoiceSearch(false);
-    setIsMapVisible(false);
-    setFormVisible(false);
   };
 
   return (
     <div>
-      {!isRecording && (
-        <button
-          onClick={async () => {
-            setIsRecording(true);
-            setProccessRecording(true);
-            handleStartRecording();
-            clearTimeout();
-            setSecondsLeft(10);
-            setIsVoiceSearch(false);
-            setIsMapVisible(false);
-            setFormVisible(false);
-          }}
-          disabled={proccessRecording}
-        >
-          {proccessRecording && (
-            <div className={styles.recordingSpinner}>
-              <Spinner />
-              Proccessing...
-            </div>
-          )}
-        </button>
-      )}
       {/* Identify Song */}
       <button
         className={styles.recordingButton}
@@ -127,32 +96,23 @@ function Record({ setSongSuggestions }) {
           />
           Identify Song
         </div>
-
-        {!isRecording && (
-          <>
-            {proccessRecording && (
-              <Spinner />
-              // <span className={styles.recordingSpinnerRight}>
-              // </span>
-            )}
-          </>
-        )}
-        {isRecording && (
-          <>
-            <Spinner />
-            Please wait {secondsLeft} seconds...
-          </>
-          // <>
-          //   <BarsScaleMiddleIcon
-          //     width={20}
-          //     height={30}
-          //     fill="none"
-          //     stroke="#ffffff"
-          //   />
-          //   <span>Identify Song</span>
-          // </>
-        )}
       </button>
+      {!isRecording && (
+        <div>
+          {proccessRecording && (
+            <>
+              <Spinner />
+              Proccessing...
+            </>
+          )}
+        </div>
+      )}
+      {isRecording && (
+        <>
+          <Spinner />
+          Please wait {secondsLeft} seconds...
+        </>
+      )}
     </div>
   );
 }

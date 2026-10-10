@@ -43,24 +43,22 @@ export default function Home() {
         <DropDownComponent />
       </header>
       <main className="home">
-        <>
-          <h2>Discover Your Next Vibe</h2>
-          <p>Tell us for you feel, explore new music around the globe</p>
-          <Search setSongSuggestions={setSongSuggestions} />
+        <h2>Discover Your Next Vibe</h2>
+        <p>Tell us for you feel, explore new music around the globe</p>
+        <Search setSongSuggestions={setSongSuggestions} />
 
-          {songSuggestions.length == 0 && !isMapVisible && <Categories />}
-          {songSuggestions.length > 0 &&
-            !isVoiceSearch &&
-            !isMapVisible &&
-            !isRecording && <Songs songSuggestions={songSuggestions} />}
+        {songSuggestions.length == 0 && !isMapVisible && <Categories />}
+        {songSuggestions.length > 0 &&
+          !isVoiceSearch &&
+          !isMapVisible &&
+          !isRecording && <Songs songSuggestions={songSuggestions} />}
 
-          {songSuggestions.length > 0 &&
-            !isMapVisible &&
-            !isRecording &&
-            isVoiceSearch && <Songs songSuggestions={songSuggestions} />}
+        {songSuggestions.length > 0 &&
+          !isMapVisible &&
+          !isRecording &&
+          isVoiceSearch && <Songs songSuggestions={songSuggestions} />}
 
-          {isMapVisible && <MapComponent />}
-        </>
+        {isMapVisible && <MapComponent />}
       </main>
     </div>
   );
