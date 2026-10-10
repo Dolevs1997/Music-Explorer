@@ -1,5 +1,6 @@
 import styles from "./Logo.module.css";
 import { useNavigate } from "react-router";
+import { AudioLines } from "lucide-react";
 
 export default function Logo() {
   const navigate = useNavigate();
@@ -9,17 +10,17 @@ export default function Logo() {
     window.location.reload();
   };
   return (
-    <button
-      type="button"
-      className={styles.logoButton}
-      onClick={handleLogoClick}
-      aria-label="Go to home"
-    >
-      <img
-        src="/logo-app.png"
-        alt="Music Explorer Home"
-        className={styles.logo}
+    <div className={styles.logo} onClick={handleLogoClick}>
+      <AudioLines
+        size={28}
+        strokeWidth={1.5}
+        style={{
+          cursor: "pointer",
+          color: "#A855F7",
+          filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
+        }}
       />
-    </button>
+      <h6>Music Explorer</h6>
+    </div>
   );
 }

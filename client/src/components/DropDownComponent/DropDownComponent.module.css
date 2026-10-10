@@ -18,10 +18,6 @@
 }
 
 /* Desktop - 70x70px avatar */
-.navbar {
-  align-items: center;
-  margin-left: 95%;
-}
 
 .navbar img {
   width: 70px;

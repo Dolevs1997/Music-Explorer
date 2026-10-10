@@ -323,8 +323,8 @@ h2:hover {
 /* ===== HEADER LAYOUT ===== */
 .header {
   display: flex;
-  padding: 15px;
-  z-index: 100;
+  align-items: center;
+  justify-content: space-between;
 }
 .homeContainer,
 .homeContainerWithForm {
