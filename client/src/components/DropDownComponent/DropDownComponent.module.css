@@ -18,13 +18,12 @@
 }
 
 /* Desktop - 70x70px avatar */
-nav {
-  display: flex;
+.navbar {
   align-items: center;
-  flex-shrink: 0;
+  margin-left: 95%;
 }
 
-nav img {
+.navbar img {
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -33,13 +32,13 @@ nav img {
   transition: transform 0.2s;
 }
 
-nav img:hover {
+.navbar img:hover {
   transform: scale(1.05);
 }
 
 /* Tablet - 60x60px */
 @media screen and (max-width: 1024px) {
-  nav img {
+  .navbar img {
     width: 60px;
     height: 60px;
     margin-right: 8px;
@@ -48,7 +47,7 @@ nav img:hover {
 
 /* Mobile - 50x50px */
 @media screen and (max-width: 768px) {
-  nav img {
+  .navbar img {
     width: 50px;
     height: 50px;
     margin-right: 5px;
@@ -57,7 +56,7 @@ nav img:hover {
 
 /* Small mobile - 40x40px */
 @media screen and (max-width: 480px) {
-  nav img {
+  .navbar img {
     width: 40px;
     height: 40px;
     margin-right: 3px;

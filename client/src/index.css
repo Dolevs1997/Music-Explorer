@@ -322,8 +322,6 @@ h2:hover {
 
 /* ===== HEADER LAYOUT ===== */
 .header {
-  align-items: center;
-  justify-content: space-between;
   display: flex;
   padding: 15px;
   z-index: 100;
