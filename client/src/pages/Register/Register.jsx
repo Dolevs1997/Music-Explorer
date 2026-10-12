@@ -1,3 +1,4 @@
+import styles from "./Register.module.css";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/Button/Button";
 import axios from "axios";
@@ -60,7 +61,7 @@ function Register() {
   return (
     <>
       <BackgroundMusic />
-      <form className="registerForm" style={{ opacity: 0.9 }}>
+      <form className={styles.registerForm}>
         <h2>Register</h2>
 
         <label htmlFor="email">Email:</label>
@@ -74,7 +75,7 @@ function Register() {
         />
         <label htmlFor="country">Country</label>
         <select
-          className="country-select-register"
+          className={styles.countrySelectRegister}
           value={countryShortName}
           onChange={(e) => {
             setCountryShortName(e.target.value);

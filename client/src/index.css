@@ -99,14 +99,7 @@ body {
   background-color: unset;
   font-size: 0.9rem;
 }
-.country-select-register {
-  background-color: var(--color-background-100);
-}
-@media screen and (max-width: 768px) {
-  .country-select-register {
-    width: 90%;
-  }
-}
+
 .search-tool-wraper {
   display: flex;
   align-items: center;
@@ -114,7 +107,7 @@ body {
   gap: 10px;
   width: 100%;
 }
-/* form {
+form {
   gap: 5px;
   padding: 30px;
   border-radius: 5px;
@@ -130,32 +123,8 @@ body {
   right: 50%;
   top: 50%;
   transform: translate(50%, -50%);
-
+  opacity: 0.9;
   z-index: 150;
-} */
-.passwordInputContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 80%;
-}
-
-.passwordInputContainer input {
-  width: 100%;
-  padding-right: 40px; /* Make space for the icon */
-  box-sizing: border-box;
-}
-
-.passwordInputContainer button {
-  position: absolute;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
 }
 form input {
   padding: 10px;
@@ -182,46 +151,31 @@ form input:focus {
     font-size: 1rem;
   }
 }
-.registerForm {
+.passwordInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 80%;
+}
+
+.passwordInputContainer input {
+  width: 100%;
+  padding-right: 40px; /* Make space for the icon */
   box-sizing: border-box;
 }
 
-@media screen and (max-width: 768px) {
-  .registerForm {
-    width: calc(100% - 24px);
-    max-height: calc(100vh - 24px);
-    overflow-y: auto;
-    padding: 16px;
-    font-size: 1rem;
-  }
-
-  .registerForm h2 {
-    font-size: 1.6rem;
-    margin: 0 0 8px;
-    padding: 4px;
-  }
-
-  .registerForm input,
-  .registerForm select,
-  .registerForm .passwordInputContainer {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .registerForm ol {
-    width: 100%;
-    box-sizing: border-box;
-    margin: 4px 0;
-    padding-left: 24px;
-  }
-
-  .registerForm li,
-  .registerForm p {
-    font-size: 0.9rem;
-    line-height: 1.35;
-  }
+.passwordInputContainer button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
+
 textarea {
   resize: none;
 

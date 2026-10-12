@@ -4,7 +4,6 @@ import { useState, useContext } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import UserContext from "../../Contexts/UserContext";
-
 import BackgroundMusic from "../../components/BackgroundMusic";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 import { GoogleLogin } from "@react-oauth/google";
@@ -82,7 +81,7 @@ function Login() {
       }}
     >
       <BackgroundMusic />
-      <form style={{ opacity: 0.9 }}>
+      <form>
         <h2>Login</h2>
         <label htmlFor="email">Email:</label>
         <input
