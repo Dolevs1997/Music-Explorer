@@ -8,15 +8,19 @@ import {
   handleStartRecording,
   handleStopRecording,
 } from "../../utils/recording";
-import propTypes from "prop-types";
 import { AudioLines } from "lucide-react";
-function Record({ setSongSuggestions }) {
+function Record() {
   const [secondsLeft, setSecondsLeft] = useState(10);
   const [proccessRecording, setProccessRecording] = useState(false);
   const [resultRecord, setResultRecord] = useState(null);
   const navigate = useNavigate();
-  const { setIsMapVisible, isRecording, setIsRecording, setIsVoiceSearch } =
-    useContext(SearchContext);
+  const {
+    setIsMapVisible,
+    isRecording,
+    setIsRecording,
+    setIsVoiceSearch,
+    setSongSuggestions,
+  } = useContext(SearchContext);
   useEffect(() => {
     setSecondsLeft(10);
   }, []);
@@ -116,9 +120,5 @@ function Record({ setSongSuggestions }) {
     </div>
   );
 }
-
-Record.propTypes = {
-  setSongSuggestions: propTypes.func,
-};
 
 export default Record;

@@ -1,15 +1,14 @@
 import { SearchContext } from "../../Contexts/SearchContext";
-import {
-  handleVoiceSearch,
-  SPEECH_RECOGNITION_LANGUAGES,
-  getDetectedLanguage,
-} from "../../utils/voice_search_song";
+import { handleVoiceSearch } from "../../utils/voice_search_song";
+// SPEECH_RECOGNITION_LANGUAGES,
+// getDetectedLanguage,
 import { toast } from "react-hot-toast";
 import { useContext, useState, useMemo, useRef } from "react";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
 import { useNavigate } from "react-router";
 import { Spinner } from "../ui/spinner";
 import { Mic } from "lucide-react";
+import propTypes from "prop-types";
 function Voice({ setIsLoading, isLoading }) {
   const {
     setIsMapVisible,
@@ -30,9 +29,9 @@ function Voice({ setIsLoading, isLoading }) {
       return null;
     }
   }, []);
-  const [selectedLanguage, setSelectedLanguage] = useState(
-    getDetectedLanguage(),
-  );
+  // const [selectedLanguage, setSelectedLanguage] = useState(
+  //   getDetectedLanguage(),
+  // );
 
   const handleVoiceSearchClick = async () => {
     if (isVoiceSearch && voiceRecognitionRef.current) {
@@ -48,7 +47,6 @@ function Voice({ setIsLoading, isLoading }) {
         userData,
         10000,
         setResultVoice,
-        selectedLanguage,
         (recognition) => {
           voiceRecognitionRef.current = recognition;
         },
@@ -75,6 +73,7 @@ function Voice({ setIsLoading, isLoading }) {
         onClick={handleVoiceSearchClick}
         disabled={isLoading && !isVoiceSearch}
       >
+        {/* voice search is not activated */}
         {!isVoiceSearch && (
           <>
             <div className="search-tool">
@@ -92,6 +91,7 @@ function Voice({ setIsLoading, isLoading }) {
             {isLoading && <Spinner />}
           </>
         )}
+        {/* voice search is  activated */}
         {isVoiceSearch && (
           <div>
             <Mic
@@ -108,38 +108,7 @@ function Voice({ setIsLoading, isLoading }) {
           </div>
         )}
       </button>
-      {!isVoiceSearch && (
-        <button
-          onClick={async () => {
-            setIsVoiceSearch(true);
-            setIsLoading(true);
-            try {
-              const response = await handleVoiceSearch(
-                userData,
-                10000,
-                setResultVoice,
-                selectedLanguage,
-              );
-              if (!response) return;
-              else if (response?.length == 0)
-                toast.error("No available songs, please try again..");
-              const uniqueSongs = deduplicateSongs(response);
-              setIsLoading(false);
-              setSongSuggestions(uniqueSongs);
-              setIsVoiceSearch(false);
-              setIsMapVisible(false);
-              setIsRecording(false);
 
-              navigate("/home");
-            } catch (e) {
-              console.error("Error in speech detecting: ", e);
-              toast.error("Speech recognition error");
-              setIsLoading(false);
-            }
-          }}
-          disabled={isLoading}
-        ></button>
-      )}
       {/* Language Selector for Voice Search */}
       {/* <select
         value={selectedLanguage}
@@ -173,5 +142,10 @@ function Voice({ setIsLoading, isLoading }) {
     </nav>
   );
 }
+
+Voice.propTypes = {
+  setIsLoading: propTypes.func,
+  isLoading: propTypes.bool,
+};
 
 export default Voice;
