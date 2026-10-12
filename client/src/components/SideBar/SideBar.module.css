@@ -1,0 +1,29 @@
+.sideBar {
+  position: fixed;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  width: max-content;
+  height: auto;
+  gap: 8px;
+  padding: 12px;
+  z-index: 1000;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navItem:hover,
+.active {
+  color: var(--purple-neon);
+  background-color: var(--bg-elevated);
+}

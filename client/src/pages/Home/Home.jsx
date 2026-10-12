@@ -11,6 +11,7 @@ import { SearchContext } from "../../Contexts/SearchContext";
 import { useInactivity } from "../../hooks/useInactivity";
 import axios from "axios";
 import propTypes from "prop-types";
+import SideBar from "../../components/SideBar/SideBar";
 export default function Home() {
   const { songSuggestions, setSongSuggestions, isRecording, isVoiceSearch } =
     useContext(SearchContext);
@@ -37,11 +38,13 @@ export default function Home() {
   }, [isMapVisible, navigate, location.state, setIsMapVisible]);
 
   return (
-    <div className="app-container">
+    <div>
       <header className="header">
         <Logo />
         <DropDownComponent />
       </header>
+      <SideBar />
+
       <main className="home">
         <h2>Discover Your Next Vibe</h2>
         <p>Tell us for you feel, explore new music around the globe</p>
