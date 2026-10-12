@@ -8,7 +8,7 @@ import BackgroundMusic from "../../components/BackgroundMusic";
 import EyeIconPassword from "../../components/EyeIconPassword/EyeIconPassword";
 import { GoogleLogin } from "@react-oauth/google";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
-
+import styles from "./Login.module.css";
 // const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function Login() {
   const [email, setEmail] = useState("");
@@ -81,7 +81,7 @@ function Login() {
       }}
     >
       <BackgroundMusic />
-      <form>
+      <form className={styles.formLogin}>
         <h2>Login</h2>
         <label htmlFor="email">Email:</label>
         <input

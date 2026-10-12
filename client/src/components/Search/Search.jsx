@@ -74,7 +74,7 @@ export default function Search({ setSongSuggestions }) {
   }, [mobileMenuOpen]);
 
   return (
-    <div>
+    <div className={styles.searchContainer}>
       {/* Text Search */}
       <form className={styles.searchBar} onSubmit={handleSubmit}>
         <input
