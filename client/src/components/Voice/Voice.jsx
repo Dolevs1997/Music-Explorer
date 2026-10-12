@@ -1,4 +1,3 @@
-import styles from "./Voice.module.css";
 import { SearchContext } from "../../Contexts/SearchContext";
 import {
   handleVoiceSearch,
@@ -11,7 +10,7 @@ import { deduplicateSongs } from "../../utils/deduplicateSongs";
 import { useNavigate } from "react-router";
 import { Spinner } from "../ui/spinner";
 import { Mic } from "lucide-react";
-function Voice() {
+function Voice({ setIsLoading, isLoading }) {
   const {
     setIsMapVisible,
     setIsRecording,
@@ -21,7 +20,6 @@ function Voice() {
   } = useContext(SearchContext);
   const navigate = useNavigate();
 
-  const [proccessVoiceSearch, setProccessVoiceSearch] = useState(false);
   const voiceRecognitionRef = useRef(null);
   const [setResultVoice] = useState(null);
 
@@ -44,7 +42,7 @@ function Voice() {
     }
 
     setIsVoiceSearch(true);
-    setProccessVoiceSearch(true);
+    setIsLoading(true);
     try {
       const response = await handleVoiceSearch(
         userData,
@@ -65,15 +63,85 @@ function Voice() {
       toast.error("Voice search failed! Please try again.");
     } finally {
       voiceRecognitionRef.current = null;
-      setProccessVoiceSearch(false);
+      setIsLoading(false);
       setIsVoiceSearch(false);
     }
   };
 
   return (
     <nav>
+      {/* Voice Search */}
+      <button
+        onClick={handleVoiceSearchClick}
+        disabled={isLoading && !isVoiceSearch}
+      >
+        {!isVoiceSearch && (
+          <>
+            <div className="search-tool">
+              <Mic
+                size={28}
+                strokeWidth={1.5}
+                style={{
+                  cursor: "pointer",
+                  color: "#A855F7",
+                  filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
+                }}
+              />
+              <span>Voice Search</span>
+            </div>
+            {isLoading && <Spinner />}
+          </>
+        )}
+        {isVoiceSearch && (
+          <div>
+            <Mic
+              size={28}
+              strokeWidth={1.5}
+              style={{
+                cursor: "pointer",
+                color: "#f75555",
+                filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
+              }}
+            />
+            {/* {proccessVoiceSearch && <Spinner />} */}
+            <span>Speak Now...</span>
+          </div>
+        )}
+      </button>
+      {!isVoiceSearch && (
+        <button
+          onClick={async () => {
+            setIsVoiceSearch(true);
+            setIsLoading(true);
+            try {
+              const response = await handleVoiceSearch(
+                userData,
+                10000,
+                setResultVoice,
+                selectedLanguage,
+              );
+              if (!response) return;
+              else if (response?.length == 0)
+                toast.error("No available songs, please try again..");
+              const uniqueSongs = deduplicateSongs(response);
+              setIsLoading(false);
+              setSongSuggestions(uniqueSongs);
+              setIsVoiceSearch(false);
+              setIsMapVisible(false);
+              setIsRecording(false);
+
+              navigate("/home");
+            } catch (e) {
+              console.error("Error in speech detecting: ", e);
+              toast.error("Speech recognition error");
+              setIsLoading(false);
+            }
+          }}
+          disabled={isLoading}
+        ></button>
+      )}
       {/* Language Selector for Voice Search */}
-      <select
+      {/* <select
         value={selectedLanguage}
         onChange={(e) => setSelectedLanguage(e.target.value)}
         className="languageSelect"
@@ -85,7 +153,7 @@ function Voice() {
             {name}
           </option>
         ))}
-      </select>
+      </select> */}
       {/* Language selector in menu */}
       {/* <select
         value={selectedLanguage}
@@ -102,67 +170,6 @@ function Voice() {
           </option>
         ))}
       </select> */}
-      {!isVoiceSearch && (
-        <button
-          onClick={async () => {
-            setIsVoiceSearch(true);
-            setProccessVoiceSearch(true);
-            try {
-              const response = await handleVoiceSearch(
-                userData,
-                10000,
-                setResultVoice,
-                selectedLanguage,
-              );
-              if (!response) return;
-              else if (response?.length == 0)
-                toast.error("No available songs, please try again..");
-              const uniqueSongs = deduplicateSongs(response);
-              setProccessVoiceSearch(false);
-              setSongSuggestions(uniqueSongs);
-              setIsVoiceSearch(false);
-              setIsMapVisible(false);
-              setIsRecording(false);
-
-              navigate("/home");
-            } catch (e) {
-              console.error("Error in speech detecting: ", e);
-              toast.error("Speech recognition error");
-              setProccessVoiceSearch(false);
-            }
-          }}
-          disabled={proccessVoiceSearch}
-        >
-          {proccessVoiceSearch && (
-            <div className={styles.recordingSpinner}>
-              <Spinner />
-              Proccessing...
-            </div>
-          )}
-        </button>
-      )}
-
-      {/* Voice Search */}
-      <button
-        onClick={handleVoiceSearchClick}
-        disabled={proccessVoiceSearch && !isVoiceSearch}
-      >
-        {!isVoiceSearch && (
-          <div className="search-tool">
-            <Mic
-              size={28}
-              strokeWidth={1.5}
-              style={{
-                cursor: "pointer",
-                color: "#A855F7",
-                filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
-              }}
-            />
-            <span>Voice Search</span>
-            {proccessVoiceSearch && <Spinner />}
-          </div>
-        )}
-      </button>
     </nav>
   );
 }
