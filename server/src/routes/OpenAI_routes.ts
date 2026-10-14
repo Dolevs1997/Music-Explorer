@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import {
   SongSuggestions,
-  SongSuggestionsVoice,
   generatePlaylistPicture,
 } from "../services/OpenAI_service";
 import { authenticate } from "../middlewares/auth_middleware";
+
 const openaiRouter = express.Router();
 
 openaiRouter.post("/", authenticate, async (req, res) => {
@@ -13,20 +13,6 @@ openaiRouter.post("/", authenticate, async (req, res) => {
     res.status(200).json(suggestions);
   } catch (error: Error | any) {
     console.error("OpenAI song suggestions error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-openaiRouter.post("/voice-search", authenticate, async (req, res) => {
-  try {
-    const { audioFilePath } = req.body;
-    if (!audioFilePath) {
-      return res.status(400).json({ error: "Please provide audio file path" });
-    }
-
-    const songSuggestions = await SongSuggestionsVoice();
-    res.status(200).json(songSuggestions);
-  } catch (error: Error | any) {
     res.status(500).json({ error: error.message });
   }
 });

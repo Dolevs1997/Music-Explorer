@@ -1,5 +1,5 @@
 import styles from "./Song.module.css";
-import { useState, useEffect, useReducer, useRef, useContext } from "react";
+import { useState, useEffect, useReducer, useContext } from "react";
 import YouTube from "react-youtube";
 import propTypes from "prop-types";
 import { fetchSongYT } from "../../services/YouTube_service";
@@ -51,6 +51,7 @@ function reducer(state, action) {
       return {
         ...state,
         loading: true,
+        error: null,
       };
 
     case "SET_VIDEO_SONG":
@@ -82,50 +83,70 @@ function reducer(state, action) {
   }
 }
 const globalUsedVideoIds = new Set();
+
+function getSongDetails(song) {
+  if (typeof song === "string") return song.trim();
+
+  return (
+    song?.song ||
+    song?.songDetail ||
+    (song?.artists && song?.title
+      ? `${song.artists} - ${song.title}`
+      : song?.title || "")
+  );
+}
+
 function Song({
   song,
   country = "US",
   playingVideoId,
   setPlayingVideoId,
-  playlistId,
   onRemoveSong,
 }) {
-  const songDetails =
-    song.song || song.songDetail || song.artists + " - " + song.title;
+  const songDetails = getSongDetails(song);
   const [playlistName, setPlaylistName] = useState("");
   const [state, dispatch] = useReducer(reducer, initialSong);
-  const songRef = useRef(null);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const remove = useContext(removeBtn);
   const { user, setUser } = useContext(UserContext);
-  const hasFetchedRef = useRef(false); // ← add this ref
-  const storedVideoId =
-    typeof song === "object" ? song.videoId || songRef?.current?.videoId : null;
-  if (!user.playlists) {
-    user.playlists = [];
-    localStorage.setItem("user", JSON.stringify(user));
-  }
-  if (user.playlists.length === 0) {
-    user.playlists = [];
-  }
+  const playlists = user?.playlists || [];
+  const storedVideoId = typeof song === "object" ? song?.videoId : null;
+
   async function handlePlaySong() {
-    await addSongToHistory(user, songRef.current);
-    dispatch({ type: "PLAY", payload: { playing: true } });
-  }
-  async function handleAddSongToPlaylist(playlist) {
-    const response = await addSongToPlaylist(
-      songDetails,
-      state,
-      user,
-      playlist,
-    );
-    if (response.status == 200) toast.success(`${response.data.message}`);
-    else if (response.status != 200) toast.error(`${response.data.message}`);
-    const data = response.data;
+    if (!user?._id) return;
 
     try {
+      await addSongToHistory(user, {
+        videoId: state.videoId,
+        song: state.song,
+        regionCode: state.regionCode,
+      });
+    } catch (error) {
+      console.error("Error adding song to listening history:", error);
+      toast.error("Could not save this song to your listening history.");
+    }
+  }
+  async function handleAddSongToPlaylist(playlist) {
+    try {
+      if (!user?._id) {
+        toast.error("Please sign in to add songs to a playlist.");
+        return;
+      }
+
+      const response = await addSongToPlaylist(
+        songDetails,
+        state,
+        user,
+        playlist,
+      );
+      const data = response.data;
+      const addedSong = data?.playlist?.songs?.at(-1);
+
+      if (!data?.playlist || !addedSong) {
+        throw new Error("The server returned an invalid playlist response.");
+      }
+
       dispatch({
         type: "SET_IN_PLAYLIST",
         payload: {
@@ -135,47 +156,52 @@ function Song({
         },
       });
 
-      // updating user context with new song
       const updatedUser = {
         ...user,
-        playlists: user.playlists.map((p) =>
-          p._id == playlist._id
+        playlists: playlists.map((existingPlaylist) =>
+          existingPlaylist._id === playlist._id
             ? {
-                ...p,
-                songs: [
-                  ...(p.songs || []),
-                  data.playlist.songs[data.playlist.songs.length - 1],
-                ],
+                ...existingPlaylist,
+                songs: [...(existingPlaylist.songs || []), addedSong],
               }
-            : p,
+            : existingPlaylist,
         ),
       };
 
-      //checking if playlist already exists
-      const playlistExists = user.playlists.some(
-        (p) => p._id === data.playlist._id || p.name === data.playlist.name,
+      const playlistExists = playlists.some(
+        (existingPlaylist) =>
+          existingPlaylist._id === data.playlist._id ||
+          existingPlaylist.name === data.playlist.name,
       );
-
       if (!playlistExists) {
         updatedUser.playlists = [...updatedUser.playlists, data.playlist];
       }
 
       setUser(updatedUser);
+      toast.success(data.message || "Song added to playlist.");
     } catch (error) {
       console.error("Error adding song to playlist:", error);
+      toast.error("Failed to add song to playlist.");
+    } finally {
+      setPlaylistName("");
     }
-    setPlaylistName("");
   }
 
   useEffect(() => {
-    async function processQueue() {
-      if (!songDetails) return;
-      if (hasFetchedRef.current) return;
+    let isCancelled = false;
+
+    async function loadSong() {
+      dispatch({ type: "LOADING_SONG" });
+
+      if (!songDetails) {
+        dispatch({
+          type: "SET_ERROR",
+          payload: { error: "Song details are missing." },
+        });
+        return;
+      }
+
       if (storedVideoId) {
-        songRef.current = {
-          videoId: storedVideoId,
-          song: songDetails,
-        };
         dispatch({
           type: "SET_VIDEO_SONG",
           payload: {
@@ -187,71 +213,53 @@ function Song({
         });
         return;
       }
-      if (songRef.current && state.videoId === songRef.current.videoId) return;
-      if (songRef.current?.videoId) {
-        dispatch({
-          type: "SET_VIDEO_SONG",
-          payload: {
-            videoId: songRef.current.videoId,
-            regionCode: songRef.current.regionCode,
-            song: songRef.current.song,
-            playlists: [],
-          },
-        });
-        return;
-      }
-      if (state.error) return;
-
-      // Mark it right away to prevent secondary component updates from re-triggering
-      hasFetchedRef.current = true;
 
       try {
         const excludedIds = Array.from(globalUsedVideoIds);
         const data = await fetchSongYT(songDetails, country, excludedIds);
 
         if (!data?.videoId) {
-          hasFetchedRef.current = false;
-          dispatch({
-            type: "SET_ERROR",
-            payload: { error: "Song video could not be fetched." },
-          });
-          return;
+          throw new Error("Song video could not be fetched.");
         }
 
         globalUsedVideoIds.add(data.videoId);
-        songRef.current = data;
-
-        dispatch({
-          type: "SET_VIDEO_SONG",
-          payload: {
-            videoId: data.videoId,
-            regionCode: data.regionCode,
-            song: data.song,
-            playlists: [],
-          },
-        });
+        if (!isCancelled) {
+          dispatch({
+            type: "SET_VIDEO_SONG",
+            payload: {
+              videoId: data.videoId,
+              regionCode: data.regionCode,
+              song: data.song || songDetails,
+              playlists: [],
+            },
+          });
+        }
       } catch (error) {
-        hasFetchedRef.current = false;
-        console.error("Error fetching song", error);
-        dispatch({
-          type: "SET_ERROR",
-          payload: { error: "Failed to fetch song " },
-        });
+        console.error("Error fetching song:", error);
+        if (!isCancelled) {
+          dispatch({
+            type: "SET_ERROR",
+            payload: { error: "Failed to load this song." },
+          });
+        }
       }
     }
 
-    processQueue();
-  }, [songDetails, storedVideoId, country, playlistId]);
+    loadSong();
+    return () => {
+      isCancelled = true;
+    };
+  }, [songDetails, storedVideoId, country]);
 
-  async function handleRemoveSongFromPlaylist(videoId, playlistId) {
-    if (onRemoveSong) {
-      onRemoveSong(song, videoId);
-    } else {
-      console.warn("onRemoveSong is undefined!");
-    }
-
+  async function handleRemoveSongFromPlaylist(videoId, targetPlaylistId) {
     try {
-      await removeSongFromPlaylist(videoId, user, playlistId);
+      if (!user?._id || !targetPlaylistId) {
+        toast.error("Unable to remove this song from the playlist.");
+        return;
+      }
+
+      await removeSongFromPlaylist(videoId, user, targetPlaylistId);
+      onRemoveSong?.(song, videoId);
       toast.success("Song removed from playlist");
     } catch (error) {
       console.error("Error removing song from playlist:", error);
@@ -259,7 +267,38 @@ function Song({
     }
   }
 
-  if (state.loading || state.error || !state.videoId) {
+  async function handleCreatePlaylist() {
+    const trimmedPlaylistName = playlistName.trim();
+    if (!trimmedPlaylistName) {
+      toast.error("Enter a playlist name.");
+      return;
+    }
+
+    try {
+      if (!user?._id) {
+        toast.error("Please sign in to create a playlist.");
+        return;
+      }
+
+      const response = await createPlaylist(trimmedPlaylistName, user);
+      const newPlaylist = response.data?.playlist;
+      if (!newPlaylist) {
+        throw new Error("The server did not return the created playlist.");
+      }
+
+      await handleAddSongToPlaylist(newPlaylist);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+      toast.error("Failed to create playlist. Please try again.");
+    }
+  }
+
+  if (state.error) {
+    return <p role="alert">{state.error}</p>;
+  }
+
+  if (state.loading || !state.videoId) {
     return null;
   }
 
@@ -269,13 +308,11 @@ function Song({
         <button
           type="button"
           className={styles.optionsBtn}
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-            if (menuPlaylistsOpen) {
-              setMenuPlaylistsOpen(false);
-            }
-          }}
+          onClick={() =>
+            remove
+              ? handleRemoveSongFromPlaylist(state.videoId, remove.playlistId)
+              : setMenuPlaylistsOpen((isOpen) => !isOpen)
+          }
           aria-label="Options"
         >
           {state.videoId && (
@@ -287,7 +324,6 @@ function Song({
                   viewBox="0 -960 960 960"
                   width="35px"
                   fill="#e3e3e3"
-                  onClick={() => setMenuPlaylistsOpen((prev) => !prev)}
                 >
                   <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z" />
                 </svg>
@@ -298,13 +334,6 @@ function Song({
                   viewBox="0 -960 960 960"
                   width="35px"
                   fill="#e3e3e3"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveSongFromPlaylist(
-                      state.videoId,
-                      remove.playlistId,
-                    );
-                  }}
                 >
                   <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z" />
                 </svg>
@@ -316,10 +345,10 @@ function Song({
 
       {menuPlaylistsOpen && (
         <ListGroup>
-          {user.playlists.map((playlist) => (
+          {playlists.map((playlist) => (
             <ListGroup.Item
               action
-              key={playlist.name}
+              key={playlist._id || playlist.id || playlist.name}
               onClick={() => handleAddSongToPlaylist(playlist)}
             >
               {playlist.name}
@@ -343,30 +372,7 @@ function Song({
                     <Button onClick={() => setShowModal(false)} type="close">
                       Close
                     </Button>
-                    <Button
-                      onClick={async () => {
-                        // Create the playlist first
-                        const response = await createPlaylist(
-                          playlistName,
-                          user,
-                        );
-                        console.log("response playlist: ", response);
-                        if (response.status === 200) {
-                          const newPlaylist = response.data.playlist;
-                          toast.success(`${response.data.message}`);
-                          // IMMEDIATELY add the current song to the new playlist
-                          await handleAddSongToPlaylist(newPlaylist);
-                        } else {
-                          toast.error(
-                            "Failed to create playlist. Please try again.",
-                          );
-                        }
-
-                        setShowModal(false);
-                        setPlaylistName("");
-                      }}
-                      type="submit"
-                    >
+                    <Button onClick={handleCreatePlaylist} type="submit">
                       Save changes
                     </Button>
                   </div>
@@ -384,7 +390,7 @@ function Song({
         (playingVideoId === state.videoId ? (
           <YouTube
             videoId={state.videoId}
-            title={state.title}
+            title={state.song}
             opts={opts}
             onPlay={handlePlaySong}
             onPause={() => {
@@ -396,11 +402,11 @@ function Song({
           <div>
             <img
               src={`https://img.youtube.com/vi/${state.videoId}/hqdefault.jpg`}
-              alt={state.title}
+              alt={state.song}
               className={styles.thumbnail}
               loading="lazy"
               onClick={() => {
-                setPlayingVideoId(state.videoId);
+                setPlayingVideoId?.(state.videoId);
               }}
             />
           </div>
@@ -413,7 +419,10 @@ Song.propTypes = {
   song: propTypes.oneOfType([
     propTypes.string,
     propTypes.shape({
-      song: propTypes.string.isRequired,
+      song: propTypes.string,
+      songDetail: propTypes.string,
+      artists: propTypes.string,
+      title: propTypes.string,
       videoId: propTypes.string,
     }),
   ]).isRequired,

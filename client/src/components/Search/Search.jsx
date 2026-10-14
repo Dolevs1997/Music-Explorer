@@ -16,14 +16,14 @@ export default function Search({ setSongSuggestions }) {
   const navigate = useNavigate();
   const menuRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [text, setText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useContext(UserContext);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const content = text.trim();
+    const content = searchQuery.trim();
     if (!content) return;
 
     setIsLoading(true);
@@ -38,9 +38,9 @@ export default function Search({ setSongSuggestions }) {
         uniqueSongs,
         user.country?.shortName || "US",
       );
-      console.log("recommendations: ", recommendations);
+      // console.log("recommendations: ", recommendations);
       setSongSuggestions(recommendations);
-      setText("");
+      setSearchQuery("");
       if (recommendations.length === 0) {
         alert("No song suggestions found. Please try again.");
       } else {
@@ -55,7 +55,7 @@ export default function Search({ setSongSuggestions }) {
   }
 
   function handleChange(e) {
-    setText(e.target.value);
+    setSearchQuery(e.target.value);
   }
 
   // Close menu when clicking outside
@@ -80,7 +80,7 @@ export default function Search({ setSongSuggestions }) {
         <input
           type="text"
           placeholder="Describe your tracks"
-          value={text}
+          value={searchQuery}
           onChange={handleChange}
         />
         <button
@@ -92,7 +92,7 @@ export default function Search({ setSongSuggestions }) {
         </button>
       </form>
       <div className={styles.searchTools}>
-        <Voice setIsLoading={setIsLoading} isLoading={isLoading} />
+        <Voice />
         <Record setSongSuggestions={setSongSuggestions} />
         <Global />
         {/* Explore Global */}

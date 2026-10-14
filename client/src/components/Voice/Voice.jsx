@@ -1,151 +1,203 @@
 import { SearchContext } from "../../Contexts/SearchContext";
-import { handleVoiceSearch } from "../../utils/voice_search_song";
-// SPEECH_RECOGNITION_LANGUAGES,
-// getDetectedLanguage,
+import { getSongSuggestions } from "../../services/OpenAI_service";
+import { createVoiceRecognition } from "../../utils/voice_search_song";
 import { toast } from "react-hot-toast";
-import { useContext, useState, useMemo, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { deduplicateSongs } from "../../utils/deduplicateSongs";
-import { useNavigate } from "react-router";
 import { Spinner } from "../ui/spinner";
 import { Mic } from "lucide-react";
 import propTypes from "prop-types";
-function Voice({ setIsLoading, isLoading }) {
-  const {
-    setIsMapVisible,
-    setIsRecording,
-    setSongSuggestions,
-    setIsVoiceSearch,
-    isVoiceSearch,
-  } = useContext(SearchContext);
+import {
+  getDetectedLanguage,
+  SPEECH_RECOGNITION_LANGUAGES,
+} from "../../utils/voice_search_song";
+import { useNavigate } from "react-router";
+function Voice() {
+  const { setIsMapVisible, setIsRecording, setSongSuggestions } =
+    useContext(SearchContext);
+  const [status, setStatus] = useState("idle");
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    getDetectedLanguage(),
+  );
+  const recognitionRef = useRef(null);
+  const transcriptRef = useRef("");
+  const recognitionFailedRef = useRef(false);
   const navigate = useNavigate();
+  async function handleRecognitionEnd() {
+    recognitionRef.current = null;
 
-  const voiceRecognitionRef = useRef(null);
-  const [setResultVoice] = useState(null);
-
-  const userData = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user"));
-    } catch {
-      return null;
-    }
-  }, []);
-  // const [selectedLanguage, setSelectedLanguage] = useState(
-  //   getDetectedLanguage(),
-  // );
-
-  const handleVoiceSearchClick = async () => {
-    if (isVoiceSearch && voiceRecognitionRef.current) {
-      voiceRecognitionRef.current.stop();
-      setIsVoiceSearch(false);
+    if (recognitionFailedRef.current) {
+      recognitionFailedRef.current = false;
+      setStatus("idle");
       return;
     }
 
-    setIsVoiceSearch(true);
-    setIsLoading(true);
+    const transcript = transcriptRef.current.trim();
+    setStatus("processing");
+
+    if (!transcript) {
+      toast.error("No speech detected. Please try again.");
+      setStatus("idle");
+      return;
+    }
+
     try {
-      const response = await handleVoiceSearch(
-        userData,
-        10000,
-        setResultVoice,
-        (recognition) => {
-          voiceRecognitionRef.current = recognition;
-        },
-      );
-      if (response?.length === 0)
+      const response = await getSongSuggestions({
+        content: transcript,
+        role: "user",
+      });
+
+      const songs = deduplicateSongs(response || []);
+      if (songs.length === 0) {
         toast.error("No available songs, please try again.");
-      setSongSuggestions(deduplicateSongs(response || []));
+      }
+      setSongSuggestions(songs);
       setIsMapVisible(false);
       navigate("/home");
     } catch (error) {
-      console.error("Voice search failed:", error);
-      toast.error("Voice search failed! Please try again.");
+      console.error(
+        "Error fetching song suggestions from voice search:",
+        error,
+      );
+      toast.error("Voice search failed. Please try again.");
     } finally {
-      voiceRecognitionRef.current = null;
-      setIsLoading(false);
-      setIsVoiceSearch(false);
+      setStatus("idle");
+    }
+  }
+
+  async function startRecording() {
+    try {
+      const recognition = createVoiceRecognition(selectedLanguage);
+      transcriptRef.current = "";
+      recognitionFailedRef.current = false;
+      recognitionRef.current = recognition;
+
+      recognition.onresult = (event) => {
+        for (
+          let index = event.resultIndex;
+          index < event.results.length;
+          index++
+        ) {
+          const result = event.results[index];
+          if (result.isFinal) {
+            transcriptRef.current += `${
+              transcriptRef.current ? " " : ""
+            }${result[0].transcript}`;
+          }
+        }
+      };
+
+      recognition.onerror = (event) => {
+        recognitionFailedRef.current = true;
+        console.error("Speech recognition error:", event.error);
+        toast.error("Voice recording failed. Please check microphone access.");
+        try {
+          recognition.stop();
+        } catch (error) {
+          console.error(
+            "Could not stop speech recognition after an error:",
+            error,
+          );
+          recognitionRef.current = null;
+          setStatus("idle");
+        }
+      };
+
+      recognition.onend = handleRecognitionEnd;
+      recognition.start();
+      setIsRecording(false);
+      setIsMapVisible(false);
+      setStatus("listening");
+    } catch (error) {
+      console.error("Could not start voice recognition:", error);
+      toast.error(error.message || "Voice search failed. Please try again.");
+      recognitionRef.current = null;
+      setStatus("idle");
+    }
+  }
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      setStatus("processing");
+      recognitionRef.current.stop();
     }
   };
 
+  const handleMicClick = () => {
+    if (status === "listening") {
+      stopRecording();
+    } else if (status === "idle") {
+      startRecording();
+    }
+  };
+
+  useEffect(
+    () => () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+    },
+    [],
+  );
+
   return (
     <nav>
-      {/* Voice Search */}
       <button
-        onClick={handleVoiceSearchClick}
-        disabled={isLoading && !isVoiceSearch}
+        type="button"
+        onClick={handleMicClick}
+        disabled={status === "processing"}
+        aria-label={
+          status === "listening"
+            ? "Stop voice recording"
+            : "Start voice recording"
+        }
+        aria-pressed={status === "listening"}
       >
-        {/* voice search is not activated */}
-        {!isVoiceSearch && (
-          <>
-            <div className="search-tool">
-              <Mic
-                size={28}
-                strokeWidth={1.5}
-                style={{
-                  cursor: "pointer",
-                  color: "#A855F7",
-                  filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
-                }}
-              />
-              <span>Voice Search</span>
-            </div>
-            {isLoading && <Spinner />}
-          </>
-        )}
-        {/* voice search is  activated */}
-        {isVoiceSearch && (
-          <div>
+        <div className="search-tool">
+          {status === "processing" ? (
+            <Spinner />
+          ) : (
             <Mic
               size={28}
               strokeWidth={1.5}
               style={{
-                cursor: "pointer",
-                color: "#f75555",
+                cursor: status === "processing" ? "default" : "pointer",
+                color: status === "listening" ? "#f75555" : "#A855F7",
                 filter: "drop-shadow(0 0 8px rgba(168,85,247,0.5))",
               }}
             />
-            {/* {proccessVoiceSearch && <Spinner />} */}
-            <span>Speak Now...</span>
-          </div>
-        )}
+          )}
+          <span>
+            {status === "listening"
+              ? "Click to stop"
+              : status === "processing"
+                ? "Processing..."
+                : "Voice Search"}
+          </span>
+        </div>
       </button>
 
-      {/* Language Selector for Voice Search */}
-      {/* <select
+      <select
         value={selectedLanguage}
-        onChange={(e) => setSelectedLanguage(e.target.value)}
+        onChange={(event) => setSelectedLanguage(event.target.value)}
         className="languageSelect"
         title="Select language for voice search"
+        disabled={status !== "idle"}
       >
-        <option disabled>Choose your language for voice</option>
         {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
           <option key={code} value={code}>
             {name}
           </option>
         ))}
-      </select> */}
-      {/* Language selector in menu */}
-      {/* <select
-        value={selectedLanguage}
-        onChange={(e) => setSelectedLanguage(e.target.value)}
-        className={styles.languageSelect}
-        title="Select language"
-      >
-        <option disabled value="">
-          Choose language
-        </option>
-        {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
-          <option key={code} value={code}>
-            {name}
-          </option>
-        ))}
-      </select> */}
+      </select>
     </nav>
   );
 }
 
 Voice.propTypes = {
-  setIsLoading: propTypes.func,
-  isLoading: propTypes.bool,
+  setSongSuggestions: propTypes.func,
 };
 
 export default Voice;

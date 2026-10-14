@@ -44,7 +44,7 @@ Songs.propTypes = {
       }),
     ]),
   ).isRequired,
-  onRemoveSong: propTypes.func.isRequired,
+  onRemoveSong: propTypes.func,
 };
 
 export default Songs;
