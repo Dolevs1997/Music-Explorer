@@ -6,7 +6,7 @@ function PlaylistCategory({ playlist, shortName }) {
   const navigate = useNavigate();
   return (
     <div
-      className={styles.playlist}
+      className={styles.playlistCategory}
       onClick={() =>
         navigate(`/category/playlists/${playlist.id}/songs`, {
           state: {
@@ -19,7 +19,7 @@ function PlaylistCategory({ playlist, shortName }) {
       <h3 className={styles.playlistTitle}>{playlist.title}</h3>
 
       <img
-        className={styles.playlistImage}
+        className={styles.playlistCategoryImage}
         src={playlist.thumbnail}
         alt={playlist.image}
       />

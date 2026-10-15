@@ -1,4 +1,7 @@
-:global(.playlist-songs) {
+/* :global(.playlist-songs) {
   margin-top: 100px;
   justify-items: center;
+} */
+.playlistCategorySongs {
+  display: grid;
 }

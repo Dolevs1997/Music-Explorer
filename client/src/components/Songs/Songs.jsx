@@ -6,20 +6,18 @@ function Songs({ songSuggestions, onRemoveSong }) {
   const [playingVideoId, setPlayingVideoId] = useState(null);
 
   return (
-    <div>
+    <div className="playlists">
       {songSuggestions.length > 1 ? (
-        <div className="homeContainer">
-          <div className="playlists">
-            {songSuggestions.map((song) => (
-              <Song
-                key={typeof song === "object" ? song.videoId : song}
-                song={song}
-                playingVideoId={playingVideoId}
-                setPlayingVideoId={setPlayingVideoId}
-                onRemoveSong={onRemoveSong}
-              />
-            ))}
-          </div>
+        <div>
+          {songSuggestions.map((song) => (
+            <Song
+              key={typeof song === "object" ? song.videoId : song}
+              song={song}
+              playingVideoId={playingVideoId}
+              setPlayingVideoId={setPlayingVideoId}
+              onRemoveSong={onRemoveSong}
+            />
+          ))}
         </div>
       ) : (
         <div className="homeContainer">

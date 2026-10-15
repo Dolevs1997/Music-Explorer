@@ -1,11 +1,13 @@
+// import styles from "./CategorySongsPlaylist.module.css";
 import { useParams, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
-import Song from "../../components/Song/Song";
+// import Song from "../../components/Song/Song";
 import { Spinner } from "../../components/ui/spinner";
 import axios from "axios";
+import Songs from "../../components/Songs/Songs";
 function getUniqueSongs(songs) {
   const seen = new Set();
 
@@ -27,10 +29,10 @@ function CategorySongsPlaylist() {
   const { playlistId } = useParams();
   const location = useLocation();
   const { playlistName, country } = location.state || {};
-  const [playlist, setPlaylist] = useState([]);
+  // const [playlist, setPlaylist] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const [playingVideoId, setPlayingVideoId] = useState(null);
+  const [playlistSongs, setPlaylistSongs] = useState([]);
+  // const [playingVideoId, setPlayingVideoId] = useState(null);
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -44,7 +46,7 @@ function CategorySongsPlaylist() {
         }
         const data = await response.data;
         setIsLoading(false);
-        setPlaylist(getUniqueSongs(data));
+        setPlaylistSongs(getUniqueSongs(data));
       } catch (error) {
         console.error("Error fetching playlist:", error);
       }
@@ -55,7 +57,7 @@ function CategorySongsPlaylist() {
     } else {
       console.warn("Missing required params:", { playlistId, country });
     }
-  }, [playlistId, country]);
+  }, [playlistId, country, playlistSongs]);
   return (
     <div className="app-container">
       <header className="header">
@@ -64,29 +66,11 @@ function CategorySongsPlaylist() {
         <DropDownComponent />
       </header>
 
-      <div className="playlist-songs">
+      <div>
         <h2>{playlistName}</h2>
-        {playlist.length > 0 ? (
+        {playlistSongs.length > 0 ? (
           <div className="playlists">
-            {playlist.map((song) => (
-              <Song
-                key={
-                  song.videoId || song.song || song.searchQuery || song.title
-                }
-                song={
-                  typeof song === "object"
-                    ? {
-                        ...song,
-                        song: song.song || song.searchQuery || song.title,
-                      }
-                    : song
-                }
-                country={country}
-                playingVideoId={playingVideoId}
-                setPlayingVideoId={setPlayingVideoId}
-                playlistId={playlistId}
-              />
-            ))}
+            <Songs songSuggestions={playlistSongs} />
           </div>
         ) : isLoading ? (
           <Spinner />

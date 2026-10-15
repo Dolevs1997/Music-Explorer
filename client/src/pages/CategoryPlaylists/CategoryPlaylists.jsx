@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
+import SideBar from "../../components/SideBar/SideBar";
 
 function CategoryPlaylists() {
   const navigate = useNavigate();
@@ -28,13 +29,15 @@ function CategoryPlaylists() {
     <div>
       <header className="header">
         <Logo />
-        <Search />
         <DropDownComponent />
       </header>
-      <main className={styles.playlistsContainer}>
+      <SideBar />
+      <main className="home">
+        <Search />
+
         <h1 className={styles.title}>{categoryName} Playlist</h1>
 
-        <div className="playlists">
+        <div className={styles.categoryPlaylists}>
           {playlistsCategory.length > 0 &&
             playlistsCategory.map((playlist) => (
               <PlaylistCategory

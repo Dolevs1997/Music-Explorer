@@ -1,16 +1,22 @@
-.playlist {
+.playlistCategory {
   justify-items: center;
 }
 
-.playlist:hover {
+.playlistCategory:hover {
   cursor: pointer;
   transform: scale(1.05);
   transition: transform 0.2s ease-in-out;
 }
 
-.playlistImage {
-  width: 100%;
-  height: 100%;
+.playlistCategoryImage {
+  width: 250px;
+  height: 250px;
   border-radius: 10px;
   object-fit: contain;
+}
+.playlistTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
 }

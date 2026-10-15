@@ -200,7 +200,7 @@ h2:hover {
 }
 .playlists {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   gap: 30px;
   margin: 0 auto;
   align-items: center;
@@ -209,7 +209,7 @@ h2:hover {
 
 .playlists-user {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   gap: 30px;
   margin: 0 auto;
   align-items: center;
@@ -221,7 +221,7 @@ h2:hover {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    grid-template-columns: 1fr 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr 1fr; */
   }
 }
 @media screen and (max-width: 1024px) {
@@ -229,7 +229,7 @@ h2:hover {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    grid-template-columns: 1fr 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr 1fr; */
   }
 }
 @media screen and (max-width: 765px) {
@@ -237,7 +237,7 @@ h2:hover {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    grid-template-columns: 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr; */
   }
 }
 @media screen and (max-width: 765px) {
@@ -245,7 +245,7 @@ h2:hover {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    grid-template-columns: 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr; */
   }
 }
 
