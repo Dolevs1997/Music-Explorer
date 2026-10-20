@@ -1,4 +1,4 @@
-// import styles from "./CategorySongsPlaylist.module.css";
+import styles from "./CategorySongsPlaylist.module.css";
 import { useParams, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
@@ -8,6 +8,7 @@ import DropDownComponent from "../../components/DropDownComponent/DropDownCompon
 import { Spinner } from "../../components/ui/spinner";
 import axios from "axios";
 import Songs from "../../components/Songs/Songs";
+import SideBar from "../../components/SideBar/SideBar";
 function getUniqueSongs(songs) {
   const seen = new Set();
 
@@ -62,12 +63,12 @@ function CategorySongsPlaylist() {
     <div className="app-container">
       <header className="header">
         <Logo />
-        <Search />
         <DropDownComponent />
       </header>
-
-      <div>
-        <h2>{playlistName}</h2>
+      <SideBar />
+      <main className="home">
+        <Search />
+        <h2 className={styles.categorySongsPlaylistTitle}>{playlistName}</h2>
         {playlistSongs.length > 0 ? (
           <div className="playlists">
             <Songs songSuggestions={playlistSongs} />
@@ -77,7 +78,7 @@ function CategorySongsPlaylist() {
         ) : (
           <p>No playlist found</p>
         )}
-      </div>
+      </main>
     </div>
   );
 }

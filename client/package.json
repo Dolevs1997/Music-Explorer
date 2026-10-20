@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@gravity-ui/icons": "^2.23.0",
     "@heroui/button": "^2.2.29",
     "@heroui/card": "^2.2.27",
     "@heroui/image": "^2.2.18",
@@ -31,6 +32,7 @@
     "client": "file:",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
+    "iso8601-duration": "^2.2.0",
     "lucide-react": "^0.562.0",
     "motion": "^12.23.26",
     "openai": "^4.85.1",

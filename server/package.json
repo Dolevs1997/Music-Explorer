@@ -27,6 +27,7 @@
     "form-data": "^4.0.4",
     "fs": "^0.0.1-security",
     "ioredis": "^5.8.2",
+    "iso8601-duration": "^2.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.1",
     "multer": "^2.0.2",

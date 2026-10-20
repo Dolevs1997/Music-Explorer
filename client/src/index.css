@@ -199,12 +199,8 @@ h2:hover {
   margin-bottom: 50px;
 }
 .playlists {
-  display: grid;
   /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   gap: 30px;
-  margin: 0 auto;
-  align-items: center;
-  max-width: 1200px;
 }
 
 .playlists-user {
@@ -266,12 +262,11 @@ h2:hover {
   z-index: 0;
 }
 
-.homeContainer,
+/* .homeContainer,
 .homeContainerWithForm {
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
+} */
 .home {
   display: flex;
   flex-direction: column;

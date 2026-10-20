@@ -1,34 +1,32 @@
 import Song from "../Song/Song";
 import { useState } from "react";
 import propTypes from "prop-types";
-
+import styles from "./Songs.module.css";
 function Songs({ songSuggestions, onRemoveSong }) {
   const [playingVideoId, setPlayingVideoId] = useState(null);
 
   return (
-    <div className="playlists">
-      {songSuggestions.length > 1 ? (
-        <div>
-          {songSuggestions.map((song) => (
-            <Song
-              key={typeof song === "object" ? song.videoId : song}
-              song={song}
-              playingVideoId={playingVideoId}
-              setPlayingVideoId={setPlayingVideoId}
-              onRemoveSong={onRemoveSong}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="homeContainer">
+    <div className={styles.songsList}>
+      <div className={styles.songDetails}>
+        <div className={styles.columnHeading}>#</div>
+        <div className={styles.columnHeading}>Title</div>
+        <div className={styles.columnHeading}>Album</div>
+        <div className={styles.columnHeading}>Duration</div>
+        <div aria-hidden="true"></div>
+      </div>
+      <div className={styles.borderSection}></div>
+      <div className={styles.playlistSongs}>
+        {songSuggestions.map((song, index) => (
           <Song
-            song={songSuggestions[0]}
+            key={song?.videoId || `${song?.song || song?.title || song}-${index}`}
+            song={song}
             playingVideoId={playingVideoId}
             setPlayingVideoId={setPlayingVideoId}
             onRemoveSong={onRemoveSong}
+            index={index}
           />
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,3 +1,36 @@
-.boxSongs {
-  justify-items: center;
+.songsList {
+  width: 100%;
+}
+
+.songDetails {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 2fr) minmax(0, 1fr) 88px 44px;
+  align-items: center;
+  gap: 16px;
+  padding: 10px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.columnHeading:first-child {
+  text-align: center;
+}
+
+.borderSection {
+  border-bottom: 1px solid var(--bg-secondary);
+}
+
+.playlistSongs {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 520px) {
+  .songDetails {
+    grid-template-columns: 28px minmax(0, 2fr) minmax(0, 1fr) 64px 36px;
+    gap: 8px;
+    padding: 10px 6px;
+    font-size: 0.75rem;
+  }
 }

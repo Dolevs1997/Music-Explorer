@@ -1,118 +1,536 @@
-.songContainerBox h2:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-:global(.song) {
-  margin-top: 10px;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
+.songContainerBox {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 2fr) minmax(0, 1fr) 88px 80px;
   align-items: center;
-  padding: 5px;
+  gap: 16px;
+  padding: 10px;
   border-radius: 10px;
 }
 
-.song:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  background-color: var(--color-background-900);
-  transition:
-    background-color 0.4s ease,
-    box-shadow 0.3s ease;
-  transform: scale(1.005);
-}
-
-.addBtn {
-  margin-top: 10px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  background-color: var(--color-primary-500);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.addBtn:hover {
-  background-color: var(--color-primary-600);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.playlistSelect {
-  margin-top: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: var(--color-background-900);
-  color: var(--color-text);
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.playlistInput {
-  margin-top: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: var(--color-background-900);
-  color: var(--color-text);
-  border: none;
-  font-size: 1rem;
-  width: 100%;
-}
-
-.songDetails {
-  font-weight: bolder;
-  color: var(--color-text);
+.trackNumber {
+  color: var(--text-secondary);
   text-align: center;
-  margin-top: 5px;
+}
+
+.imageContainer {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  align-items: center;
 }
 
 .thumbnail {
-  width: 100%;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
-.thumbnail:hover {
-  transform: scale(1.02);
-  transition: transform 0.3s ease;
+.songInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.songTitle {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.songArtists {
+  overflow: hidden;
+  color: var(--purple-neon);
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.album,
+.duration {
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duration {
+  text-align: right;
+}
+
+.menuContainer {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.menuContainerOpen {
+  z-index: 60;
 }
 
 .optionsBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: none;
-  color: var(--color-text);
-  border: none;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 4px;
-  touch-action: manipulation;
-}
-.menuContainer {
-  position: relative;
-  z-index: 20;
-}
-.removeMenu {
-  position: relative;
-  z-index: 30;
-  touch-action: manipulation;
-}
-.optionItem {
-  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-:global(.modalOverlay) {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+.optionsBtn:hover,
+.optionsBtn[aria-expanded="true"] {
+  border-color: var(--border-glow);
+  background: var(--bg-elevated);
+  color: var(--purple-neon);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.18);
+}
+
+.optionsBtn:focus-visible,
+.closeMenuButton:focus-visible,
+.playlistOption:focus-visible,
+.createPlaylistButton:focus-visible,
+.cancelButton:focus-visible,
+.savePlaylistButton:focus-visible {
+  outline: 2px solid var(--purple-neon);
+  outline-offset: 2px;
+}
+
+.actionIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.playlistMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  width: min(310px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid var(--border-default);
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      ellipse at top right,
+      rgba(124, 58, 237, 0.16),
+      transparent 60%
+    ),
+    var(--bg-secondary);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(124, 58, 237, 0.12);
+  color: var(--text-primary);
+  animation: menuEnter 0.16s ease-out;
+}
+
+.menuHeader {
   display: flex;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 2px 13px;
+}
+
+.menuEyebrow {
+  color: var(--purple-neon);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.menuTitle {
+  margin: 3px 0 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.closeMenuButton {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.closeMenuButton:hover {
+  border-color: var(--border-default);
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.playlistList {
+  display: flex;
+  max-height: 224px;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  margin: 0 -5px;
+  padding: 0 5px 10px;
+}
+
+.playlistOption {
+  display: flex;
   align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 48px;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.playlistOption:hover {
+  border-color: rgba(192, 132, 252, 0.24);
+  background: rgba(168, 85, 247, 0.12);
+}
+
+.playlistArtwork {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(192, 132, 252, 0.26);
+  border-radius: 8px;
+  background: linear-gradient(145deg, #8b5cf6, #4c1d95);
+  color: white;
+  font-size: 1.15rem;
+}
+
+.playlistOptionName {
+  overflow: hidden;
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlistOptionArrow {
+  color: var(--text-muted);
+  font-size: 1rem;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.playlistOption:hover .playlistOptionArrow {
+  transform: translateX(2px);
+  color: var(--purple-neon);
+}
+
+.emptyPlaylists {
+  margin: 0;
+  padding: 14px 8px 18px;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.createPlaylistButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 9px 10px;
+  border: 1px solid rgba(192, 132, 252, 0.27);
+  border-radius: 10px;
+  background: rgba(168, 85, 247, 0.11);
+  color: var(--purple-neon);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: left;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.createPlaylistButton:hover {
+  border-color: var(--purple-neon);
+  background: rgba(168, 85, 247, 0.2);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.14);
+}
+
+.createPlaylistPlus {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--purple-primary);
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(4, 3, 12, 0.76);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.18s ease-out;
+}
+
+.playlistDialog {
+  width: min(420px, 100%);
+  padding: 30px;
+  border: 1px solid var(--border-glow);
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at top, rgba(124, 58, 237, 0.2), transparent 58%),
+    var(--bg-secondary);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.6),
+    var(--shadow-neon);
+  color: var(--text-primary);
+  text-align: center;
+  animation: dialogEnter 0.2s ease-out;
+}
+
+.dialogArtwork {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 17px;
+  place-items: center;
+  border: 1px solid rgba(216, 180, 254, 0.42);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #a855f7, #5b21b6 75%);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.32);
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.dialogTitle {
+  margin: 5px 0 8px;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: none;
+  cursor: default;
+}
+
+.dialogDescription {
+  margin: 0 auto 23px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.playlistForm {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 1;
+  text-align: left;
+}
+
+.playlistInputLabel {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.playlistInput {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  margin: 0 0 10px;
+  padding: 0 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  outline: none;
+  background: rgba(7, 6, 17, 0.72);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.playlistInput::placeholder {
+  color: var(--text-muted);
+}
+
+.playlistInput:focus {
+  border-color: var(--purple-neon);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.16);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.cancelButton,
+.savePlaylistButton {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cancelButton {
+  border-color: var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cancelButton:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.savePlaylistButton {
+  background: linear-gradient(110deg, #9333ea, #7c3aed);
+  box-shadow: 0 5px 16px rgba(124, 58, 237, 0.28);
+  color: #fff;
+}
+
+.savePlaylistButton:hover {
+  background: linear-gradient(110deg, #a855f7, #8b5cf6);
+  box-shadow: 0 7px 22px rgba(124, 58, 237, 0.42);
+}
+
+@keyframes menuEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 520px) {
+  .songContainerBox {
+    grid-template-columns: 28px minmax(0, 2fr) minmax(0, 1fr) 64px 36px;
+    gap: 8px;
+    padding: 10px 6px;
+  }
+
+  .thumbnail {
+    width: 42px;
+    height: 42px;
+  }
+
+  .imageContainer {
+    gap: 6px;
+  }
+
+  .album,
+  .duration {
+    font-size: 0.75rem;
+  }
+
+  .optionsBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .playlistMenu {
+    right: -8px;
+  }
+
+  .playlistDialog {
+    padding: 25px 20px;
+  }
+
+  .dialogActions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelButton,
+  .savePlaylistButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playlistMenu,
+  .modalOverlay,
+  .playlistDialog {
+    animation: none;
+  }
 }

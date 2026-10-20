@@ -36,6 +36,7 @@ const getAll = async (req: Request, res: Response) => {
     return res.status(200).json({
       song: songData.title,
       videoId: videoId,
+      duration: songData.duration,
       regionCode: country,
     });
   } catch (err: Error | any) {
@@ -55,6 +56,7 @@ const getBatch = async (req: Request, res: Response) => {
     const results: {
       songDetail: string;
       videoId: string;
+      duration?: string;
       regionCode: string;
     }[] = [];
     for (const song of songs) {
@@ -70,6 +72,7 @@ const getBatch = async (req: Request, res: Response) => {
       results.push({
         songDetail: songData.title,
         videoId: songData.videoId,
+        duration: songData.duration,
         regionCode: country,
       });
     }

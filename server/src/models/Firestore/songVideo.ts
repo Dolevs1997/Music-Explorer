@@ -5,6 +5,7 @@ import { adminDb } from "../../config/firebase_config";
 export type SongVideo = {
   title: string;
   videoId: string;
+  duration?: string;
 };
 
 const addSongVideo = async (userId: string, songVideo: SongVideo) => {
@@ -21,6 +22,7 @@ const addSongVideo = async (userId: string, songVideo: SongVideo) => {
     const docRef = await col.add({
       song: songVideo.title,
       videoId: songVideo.videoId,
+      duration: songVideo.duration,
       createdAt: FieldValue.serverTimestamp(),
     });
     console.log("Song video added with ID: ", docRef.id);
@@ -39,6 +41,7 @@ const getRecentSongVideos = async (userId: string, limit: number) => {
     const allSongs: SongVideo[] = querySnapshot.docs.map((doc: any) => ({
       title: doc.data().song,
       videoId: doc.data().videoId,
+      duration: doc.data().duration,
     }));
     // Fisher-Yates shuffle — different result on every call
     for (let i = allSongs.length - 1; i > 0; i--) {

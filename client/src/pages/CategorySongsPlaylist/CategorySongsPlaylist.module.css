@@ -2,6 +2,10 @@
   margin-top: 100px;
   justify-items: center;
 } */
-.playlistCategorySongs {
-  display: grid;
+
+.categorySongsPlaylistTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
 }

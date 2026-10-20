@@ -5,6 +5,7 @@ import {
   getCachedSongPlaylist,
   setCachedPlaylistSongs,
 } from "./Redis_service";
+
 dotenv.config();
 const API_KEY = process.env.YOUTUBE_API_KEY;
 // id: playlist.id,
@@ -266,6 +267,7 @@ async function fetchSong(
   if (
     cachedSong &&
     (cachedSong as any).videoId &&
+    typeof (cachedSong as any).duration === "string" &&
     !excludedVideoSet.has((cachedSong as any).videoId)
   ) {
     // console.log("Returning cached song:", cachedSong);
@@ -280,7 +282,7 @@ async function fetchSong(
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    // console.log("YouTube API response data:", data.items); // Debugging line
+    console.log("YouTube API response data:", data.items); // Debugging line
     if (!data || !data.items || data.items.length === 0) {
       return null; // No results found
     }
@@ -297,13 +299,34 @@ async function fetchSong(
       if (!videoId || !title) {
         throw new Error("No videos with videoId found for the given query");
       }
+      const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoId}&key=${API_KEY}`;
+      const detailsResponse = await fetch(detailsUrl, { signal });
+      console.log("detailsResponse: ", detailsResponse);
+      if (!detailsResponse.ok) {
+        throw new Error(
+          `Failed to fetch video details: ${detailsResponse.status} ${detailsResponse.statusText}`,
+        );
+      }
+      const detailsData = await detailsResponse.json();
+      const duration = detailsData.items?.[0]?.contentDetails?.duration;
+
+      // console.log(
+      //   "Fetched video details for videoId:",
+      //   videoId,
+      //   "Duration:",
+      //   duration,
+      // );
+      // if (!duration) {
+      //   throw new Error("No video details found for the given videoId");
+      // }
       // Only cache and return if we have a videoId
       await setCachedSong(song, country, {
         title,
         videoId,
+        duration,
       });
 
-      return { title, videoId };
+      return { title, videoId, duration };
     }
 
     return null; // No unique videos found
@@ -367,7 +390,6 @@ async function fetchPlaylistSongs(
       }
 
       const data = await response.json();
-      console.log("data in YouTube_service: ", data);
       total = data.total;
       const pageTracks = data.items
         .filter((item: any) => {
@@ -376,7 +398,6 @@ async function fetchPlaylistSongs(
           if (item?.track?.duration_ms >= 400000) return false;
           if (uniqueTrackIds.has(item?.track.id)) return false;
           uniqueTrackIds.add(item?.track.id);
-          console.log("item:", item);
           // Skip null tracks (can happen with local files or removed tracks)
           if (!item?.track) return false;
           if (!item.track.id) return false;
