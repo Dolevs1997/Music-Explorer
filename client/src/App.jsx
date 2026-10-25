@@ -29,7 +29,8 @@ import UserContext from "./Contexts/UserContext";
 import { Toaster, toast } from "react-hot-toast";
 import propTypes from "prop-types";
 import axios from "axios";
-
+import CustomPlayer from "./components/CustomPlayer/CustomPlayer";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ function ProtectedRoute({ children }) {
 ProtectedRoute.propTypes = {
   children: propTypes.node,
 };
+const queryClient = new QueryClient();
 
 function App() {
   const [songSuggestions, setSongSuggestions] = useState([]);
@@ -103,103 +105,108 @@ function App() {
   // }
   return (
     <UserProvider>
-      <Toaster />
-      <CurrentLocationContext.Provider
-        value={{ currentLocation, setCurrentLocation }}
-      >
-        <BrowserRouter>
-          <SearchContext.Provider value={searchContextValue}>
-            <Routes>
-              <Route path="/" element={<AppIntro />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+      <QueryClientProvider client={queryClient}>
+        <Toaster />
+        <CurrentLocationContext.Provider
+          value={{ currentLocation, setCurrentLocation }}
+        >
+          <BrowserRouter>
+            <SearchContext.Provider value={searchContextValue}>
+              <Routes>
+                <Route path="/" element={<AppIntro />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-              <Route
-                path="/home"
-                element={
-                  <ProtectedRoute>
-                    <Home user={initialUser} />
-                  </ProtectedRoute>
-                }
-              >
-                <Route path="categories" element={<Categories />} />
                 <Route
-                  path="songSuggestions"
-                  element={<Navigate to="/home" replace />}
+                  path="/home"
+                  element={
+                    <ProtectedRoute>
+                      <Home user={initialUser} />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="categories" element={<Categories />} />
+                  <Route
+                    path="songSuggestions"
+                    element={<Navigate to="/home" replace />}
+                  />
+                </Route>
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
                 />
-              </Route>
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
 
-              <Route
-                path="/category/playlists"
-                element={
-                  <ProtectedRoute>
-                    <CategoryPlaylists />
-                  </ProtectedRoute>
-                }
-              ></Route>
-              <Route
-                path="/category/playlists/:playlistId/songs"
-                element={
-                  <ProtectedRoute>
-                    <CategorySongsPlaylist />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/myplaylists"
-                element={
-                  <ProtectedRoute>
-                    <PlaylistsUser />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/myplaylists/:playlistId"
-                element={
-                  <ProtectedRoute>
-                    <SongsPlaylistUser />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/global"
-                element={
-                  <ProtectedRoute>
-                    <Home user={initialUser} />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/global/categories/:country"
-                element={
-                  <ProtectedRoute>
-                    <div className="home">
-                      <div className="header">
-                        <Logo />
-                        <Search />
-                        <DropDownComponent />
+                <Route
+                  path="/category/playlists"
+                  element={
+                    <ProtectedRoute>
+                      <CategoryPlaylists />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/category/playlists/:playlistId/songs"
+                  element={
+                    <ProtectedRoute>
+                      <CategorySongsPlaylist />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/myplaylists"
+                  element={
+                    <ProtectedRoute>
+                      <PlaylistsUser />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/myplaylists/:playlistId"
+                  element={
+                    <ProtectedRoute>
+                      <SongsPlaylistUser />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/global"
+                  element={
+                    <ProtectedRoute>
+                      <Home user={initialUser} />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/global/categories/:country"
+                  element={
+                    <ProtectedRoute>
+                      <div className="home">
+                        <div className="header">
+                          <Logo />
+                          <Search />
+                          <DropDownComponent />
+                        </div>
+                        <div className="homeContainer">
+                          <Categories />
+                        </div>
                       </div>
-                      <div className="homeContainer">
-                        <Categories />
-                      </div>
-                    </div>
-                  </ProtectedRoute>
-                }
-              />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="*" element={<ErrorPage />} />
-            </Routes>
-          </SearchContext.Provider>
-        </BrowserRouter>
-      </CurrentLocationContext.Provider>
+                <Route path="*" element={<ErrorPage />} />
+              </Routes>
+            </SearchContext.Provider>
+          </BrowserRouter>
+          <div className="media-player">
+            <CustomPlayer videoId={"ninQI8NzLMQ"} />
+          </div>
+        </CurrentLocationContext.Provider>
+      </QueryClientProvider>
     </UserProvider>
   );
 }

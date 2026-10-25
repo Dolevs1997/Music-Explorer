@@ -253,22 +253,15 @@ async function fetchSpotifyPlaylistsBySearch(
 
   return Array.from(unique.values());
 }
-async function fetchSong(
-  song: string,
-  country = "US",
-  excludedVideoIds: string[] = [],
-) {
+async function fetchSong(song: string, country = "US") {
   const controller = new AbortController();
   const signal = controller.signal;
-  const excludedVideoSet = new Set(
-    excludedVideoIds.map((id) => id.trim()).filter(Boolean),
-  );
+
   const cachedSong = await getCachedSong(song, country);
   if (
     cachedSong &&
     (cachedSong as any).videoId &&
-    typeof (cachedSong as any).duration === "string" &&
-    !excludedVideoSet.has((cachedSong as any).videoId)
+    typeof (cachedSong as any).duration === "string"
   ) {
     // console.log("Returning cached song:", cachedSong);
     return cachedSong;
@@ -282,15 +275,13 @@ async function fetchSong(
   try {
     const response = await fetch(url, { signal });
     const data = await response.json();
-    console.log("YouTube API response data:", data.items); // Debugging line
-    if (!data || !data.items || data.items.length === 0) {
-      return null; // No results found
+    if (data.error) {
+      console.error("YouTube API error:", data.error.code, data.error.message);
+      throw new Error(data.error.message);
     }
-
     // Find first search result that actually contains a unique videoId
     const itemWithVideo = data.items.find(
-      (it: any) =>
-        it && it.id && it.id.videoId && !excludedVideoSet.has(it.id.videoId),
+      (it: any) => it && it.id && it.id.videoId,
     );
 
     if (itemWithVideo) {
@@ -301,7 +292,6 @@ async function fetchSong(
       }
       const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoId}&key=${API_KEY}`;
       const detailsResponse = await fetch(detailsUrl, { signal });
-      console.log("detailsResponse: ", detailsResponse);
       if (!detailsResponse.ok) {
         throw new Error(
           `Failed to fetch video details: ${detailsResponse.status} ${detailsResponse.statusText}`,
@@ -309,17 +299,7 @@ async function fetchSong(
       }
       const detailsData = await detailsResponse.json();
       const duration = detailsData.items?.[0]?.contentDetails?.duration;
-
-      // console.log(
-      //   "Fetched video details for videoId:",
-      //   videoId,
-      //   "Duration:",
-      //   duration,
-      // );
-      // if (!duration) {
-      //   throw new Error("No video details found for the given videoId");
-      // }
-      // Only cache and return if we have a videoId
+      console.log("duration: ", duration);
       await setCachedSong(song, country, {
         title,
         videoId,

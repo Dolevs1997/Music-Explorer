@@ -1,17 +1,16 @@
 import axios from "axios";
 
-async function fetchSongYT(song, country, excludedVideoIds = []) {
+async function fetchSongYT(song, country) {
   const response = await axios.get(`/api/recommends/`, {
-    params: { song, country, excludedVideoIds: excludedVideoIds.join(",") },
+    params: { song, country },
   });
   return response.data;
 }
 
-async function fetchSongsYT(songs, country, excludedVideoIds = []) {
+async function fetchSongsYT(songs, country) {
   const response = await axios.post(`/api/recommends/batch`, {
     songs,
     country,
-    excludedVideoIds,
   });
   return response.data;
 }

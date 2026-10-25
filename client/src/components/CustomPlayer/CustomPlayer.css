@@ -1,0 +1,161 @@
+.cp {
+  --cp-gray: #8a8a8a;
+  --cp-track: #e2e2e2;
+  --cp-text: #111;
+  max-width: 700px;
+  width: 100%;
+  font-family: inherit;
+}
+
+/* Video area (YouTube iframe is injected inside) */
+.cp__video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  pointer-events: none; /* clicks go to your controls, not YouTube's overlay */
+}
+.cp__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Card */
+.cp__card {
+  background: var(--bg-primary);
+  border: 1px solid var(--purple-neon);
+  border-radius: 0 0 8px 8px;
+  padding: 16px 20px 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Progress row */
+.cp__progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.cp__time {
+  font-size: 15px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 44px;
+}
+.cp__progress .cp__range {
+  flex: 1;
+}
+
+/* Controls row */
+.cp__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.cp__transport {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.cp__volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 140px;
+  justify-content: flex-end;
+}
+.cp__volume .cp__range {
+  width: 90px;
+}
+
+/* Buttons */
+.cp__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  padding: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.cp__icon-btn:hover {
+  color: #555;
+}
+.cp__icon-btn.is-active {
+  color: #1db954; /* repeat enabled */
+}
+.cp__play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--text-muted);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+.cp__play:hover:not(:disabled) {
+  background: #6f6f6f;
+}
+.cp__play:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.cp__play:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Sliders (filled track via --fill) */
+.cp__range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    var(--cp-gray) 0%,
+    var(--cp-gray) var(--fill, 0%),
+    var(--cp-track) var(--fill, 0%),
+    var(--cp-track) 100%
+  );
+}
+.cp__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cp-gray);
+  border: 0;
+}
+.cp__range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cp-gray);
+  border: 0;
+}
+.cp__range--volume::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+}
+.cp__range--volume::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+}
+.cp__range:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

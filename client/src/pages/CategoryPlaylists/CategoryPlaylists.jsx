@@ -1,7 +1,6 @@
 import styles from "./CategoryPlaylists.module.css";
 import { useLocation } from "react-router";
 import PlaylistCategory from "../../components/PlaylistCategory/PlaylistCategory";
-import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
@@ -9,7 +8,6 @@ import DropDownComponent from "../../components/DropDownComponent/DropDownCompon
 import SideBar from "../../components/SideBar/SideBar";
 
 function CategoryPlaylists() {
-  const navigate = useNavigate();
   const location = useLocation();
   const [playlistsCategory, setPlaylistsCategory] = useState([]);
   const [categoryName, setCategoryName] = useState("Category");
@@ -23,7 +21,7 @@ function CategoryPlaylists() {
       setPlaylistsCategory(state.playlistsCategory);
       setCategoryName(state.categoryName);
     }
-  }, [location, navigate]);
+  }, [location]);
 
   return (
     <div>

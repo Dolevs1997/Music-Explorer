@@ -1,10 +1,19 @@
 import Song from "../Song/Song";
-import { useState } from "react";
+import { useMemo } from "react";
 import propTypes from "prop-types";
 import styles from "./Songs.module.css";
-function Songs({ songSuggestions, onRemoveSong }) {
-  const [playingVideoId, setPlayingVideoId] = useState(null);
+import { normalizeSong } from "../../utils/normalizeSong";
+import { usePlayerStore } from "../../hooks/usePlayerStore";
+import { useResolvedSongs } from "../../hooks/useResolvedSongs";
+function Songs({ songSuggestions, sourceId, country, onRemoveSong }) {
+  const normalizedSongs = useMemo(
+    () => songSuggestions.map(normalizeSong),
+    [songSuggestions],
+  );
+  const { songs } = useResolvedSongs(normalizedSongs, country);
+  const playPlaylist = usePlayerStore((s) => s.playPlaylist);
 
+  // console.log(localStorage.getItem("user"));
   return (
     <div className={styles.songsList}>
       <div className={styles.songDetails}>
@@ -16,14 +25,13 @@ function Songs({ songSuggestions, onRemoveSong }) {
       </div>
       <div className={styles.borderSection}></div>
       <div className={styles.playlistSongs}>
-        {songSuggestions.map((song, index) => (
+        {songs.map((song, index) => (
           <Song
-            key={song?.videoId || `${song?.song || song?.title || song}-${index}`}
+            key={index}
             song={song}
-            playingVideoId={playingVideoId}
-            setPlayingVideoId={setPlayingVideoId}
             onRemoveSong={onRemoveSong}
             index={index}
+            onPlay={() => playPlaylist(normalizedSongs, index, sourceId)}
           />
         ))}
       </div>
@@ -40,6 +48,8 @@ Songs.propTypes = {
       }),
     ]),
   ).isRequired,
+  sourceId: propTypes.string,
+  country: propTypes.string,
   onRemoveSong: propTypes.func,
 };
 

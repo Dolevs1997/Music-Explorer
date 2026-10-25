@@ -71,13 +71,25 @@ function CategorySongsPlaylist() {
         <h2 className={styles.categorySongsPlaylistTitle}>{playlistName}</h2>
         {playlistSongs.length > 0 ? (
           <div className="playlists">
-            <Songs songSuggestions={playlistSongs} />
+            <Songs
+              songSuggestions={playlistSongs}
+              sourceId={playlistId}
+              country={country}
+            />
           </div>
         ) : isLoading ? (
           <Spinner />
         ) : (
           <p>No playlist found</p>
         )}
+
+        {/* <iframe
+          id="ytplayer"
+          type="text/html"
+          width="640"
+          height="40"
+          src="https://www.youtube.com/embed/fV4DiAyExN0?si=QWwntI3GoJx9GqqB"
+        ></iframe> */}
       </main>
     </div>
   );
