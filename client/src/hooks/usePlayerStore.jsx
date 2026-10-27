@@ -1,23 +1,40 @@
 import { create } from "zustand";
-
+function findPlayable(queue, from, step) {
+  for (let i = from; i >= 0 && i < queue.length; i += step) {
+    if (queue[i]?.videoId) return i;
+  }
+  return -1; // אין שיר שאפשר לנגן בכיוון הזה
+}
 export const usePlayerStore = create((set, get) => ({
   queue: [],
   currentIndex: -1,
-  sourceId: null,
+  source: null,
   isPlaying: false,
-
-  playPlaylist: (songs, index, sourceId) =>
-    set({ queue: songs, currentIndex: index, sourceId, isPlaying: true }),
+  country: "US",
+  playPlaylist: (songs, index, source) => {
+    if (!songs[index]?.videoId) return;
+    set({
+      queue: songs,
+      currentIndex: index,
+      source: source,
+      isPlaying: true,
+    });
+  },
 
   next: () => {
-    const { currentIndex, queue } = get();
-    if (currentIndex < queue.length - 1)
-      set({ currentIndex: currentIndex + 1 });
+    const { queue, currentIndex } = get();
+    const i = findPlayable(queue, currentIndex + 1, 1);
+    if (i === -1) {
+      set({ isPlaying: false }); // סוף התור
+      return;
+    }
+    set({ currentIndex: i });
   },
 
   prev: () => {
-    const { currentIndex } = get();
-    if (currentIndex > 0) set({ currentIndex: currentIndex - 1 });
+    const { queue, currentIndex } = get();
+    const i = findPlayable(queue, currentIndex - 1, -1);
+    if (i !== -1) set({ currentIndex: i });
   },
 
   setPlaying: (isPlaying) => set({ isPlaying }),

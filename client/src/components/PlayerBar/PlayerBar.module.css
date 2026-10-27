@@ -1,0 +1,10 @@
+.playerBar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  z-index: 1000; /* מעל שאר התוכן */
+  width: min(600px, calc(100% - 32px));
+  transform: translateX(-50%);
+}
+.playerBarInfo {
+}

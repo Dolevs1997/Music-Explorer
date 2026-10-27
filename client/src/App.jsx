@@ -29,8 +29,8 @@ import UserContext from "./Contexts/UserContext";
 import { Toaster, toast } from "react-hot-toast";
 import propTypes from "prop-types";
 import axios from "axios";
-import CustomPlayer from "./components/CustomPlayer/CustomPlayer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import PlayerBar from "./components/PlayerBar/PlayerBar";
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -201,10 +201,8 @@ function App() {
                 <Route path="*" element={<ErrorPage />} />
               </Routes>
             </SearchContext.Provider>
+            <PlayerBar />
           </BrowserRouter>
-          <div className="media-player">
-            <CustomPlayer videoId={"ninQI8NzLMQ"} />
-          </div>
         </CurrentLocationContext.Provider>
       </QueryClientProvider>
     </UserProvider>

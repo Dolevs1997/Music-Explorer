@@ -5,14 +5,22 @@ import styles from "./Songs.module.css";
 import { normalizeSong } from "../../utils/normalizeSong";
 import { usePlayerStore } from "../../hooks/usePlayerStore";
 import { useResolvedSongs } from "../../hooks/useResolvedSongs";
-function Songs({ songSuggestions, sourceId, country, onRemoveSong }) {
+import { useLocation } from "react-router-dom";
+
+function Songs({ songSuggestions, country, onRemoveSong }) {
   const normalizedSongs = useMemo(
     () => songSuggestions.map(normalizeSong),
     [songSuggestions],
   );
   const { songs } = useResolvedSongs(normalizedSongs, country);
   const playPlaylist = usePlayerStore((s) => s.playPlaylist);
-
+  const location = useLocation();
+  const source = {
+    pathname: location.pathname,
+    search: location.search,
+    state: location.state,
+  }; // console.log("pathName: ", pathname);
+  // console.log("search: ", search);
   // console.log(localStorage.getItem("user"));
   return (
     <div className={styles.songsList}>
@@ -31,7 +39,7 @@ function Songs({ songSuggestions, sourceId, country, onRemoveSong }) {
             song={song}
             onRemoveSong={onRemoveSong}
             index={index}
-            onPlay={() => playPlaylist(normalizedSongs, index, sourceId)}
+            onPlay={() => playPlaylist(songs, index, source)}
           />
         ))}
       </div>

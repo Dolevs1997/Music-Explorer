@@ -10,17 +10,18 @@ import { removeBtn } from "../../Contexts/RemoveContext";
 import { removeSongFromPlaylist } from "../../utils/playlist";
 // import { generateImagePlaylist } from "../../services/OpenAI_service";
 
-function Song({ song, setPlayingVideoId, onRemoveSong, index }) {
+function Song({ song, onRemoveSong, index, onPlay }) {
   const remove = useContext(removeBtn);
   const [isHover, setIsHover] = useState(false);
   const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const { user } = useContext(UserContext);
   const playlists = user?.playlists || [];
+  const canPlay = Boolean(song.videoId);
+
   // console.log("song details: ", song);
   // console.log(playlists);
 
   function formatTime(time) {
-    console.log("time: ", time);
     const minutes = time?.minutes;
     const seconds = time?.seconds;
 
@@ -52,7 +53,18 @@ function Song({ song, setPlayingVideoId, onRemoveSong, index }) {
         onMouseLeave={() => setIsHover(false)}
       >
         <span className={styles.trackNumber}>
-          {isHover ? <CirclePlay className={styles.optionsBtn} /> : index + 1}
+          {isHover ? (
+            <CirclePlay
+              onClick={canPlay ? onPlay : undefined}
+              className={styles.optionsBtn}
+              style={{
+                opacity: canPlay ? 1 : 0.35,
+                cursor: canPlay ? "pointer" : "default",
+              }}
+            />
+          ) : (
+            index + 1
+          )}
         </span>
 
         <div className={styles.imageContainer}>
@@ -60,9 +72,6 @@ function Song({ song, setPlayingVideoId, onRemoveSong, index }) {
             src={`https://img.youtube.com/vi/${song.videoId}/hqdefault.jpg`}
             className={styles.thumbnail}
             loading="lazy"
-            onClick={() => {
-              setPlayingVideoId?.(song.videoId);
-            }}
           />
           <div className={styles.songInfo}>
             <span className={styles.songTitle}>{song.title}</span>
@@ -108,30 +117,22 @@ function Song({ song, setPlayingVideoId, onRemoveSong, index }) {
 }
 
 Song.propTypes = {
-  song: propTypes.oneOfType([
-    propTypes.string,
-    propTypes.shape({
-      song: propTypes.string,
-      songDetail: propTypes.string,
-      artists: propTypes.oneOfType([
-        propTypes.string,
-        propTypes.arrayOf(
-          propTypes.oneOfType([
-            propTypes.string,
-            propTypes.shape({ name: propTypes.string }),
-          ]),
-        ),
-      ]),
-      title: propTypes.string,
-      videoId: propTypes.string,
+  song: propTypes.shape({
+    id: propTypes.string,
+    query: propTypes.string,
+    title: propTypes.string,
+    videoId: propTypes.string,
+    artists: propTypes.string,
+    album: propTypes.string,
+    duration: propTypes.shape({
+      minutes: propTypes.number,
+      seconds: propTypes.number,
     }),
-  ]).isRequired,
-  country: propTypes.string,
-  playingVideoId: propTypes.string,
-  setPlayingVideoId: propTypes.func,
-  playlistId: propTypes.string,
+  }),
+
   onRemoveSong: propTypes.func,
   index: propTypes.number,
+  onPlay: propTypes.func,
 };
 
 export default Song;

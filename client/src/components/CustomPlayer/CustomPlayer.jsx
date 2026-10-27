@@ -1,13 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./CustomPlayer.css";
 import propTypes from "prop-types";
+import { Link } from "react-router";
 /* ---------- YouTube IFrame API loader (loads the script once) ---------- */
-// declare global {
-//   interface Window {
-//     YT?: any;
-//     onYouTubeIframeAPIReady?: () => void;
-//   }
-// }
 
 let apiPromise = null;
 function loadYouTubeApi() {
@@ -33,25 +28,18 @@ const formatTime = (s) => {
   return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 };
 
-/* ---------- Component ---------- */
-// interface CustomPlayerProps {
-//   videoId: string;
-//   onNext?: () => void;
-//   onPrev?: () => void;
-//   onEnded?: () => void;
-//   autoPlay?: boolean;
-// }
-
 export default function CustomPlayer({
   videoId,
   onNext,
   onPrev,
   onEnded,
   autoPlay = false,
-  queue,
-  currentIndex,
-  sourcePlaylistId,
+  info,
+  title,
+  source,
 }) {
+  const [showVideo, setShowVideo] = useState(false);
+
   const mountRef = useRef(null);
   const playerRef = useRef(null);
   const repeatRef = useRef(false);
@@ -66,7 +54,6 @@ export default function CustomPlayer({
   const [muted, setMuted] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const [seeking, setSeeking] = useState(false);
-
   // Create the player once
   useEffect(() => {
     let cancelled = false;
@@ -174,10 +161,12 @@ export default function CustomPlayer({
   return (
     <div className="cp">
       {/* The YouTube video. Remove/resize this wrapper if you don't want it shown. */}
-      {/* <div className="cp__video">
+      <div className={`cp__video ${showVideo ? "is-open" : ""}`}>
         <div ref={mountRef} />
-      </div> */}
-
+      </div>
+      <button onClick={() => setShowVideo((v) => !v)}>
+        {showVideo ? "Hide video" : "Show video"}
+      </button>
       <div className="cp__card">
         {/* Progress row */}
         <div className="cp__progress">
@@ -214,7 +203,10 @@ export default function CustomPlayer({
               <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
             </svg>
           </button>
-
+          <div>
+            {info}
+            <span>{title}</span>
+          </div>
           <div className="cp__transport">
             <button
               className="cp__icon-btn"
@@ -257,7 +249,12 @@ export default function CustomPlayer({
                 </svg>
               )}
             </button>
-
+            <Link
+              to={{ pathname: source.pathname, search: source.search }}
+              state={source.state}
+            >
+              Go to playlist
+            </Link>
             <button className="cp__icon-btn" onClick={onNext} aria-label="Next">
               <svg
                 viewBox="0 0 24 24"
@@ -312,4 +309,11 @@ CustomPlayer.propTypes = {
   onPrev: propTypes.func,
   onEnded: propTypes.func,
   autoPlay: propTypes.bool,
+  info: propTypes.element,
+  title: propTypes.string,
+  source: propTypes.shape({
+    pathname: propTypes.string,
+    search: propTypes.string,
+    state: propTypes.object,
+  }),
 };
