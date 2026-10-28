@@ -82,43 +82,6 @@
   z-index: 60;
 }
 
-.optionsBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  padding: 9px;
-  border: 1px solid transparent;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.optionsBtn:hover,
-.optionsBtn[aria-expanded="true"] {
-  border-color: var(--border-glow);
-  background: var(--bg-elevated);
-  color: var(--purple-neon);
-  box-shadow: 0 0 14px rgba(168, 85, 247, 0.18);
-}
-
-.optionsBtn:focus-visible {
-  outline: 2px solid var(--purple-neon);
-  outline-offset: 2px;
-}
-
-.actionIcon {
-  width: 22px;
-  height: 22px;
-}
-
 @media (max-width: 520px) {
   .songContainerBox {
     grid-template-columns: 28px minmax(0, 2fr) minmax(0, 1fr) 64px 36px;

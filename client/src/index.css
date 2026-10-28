@@ -39,10 +39,48 @@
   --color-button-delete: rgba(220, 50, 50, 0.1);
   --color-button-delete-hover: rgba(220, 50, 50, 0.2);
 }
+
 .icons {
   color: var(--purple-neon);
   cursor: pointer;
 }
+.action-icon {
+  width: 22px;
+  height: 22px;
+}
+/*-----button class*/
+.options-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.options-btn:hover,
+.options-btn[aria-expanded="true"] {
+  border-color: var(--border-glow);
+  background: var(--bg-elevated);
+  color: var(--purple-neon);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.18);
+}
+
+.options-btn:focus-visible {
+  outline: 2px solid var(--purple-neon);
+  outline-offset: 2px;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   color: var(--color-text) !important;

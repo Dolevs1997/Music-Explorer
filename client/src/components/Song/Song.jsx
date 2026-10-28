@@ -88,7 +88,7 @@ function Song({ song, onRemoveSong, index, onPlay }) {
         </div>
         <button
           type="button"
-          className={styles.optionsBtn}
+          className="options-btn"
           onClick={() =>
             remove
               ? handleRemoveSongFromPlaylist(song.videoId, remove.playlistId)
@@ -100,9 +100,9 @@ function Song({ song, onRemoveSong, index, onPlay }) {
           aria-expanded={!remove && menuPlaylistsOpen}
         >
           {remove ? (
-            <TrashBin className={styles.actionIcon} />
+            <TrashBin className="action-icon" />
           ) : (
-            <SquarePlus className={styles.actionIcon} />
+            <SquarePlus className="action-icon" />
           )}
         </button>
 

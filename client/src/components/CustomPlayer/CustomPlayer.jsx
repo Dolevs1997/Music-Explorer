@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./CustomPlayer.css";
 import propTypes from "prop-types";
 import { Link } from "react-router";
-/* ---------- YouTube IFrame API loader (loads the script once) ---------- */
+import { Xmark } from "@gravity-ui/icons"; /* ---------- YouTube IFrame API loader (loads the script once) ---------- */
 
 let apiPromise = null;
 function loadYouTubeApi() {
@@ -37,6 +37,7 @@ export default function CustomPlayer({
   info,
   title,
   source,
+  onClose,
 }) {
   const [showVideo, setShowVideo] = useState(false);
 
@@ -55,6 +56,7 @@ export default function CustomPlayer({
   const [repeat, setRepeat] = useState(false);
   const [seeking, setSeeking] = useState(false);
   // Create the player once
+
   useEffect(() => {
     let cancelled = false;
     loadYouTubeApi().then(() => {
@@ -169,6 +171,15 @@ export default function CustomPlayer({
       </button>
       <div className="cp__card">
         {/* Progress row */}
+        <button
+          type="button"
+          className="options-btn"
+          aria-label="Close Player"
+          onClick={onClose}
+        >
+          <Xmark />
+        </button>
+
         <div className="cp__progress">
           <span className="cp__time">{formatTime(current)}</span>
           <input
@@ -316,4 +327,5 @@ CustomPlayer.propTypes = {
     search: propTypes.string,
     state: propTypes.object,
   }),
+  onClose: propTypes.func,
 };

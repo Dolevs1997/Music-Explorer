@@ -6,6 +6,8 @@ function PlayerBar() {
   const source = usePlayerStore((s) => s.source);
   const next = usePlayerStore((s) => s.next);
   const prev = usePlayerStore((s) => s.prev);
+  const closePlayer = usePlayerStore((s) => s.closePlayer);
+
   if (!song) return null;
 
   const info = (
@@ -35,6 +37,7 @@ function PlayerBar() {
         info={info}
         title={song.title}
         source={source}
+        onClose={closePlayer}
       />
     </div>
   );

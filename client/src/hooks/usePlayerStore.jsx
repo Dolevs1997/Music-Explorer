@@ -38,4 +38,6 @@ export const usePlayerStore = create((set, get) => ({
   },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
+  closePlayer: () =>
+    set({ queue: [], currentIndex: -1, source: null, isPlaying: false }),
 }));
