@@ -56,7 +56,7 @@ function Song({ song, onRemoveSong, index, onPlay }) {
           {isHover ? (
             <CirclePlay
               onClick={canPlay ? onPlay : undefined}
-              className={styles.optionsBtn}
+              className="options-btn"
               style={{
                 opacity: canPlay ? 1 : 0.35,
                 cursor: canPlay ? "pointer" : "default",

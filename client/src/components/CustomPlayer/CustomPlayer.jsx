@@ -2,8 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./CustomPlayer.css";
 import propTypes from "prop-types";
 import { Link } from "react-router";
-import { Xmark } from "@gravity-ui/icons"; /* ---------- YouTube IFrame API loader (loads the script once) ---------- */
-
+import {
+  Xmark,
+  PlayFill,
+  BackwardStepFill,
+  ForwardStepFill,
+  PauseFill,
+} from "@gravity-ui/icons"; /* ---------- YouTube IFrame API loader (loads the script once) ---------- */
 let apiPromise = null;
 function loadYouTubeApi() {
   if (window.YT?.Player) return Promise.resolve();
@@ -219,65 +224,41 @@ export default function CustomPlayer({
             <span>{title}</span>
           </div>
           <div className="cp__transport">
-            <button
-              className="cp__icon-btn"
-              onClick={onPrev}
-              aria-label="Previous"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="28"
-                height="28"
-                fill="currentColor"
+            <div className="controllers">
+              <button
+                className="cp__icon-btn"
+                onClick={onPrev}
+                aria-label="Previous"
               >
-                <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
-              </svg>
-            </button>
+                <BackwardStepFill />
+              </button>
 
-            <button
-              className="cp__play"
-              onClick={togglePlay}
-              disabled={!ready}
-              aria-label={playing ? "Pause" : "Play"}
-            >
-              {playing ? (
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="currentColor"
-                >
-                  <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
-                </svg>
-              ) : (
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="currentColor"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </button>
+              <button
+                className="cp__icon-btn"
+                onClick={togglePlay}
+                disabled={!ready}
+                aria-label={playing ? "Pause" : "Play"}
+              >
+                {!playing && <PlayFill />}
+                {playing && <PauseFill />}
+              </button>
+
+              <button
+                className="cp__icon-btn"
+                onClick={onNext}
+                aria-label="Next"
+              >
+                <ForwardStepFill />
+              </button>
+            </div>
             <Link
+              className="link-playlist"
               to={{ pathname: source.pathname, search: source.search }}
               state={source.state}
             >
               Go to playlist
             </Link>
-            <button className="cp__icon-btn" onClick={onNext} aria-label="Next">
-              <svg
-                viewBox="0 0 24 24"
-                width="28"
-                height="28"
-                fill="currentColor"
-              >
-                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-              </svg>
-            </button>
           </div>
-
           <div className="cp__volume">
             <button
               className="cp__icon-btn"
