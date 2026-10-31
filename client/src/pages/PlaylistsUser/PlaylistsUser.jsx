@@ -1,13 +1,11 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
-import { Pencil } from "@gravity-ui/icons";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import { Pencil, Plus } from "@gravity-ui/icons";
 import { toast } from "react-hot-toast";
 import Logo from "../../components/Logo/Logo.jsx";
-import Search from "../../components/Search/Search.jsx";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import SideBar from "../../components/SideBar/SideBar.jsx";
-import CreateModalPlaylist from "../../components/CreatePlaylistModal/CreateModalPlaylist.jsx";
+import CreateModalPlaylist from "../../components/CreateModalPlaylist/CreateModalPlaylist.jsx";
 import DeleteModalPlaylist from "../../components/DeletePlaylistModal/DeleteModalPlaylist.jsx";
 import EditPlaylistModal from "../../components/EditPlaylistModal/EditPlaylistModal.jsx";
 import UploadPlaylistImageModal from "../../components/UploadPlaylistImageModal/UploadPlaylistImageModal.jsx";
@@ -16,6 +14,8 @@ import PlaylistUserCard from "../../components/PlaylistUserCard/PlaylistUserCard
 import UserContext from "../../Contexts/UserContext.jsx";
 import { removePlaylist, updatePlaylist } from "../../utils/playlist.js";
 import styles from "./PlaylistsUser.module.css";
+import Button from "../../components/Button/Button.jsx";
+import { createPlaylist } from "../../utils/playlist.js";
 
 function PlaylistsUser() {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -26,7 +26,27 @@ function PlaylistsUser() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const playlists = user.playlists;
-  console.log("selectedPlaylist: ", selectedPlaylist);
+  // console.log("selectedPlaylist: ", selectedPlaylist);
+  // console.log("playlists: ", playlists);
+  async function handleAddPlaylist() {
+    setActiveModal(false);
+    try {
+      const result = await createPlaylist(playlistName, user);
+      if (result.status === 200) {
+        const updatedUser = {
+          ...user,
+          playlists: [...user.playlists, result.data.playlist],
+        };
+        setUser(updatedUser);
+        toast.success(`${result.data.message}`);
+      } else {
+        toast.error(`${result.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+      toast.error("Failed to create playlist. Please try again.");
+    }
+  }
   function updateUserPlaylist(playlist) {
     const updatedUser = {
       ...user,
@@ -140,21 +160,18 @@ function PlaylistsUser() {
       </header>
       <SideBar />
       <main className="home">
-        <Search />
-        <main className="home">
-          <h1>Your Playlists</h1>
+        <>
           <div className={styles.playlistHeader}>
-            <NavDropdown
-              title=""
-              style={{
-                marginLeft: "30px",
-                fontSize: "30px",
-              }}
+            <h1>Your Playlists</h1>
+            <Button
+              type="create-playlist"
+              onClick={() => setActiveModal("create")}
             >
-              <NavDropdown.Item onClick={() => setActiveModal("create")}>
+              <div className={styles.createPlaylistBtn}>
+                <Plus />
                 Create Playlist
-              </NavDropdown.Item>
-            </NavDropdown>
+              </div>
+            </Button>
           </div>
 
           {playlists.length > 0 ? (
@@ -228,9 +245,10 @@ function PlaylistsUser() {
             <CreateModalPlaylist
               playlistName={playlistName}
               setPlaylistName={setPlaylistName}
-              setShowCreateModal={(isOpen) =>
+              setShowModal={(isOpen) =>
                 setActiveModal(isOpen ? "create" : null)
               }
+              onClick={handleAddPlaylist}
             />
           )}
           {activeModal === "delete" && selectedPlaylist && (
@@ -263,7 +281,7 @@ function PlaylistsUser() {
               onClose={() => setActiveModal(null)}
             />
           )}
-        </main>
+        </>
       </main>
     </div>
   );

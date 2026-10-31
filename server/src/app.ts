@@ -41,7 +41,7 @@ const initApp = async () => {
     app.use(json());
     app.use(cookieParser());
     app.use(urlencoded({ extended: true }));
-    app.use(express.static(path.join(__dirname, "public")));
+    app.use(express.static(path.join(__dirname, "../public")));
     app.use("/auth", authRouter);
     app.use("/api/recommends", recommendRouter);
     app.use("/api/categories", categoriesRouter);

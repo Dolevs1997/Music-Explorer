@@ -1,10 +1,10 @@
 import axios from "axios";
-async function addSongToPlaylist(song, state, user, playlist) {
+async function addSongToPlaylist(song, user, playlist) {
   const response = await axios.post(
     `/api/playlist/addSong?id=${playlist._id || playlist.id}`,
     {
-      song: song,
-      videoId: state.videoId,
+      song: song.query,
+      videoId: song?.videoId,
       user: user,
     },
   );

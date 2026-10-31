@@ -2,13 +2,18 @@ button {
   padding: 10px 20px;
   border-radius: 7px;
   border: none;
-  color: white;
   font-size: 0.9rem;
   cursor: pointer;
   width: fit-content;
+  background: transparent;
+  border: 1px solid transparent;
+
+  color: var(--text-secondary);
   transition:
-    background 0.2s ease,
-    transform 0.15s ease;
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 /* ── Danger Button ── */
 
@@ -84,4 +89,48 @@ button[type="accept"]:hover:not(:disabled) {
 
 button[type="link"] {
   background-color: var(--color-background-800);
+}
+button[type="options-btn"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+button[type="options-btn"]:hover,
+button[type="options-btn"][aria-expanded="true"] {
+  border-color: var(--border-glow);
+  background: var(--bg-elevated);
+  color: var(--purple-neon);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.18);
+}
+
+button[type="options-btn"]:focus-visible {
+  outline: 2px solid var(--purple-neon);
+  outline-offset: 2px;
+}
+button[type="create-playlist"] {
+  font-size: 0.88rem;
+  font-weight: 700;
+  border: 1px solid rgba(192, 132, 252, 0.27);
+  border-radius: 10px;
+  background: rgba(168, 85, 247, 0.11);
+  transform: translateX(calc(100% + 450px));
+}
+
+button[type="create-playlist"]:hover {
+  border-color: var(--purple-neon);
+  background: rgba(168, 85, 247, 0.2);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.14);
 }

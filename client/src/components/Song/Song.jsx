@@ -110,6 +110,7 @@ function Song({ song, onRemoveSong, index, onPlay }) {
           menuPlaylistsOpen={menuPlaylistsOpen}
           setMenuPlaylistsOpen={setMenuPlaylistsOpen}
           playlists={playlists}
+          song={song}
         />
       </div>
     </div>

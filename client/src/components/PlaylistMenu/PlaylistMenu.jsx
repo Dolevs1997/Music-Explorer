@@ -5,17 +5,17 @@ import propTypes from "prop-types";
 import { useContext, useState } from "react";
 import { addSongToPlaylist, createPlaylist } from "../../utils/playlist";
 import toast from "react-hot-toast";
+import CreateModalPlaylist from "../CreateModalPlaylist/CreateModalPlaylist";
 
 function PlaylistMenu({
   menuPlaylistsOpen,
   setMenuPlaylistsOpen,
   playlists,
-  state,
-  songDetails,
+  song,
 }) {
   const { user, setUser } = useContext(UserContext);
   const [playlistName, setPlaylistName] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(null);
 
   const remove = useContext(removeBtn);
 
@@ -39,7 +39,7 @@ function PlaylistMenu({
       }
 
       await handleAddSongToPlaylist(newPlaylist);
-      setShowModal(false);
+      setShowModal(null);
     } catch (error) {
       console.error("Error creating playlist:", error);
       toast.error("Failed to create playlist. Please try again.");
@@ -52,12 +52,7 @@ function PlaylistMenu({
         return;
       }
 
-      const response = await addSongToPlaylist(
-        songDetails,
-        state,
-        user,
-        playlist,
-      );
+      const response = await addSongToPlaylist(song, user, playlist);
       const data = response.data;
       const addedSong = data?.playlist?.songs?.at(-1);
 
@@ -151,7 +146,7 @@ function PlaylistMenu({
             className={styles.createPlaylistButton}
             onClick={() => {
               setMenuPlaylistsOpen(false);
-              setShowModal(true);
+              setShowModal("add-song");
             }}
           >
             <span className={styles.createPlaylistPlus} aria-hidden>
@@ -161,66 +156,13 @@ function PlaylistMenu({
           </button>
         </div>
       )}
-      {showModal && (
-        <div
-          className={styles.modalOverlay}
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setShowModal(false);
-          }}
-        >
-          <section
-            className={styles.playlistDialog}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="create-playlist-title"
-          >
-            <div className={styles.dialogArtwork} aria-hidden>
-              ♪
-            </div>
-            <span className={styles.menuEyebrow}>MAKE IT YOURS</span>
-            <h2 id="create-playlist-title" className={styles.dialogTitle}>
-              Create a playlist
-            </h2>
-            <p className={styles.dialogDescription}>
-              Give your new collection a name. We’ll add this song to it.
-            </p>
-            <form
-              className={styles.playlistForm}
-              onSubmit={(event) => {
-                event.preventDefault();
-                handleCreatePlaylist();
-              }}
-            >
-              <label
-                className={styles.playlistInputLabel}
-                htmlFor="playlist-name"
-              >
-                Playlist name
-              </label>
-              <input
-                id="playlist-name"
-                className={styles.playlistInput}
-                type="text"
-                placeholder="e.g. Late night discoveries"
-                value={playlistName}
-                onChange={(event) => setPlaylistName(event.target.value)}
-                autoFocus
-              />
-              <div className={styles.dialogActions}>
-                <button
-                  type="button"
-                  className={styles.cancelButton}
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className={styles.savePlaylistButton}>
-                  Create playlist
-                </button>
-              </div>
-            </form>
-          </section>
-        </div>
+      {showModal === "add-song" && (
+        <CreateModalPlaylist
+          playlistName={playlistName}
+          setPlaylistName={setPlaylistName}
+          setShowModal={setShowModal}
+          onClick={handleCreatePlaylist}
+        />
       )}
     </div>
   );
@@ -236,10 +178,17 @@ PlaylistMenu.propTypes = {
       imageUrl: propTypes.string,
     }),
   ),
-  state: propTypes.shape({
+  song: propTypes.shape({
+    id: propTypes.string,
+    query: propTypes.string,
+    title: propTypes.string,
     videoId: propTypes.string,
-    song: propTypes.string,
+    artists: propTypes.string,
+    album: propTypes.string,
+    duration: propTypes.shape({
+      minutes: propTypes.number,
+      seconds: propTypes.number,
+    }),
   }),
-  songDetails: propTypes.string,
 };
 export default PlaylistMenu;

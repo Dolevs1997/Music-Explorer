@@ -1,0 +1,150 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(4, 3, 12, 0.76);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.18s ease-out;
+}
+
+.playlistDialog {
+  width: min(420px, 100%);
+  padding: 30px;
+  border: 1px solid var(--border-glow);
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at top, rgba(124, 58, 237, 0.2), transparent 58%),
+    var(--bg-secondary);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.6),
+    var(--shadow-neon);
+  color: var(--text-primary);
+  text-align: center;
+  animation: dialogEnter 0.2s ease-out;
+}
+
+.dialogArtwork {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 17px;
+  place-items: center;
+  border: 1px solid rgba(216, 180, 254, 0.42);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #a855f7, #5b21b6 75%);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.32);
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.dialogTitle {
+  margin: 5px 0 8px;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: none;
+  cursor: default;
+}
+
+.dialogDescription {
+  margin: 0 auto 23px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.playlistForm {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 1;
+  text-align: left;
+}
+
+.playlistInputLabel {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.playlistInput {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  margin: 0 0 10px;
+  padding: 0 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  outline: none;
+  background: rgba(7, 6, 17, 0.72);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.playlistInput::placeholder {
+  color: var(--text-muted);
+}
+
+.playlistInput:focus {
+  border-color: var(--purple-neon);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.16);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.cancelButton,
+.savePlaylistButton {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cancelButton {
+  border-color: var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cancelButton:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.savePlaylistButton {
+  background: linear-gradient(110deg, #9333ea, #7c3aed);
+  box-shadow: 0 5px 16px rgba(124, 58, 237, 0.28);
+  color: #fff;
+}
+
+.savePlaylistButton:hover {
+  background: linear-gradient(110deg, #a855f7, #8b5cf6);
+  box-shadow: 0 7px 22px rgba(124, 58, 237, 0.42);
+}

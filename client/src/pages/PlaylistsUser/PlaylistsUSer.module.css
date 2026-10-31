@@ -1,6 +1,8 @@
 .playlistsUser {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
 }
 .textArea {
   resize: none;
@@ -47,7 +49,11 @@
 
 .playlistHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
+}
+.createPlaylistBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }

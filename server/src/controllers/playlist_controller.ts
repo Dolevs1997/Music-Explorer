@@ -78,43 +78,44 @@ const createPlaylist = async (req: Request, res: Response) => {
   }
 
   // Check if the playlist already exists for the user
-  const existingPlaylist = await PlaylistSchema.findOne({
-    name: playlistName,
-    user: userId,
-  });
+  // const existingPlaylist = await PlaylistSchema.findOne({
+  //   name: playlistName,
+  //   user: userId,
+  // });
 
-  if (existingPlaylist) {
-    console.log("playlist exists");
-    return res.status(400).json({
-      message: `playlist ${playlistName} already exists`,
-      playlist: existingPlaylist,
-    });
-  }
+  // if (existingPlaylist) {
+  //   console.log("playlist exists");
+  //   return res.status(400).json({
+  //     message: `playlist ${playlistName} already exists`,
+  //     playlist: existingPlaylist,
+  //   });
+  // }
 
   // If the playlist does not exist, create a new one
-  else {
-    newPlaylist = new PlaylistSchema({
-      name: playlistName,
-      user: userId,
-      songs: [],
-      imageUrl:
-        "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2",
-    });
-    await newPlaylist.save();
-    // Add the playlist to the user's playlists
-    existingUser.playlists.push(newPlaylist._id);
 
-    await existingUser.save();
-    return res.status(200).json({
-      message: `playlist ${playlistName} created successfully`,
-      playlist: newPlaylist,
-    });
-  }
+  newPlaylist = new PlaylistSchema({
+    name: playlistName,
+    user: userId,
+    songs: [],
+    imageUrl:
+      "https://res.cloudinary.com/dpnfdsqrl/image/upload/f_auto/q_auto/Gemini_Generated_Image_o8t3dco8t3dco8t3.jpg",
+  });
+  await newPlaylist.save();
+  // Add the playlist to the user's playlists
+  existingUser.playlists.push(newPlaylist._id);
+
+  await existingUser.save();
+  return res.status(200).json({
+    message: `playlist ${playlistName} created successfully`,
+    playlist: newPlaylist,
+  });
 };
 
 const addSongToPlaylist = async (req: Request, res: Response) => {
   const { song, videoId } = req.body;
   const playlistId = req.query.id;
+  console.log("song: ", song);
+  console.log("videoId: ", videoId);
   if (!song || !videoId || !playlistId) {
     return res.status(400).json({ message: "Missing required fields" });
   }
