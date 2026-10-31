@@ -1,3 +1,7 @@
+.playlistsUser {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
 .textArea {
   resize: none;
   max-height: 300px;

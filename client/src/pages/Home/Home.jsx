@@ -4,7 +4,7 @@ import Search from "../../components/Search/Search";
 import { useEffect, useContext } from "react";
 import Songs from "../../components/Songs/Songs";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
-import { Outlet, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 import MapComponent from "../../components/Map/MapComponent";
 import { SearchContext } from "../../Contexts/SearchContext";
@@ -44,7 +44,6 @@ export default function Home() {
         <DropDownComponent />
       </header>
       <SideBar />
-      <Outlet />
 
       <main className="home">
         <h2>Discover Your Next Vibe</h2>

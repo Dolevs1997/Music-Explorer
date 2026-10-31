@@ -64,7 +64,6 @@ const updatePlaylist = async (req: Request, res: Response) => {
 };
 const createPlaylist = async (req: Request, res: Response) => {
   const { playlistName, user } = req.body;
-
   if (!playlistName || !user) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -85,6 +84,7 @@ const createPlaylist = async (req: Request, res: Response) => {
   });
 
   if (existingPlaylist) {
+    console.log("playlist exists");
     return res.status(400).json({
       message: `playlist ${playlistName} already exists`,
       playlist: existingPlaylist,

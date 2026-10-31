@@ -41,13 +41,13 @@ async function updatePlaylist(playlist, updatedData) {
       `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
     );
-    return response.data;
+    return response;
   } else {
     const response = await axios.put(
       `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
     );
-    return response.data;
+    return response;
   }
 }
 
