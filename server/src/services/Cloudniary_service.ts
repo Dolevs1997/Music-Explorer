@@ -6,12 +6,16 @@ export const uploadToCloudinary = async (
   originalname: string,
 ) => {
   try {
-    const publicId = `moodiify_images/${originalname}`;
+    const extension = path.extname(originalname).toLowerCase();
+    const publicId = path.basename(originalname, extension);
+    const folder = "music-explorer_images"; // Specify the folder name
+    // const publicId = `moodiify_images/${originalname}`;
     const result = await new Promise<any>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           resource_type: "image",
           public_id: publicId,
+          folder: folder,
         },
         (error, result) => {
           if (error) {

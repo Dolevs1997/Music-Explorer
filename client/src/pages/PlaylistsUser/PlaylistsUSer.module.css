@@ -15,20 +15,20 @@
   text-align: center;
 }
 .playlistMenuContainer {
-  display: inline-block;
   position: relative;
+}
+.playlistCardBox {
+  display: flex;
 }
 .playlistMenu {
   position: absolute;
-  top: 28px;
+  top: calc(42% + 6px);
   left: 0;
-  right: 0;
+
   background-color: #1e1e1e;
-  border: 1px solid #333;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  padding: 6px;
+
   min-width: 160px;
 }
 @media screen and (max-width: 768px) {

@@ -1,7 +1,7 @@
 import styles from "./Song.module.css";
 import { useState, useContext } from "react";
 import propTypes from "prop-types";
-
+import Button from "../Button/Button";
 import toast from "react-hot-toast";
 import UserContext from "../../Contexts/UserContext";
 import { CirclePlay, SquarePlus, TrashBin } from "@gravity-ui/icons";
@@ -54,14 +54,14 @@ function Song({ song, onRemoveSong, index, onPlay }) {
       >
         <span className={styles.trackNumber}>
           {isHover ? (
-            <CirclePlay
-              onClick={canPlay ? onPlay : undefined}
-              className="options-btn"
-              style={{
-                opacity: canPlay ? 1 : 0.35,
-                cursor: canPlay ? "pointer" : "default",
-              }}
-            />
+            <Button type="options-btn" onClick={canPlay ? onPlay : undefined}>
+              <CirclePlay
+                style={{
+                  opacity: canPlay ? 1 : 0.35,
+                  cursor: canPlay ? "pointer" : "default",
+                }}
+              />
+            </Button>
           ) : (
             index + 1
           )}
@@ -86,9 +86,8 @@ function Song({ song, onRemoveSong, index, onPlay }) {
         <div className={styles.duration}>
           {formatTime(song.duration) || "—"}
         </div>
-        <button
-          type="button"
-          className="options-btn"
+        <Button
+          type="options-btn"
           onClick={() =>
             remove
               ? handleRemoveSongFromPlaylist(song.videoId, remove.playlistId)
@@ -104,7 +103,7 @@ function Song({ song, onRemoveSong, index, onPlay }) {
           ) : (
             <SquarePlus className="action-icon" />
           )}
-        </button>
+        </Button>
 
         <PlaylistMenu
           menuPlaylistsOpen={menuPlaylistsOpen}

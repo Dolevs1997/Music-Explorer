@@ -76,29 +76,22 @@ const createPlaylist = async (req: Request, res: Response) => {
   if (!existingUser) {
     return res.status(404).json({ message: "User not found" });
   }
-
-  // Check if the playlist already exists for the user
-  // const existingPlaylist = await PlaylistSchema.findOne({
-  //   name: playlistName,
-  //   user: userId,
-  // });
-
-  // if (existingPlaylist) {
-  //   console.log("playlist exists");
-  //   return res.status(400).json({
-  //     message: `playlist ${playlistName} already exists`,
-  //     playlist: existingPlaylist,
-  //   });
-  // }
-
-  // If the playlist does not exist, create a new one
-
+  const DEFAULT_COVERS = [
+    "cover-1-violet",
+    "cover-2-sky",
+    "cover-3-sunset",
+    "cover-4-amber",
+    "cover-5-teal",
+    "cover-6-crimson",
+    "cover-7-indigo",
+  ];
+  const defaultCover =
+    DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)];
   newPlaylist = new PlaylistSchema({
     name: playlistName,
     user: userId,
     songs: [],
-    imageUrl:
-      "https://res.cloudinary.com/dpnfdsqrl/image/upload/f_auto/q_auto/Gemini_Generated_Image_o8t3dco8t3dco8t3.jpg",
+    imageUrl: defaultCover,
   });
   await newPlaylist.save();
   // Add the playlist to the user's playlists

@@ -16,7 +16,8 @@ function PlaylistMenu({
   const { user, setUser } = useContext(UserContext);
   const [playlistName, setPlaylistName] = useState("");
   const [showModal, setShowModal] = useState(null);
-
+  const description =
+    " Give your new collection a name. We’ll add this song to it.";
   const remove = useContext(removeBtn);
 
   async function handleCreatePlaylist() {
@@ -33,6 +34,7 @@ function PlaylistMenu({
       }
 
       const response = await createPlaylist(trimmedPlaylistName, user);
+
       const newPlaylist = response.data?.playlist;
       if (!newPlaylist) {
         throw new Error("The server did not return the created playlist.");
@@ -67,6 +69,7 @@ function PlaylistMenu({
             ? {
                 ...existingPlaylist,
                 songs: [...(existingPlaylist.songs || []), addedSong],
+                imageUrl: existingPlaylist.imageUrl,
               }
             : existingPlaylist,
         ),
@@ -162,6 +165,7 @@ function PlaylistMenu({
           setPlaylistName={setPlaylistName}
           setShowModal={setShowModal}
           onClick={handleCreatePlaylist}
+          description={description}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
-import { Pencil, Plus } from "@gravity-ui/icons";
+import { Plus } from "@gravity-ui/icons";
 import { toast } from "react-hot-toast";
 import Logo from "../../components/Logo/Logo.jsx";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
@@ -27,7 +27,7 @@ function PlaylistsUser() {
   const { user, setUser } = useContext(UserContext);
   const playlists = user.playlists;
   // console.log("selectedPlaylist: ", selectedPlaylist);
-  // console.log("playlists: ", playlists);
+  console.log("playlists: ", playlists);
   async function handleAddPlaylist() {
     setActiveModal(false);
     try {
@@ -181,14 +181,17 @@ function PlaylistsUser() {
                 return (
                   <div key={playlistId || index}>
                     <div className={styles.playlistMenuContainer}>
-                      <Pencil
+                      <PlaylistUserCard
+                        playlist={playlist}
                         onClick={() => {
-                          setSelectedPlaylist(playlist);
-                          setPlaylistMenu((currentMenu) =>
-                            currentMenu === playlistId ? null : playlistId,
-                          );
+                          navigate(`/myplaylists/${playlistId}`, {
+                            state: { playlist, user },
+                          });
                         }}
+                        setSelectedPlaylist={setSelectedPlaylist}
+                        setPlaylistMenu={setPlaylistMenu}
                       />
+
                       {playlistMenu === playlistId && (
                         <div className={styles.playlistMenu}>
                           <div
@@ -223,14 +226,6 @@ function PlaylistsUser() {
                         </div>
                       )}
                     </div>
-                    <PlaylistUserCard
-                      playlist={playlist}
-                      onClick={() => {
-                        navigate(`/myplaylists/${playlistId}`, {
-                          state: { playlist, user },
-                        });
-                      }}
-                    />
                   </div>
                 );
               })}

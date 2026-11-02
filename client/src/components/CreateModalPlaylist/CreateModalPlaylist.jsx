@@ -6,6 +6,7 @@ function CreateModalPlaylist({
   setPlaylistName,
   setShowModal,
   onClick,
+  description,
 }) {
   return (
     <div
@@ -27,9 +28,7 @@ function CreateModalPlaylist({
         <h2 id="create-playlist-title" className={styles.dialogTitle}>
           Create a playlist
         </h2>
-        <p className={styles.dialogDescription}>
-          Give your new collection a name. We’ll add this song to it.
-        </p>
+        <p className={styles.dialogDescription}>{description}</p>
         <form
           className={styles.playlistForm}
           onSubmit={(event) => {
@@ -72,6 +71,7 @@ CreateModalPlaylist.propTypes = {
   setPlaylistName: propTypes.func,
   setShowModal: propTypes.func,
   onClick: propTypes.func,
+  description: propTypes.string,
 };
 
 export default CreateModalPlaylist;

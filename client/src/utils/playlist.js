@@ -1,4 +1,13 @@
 import axios from "axios";
+const CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
+export function coverUrl(publicId, size = 400) {
+  if (!publicId) {
+    return `https://res.cloudinary.com/${CLOUD}/image/upload/v1793543870/cover-7-indigo.svg`;
+  }
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/c_scale,w_${size}/${publicId}.svg`;
+}
+
 async function addSongToPlaylist(song, user, playlist) {
   const response = await axios.post(
     `/api/playlist/addSong?id=${playlist._id || playlist.id}`,
@@ -16,6 +25,7 @@ async function createPlaylist(playlistName, user) {
     playlistName: playlistName,
     user: user,
   });
+  console.log("createPlaylist response:", response);
   return response;
 }
 
