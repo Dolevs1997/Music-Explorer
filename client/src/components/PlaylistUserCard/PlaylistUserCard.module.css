@@ -1,3 +1,11 @@
+.playlistCard {
+  border: 1px solid var(--bg-card);
+  border-radius: 10px;
+}
+.playlistCard:hover {
+  cursor: pointer;
+  border: 1px solid var(--border-glow);
+}
 .playlistBox {
   display: flex;
   position: relative;
@@ -21,4 +29,40 @@
   color: var(--color-text);
   font-size: 1rem;
   font-weight: bold;
+}
+.renameForm {
+  display: flex;
+  width: calc(100% + 16px);
+  gap: 0.5rem;
+}
+.renameInput {
+  width: 100%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-default);
+}
+.renameInput:focus {
+  outline: none;
+  filter: drop-shadow(0 0 2px var(--purple-neon));
+}
+.renameActions {
+  display: flex;
+  gap: 0.5rem;
+}
+.renameBtn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  padding: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.renameBtn:hover {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-glow);
 }

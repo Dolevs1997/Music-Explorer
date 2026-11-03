@@ -1,13 +1,12 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
-import { Plus } from "@gravity-ui/icons";
+import { Plus, PencilToLine, Picture, SparklesFill } from "@gravity-ui/icons";
 import { toast } from "react-hot-toast";
 import Logo from "../../components/Logo/Logo.jsx";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import SideBar from "../../components/SideBar/SideBar.jsx";
 import CreateModalPlaylist from "../../components/CreateModalPlaylist/CreateModalPlaylist.jsx";
 import DeleteModalPlaylist from "../../components/DeletePlaylistModal/DeleteModalPlaylist.jsx";
-import EditPlaylistModal from "../../components/EditPlaylistModal/EditPlaylistModal.jsx";
 import UploadPlaylistImageModal from "../../components/UploadPlaylistImageModal/UploadPlaylistImageModal.jsx";
 import GeneratePlaylistImageModal from "../../components/GeneratePlaylistImageModal/GeneratePlaylistImageModal.jsx";
 import PlaylistUserCard from "../../components/PlaylistUserCard/PlaylistUserCard.jsx";
@@ -26,8 +25,6 @@ function PlaylistsUser() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const playlists = user.playlists;
-  // console.log("selectedPlaylist: ", selectedPlaylist);
-  console.log("playlists: ", playlists);
   async function handleAddPlaylist() {
     setActiveModal(false);
     try {
@@ -190,6 +187,18 @@ function PlaylistsUser() {
                         }}
                         setSelectedPlaylist={setSelectedPlaylist}
                         setPlaylistMenu={setPlaylistMenu}
+                        playlistName={playlistName}
+                        setPlaylistName={setPlaylistName}
+                        isRenaming={
+                          activeModal === "edit" &&
+                          (selectedPlaylist?._id || selectedPlaylist?.id) ===
+                            playlistId
+                        }
+                        onSave={handleEditPlaylist}
+                        onClose={() => {
+                          setActiveModal(null);
+                          setSelectedPlaylist(null);
+                        }}
                       />
 
                       {playlistMenu === playlistId && (
@@ -201,27 +210,31 @@ function PlaylistsUser() {
                               openModal("edit", playlist);
                             }}
                           >
-                            Edit Playlist
+                            <PencilToLine />
+                            Rename
+                          </div>
+
+                          <div
+                            className={styles.menuItem}
+                            onClick={() => openModal("upload-image", playlist)}
+                          >
+                            <Picture />
+                            Change cover image
+                          </div>
+                          <div
+                            className={styles.menuItemAI}
+                            onClick={() =>
+                              openModal("generate-image", playlist)
+                            }
+                          >
+                            <SparklesFill />
+                            Generate cover Image with AI
                           </div>
                           <div
                             className={styles.menuItem}
                             onClick={() => openModal("delete", playlist)}
                           >
                             Delete Playlist
-                          </div>
-                          <div
-                            className={styles.menuItem}
-                            onClick={() => openModal("upload-image", playlist)}
-                          >
-                            Edit Playlist Image
-                          </div>
-                          <div
-                            className={styles.menuItem}
-                            onClick={() =>
-                              openModal("generate-image", playlist)
-                            }
-                          >
-                            Generate Playlist Image
                           </div>
                         </div>
                       )}
@@ -250,14 +263,6 @@ function PlaylistsUser() {
             <DeleteModalPlaylist
               playlist={selectedPlaylist}
               onDelete={handleRemovePlaylist}
-              onClose={() => setActiveModal(null)}
-            />
-          )}
-          {activeModal === "edit" && selectedPlaylist && (
-            <EditPlaylistModal
-              playlistName={playlistName}
-              setPlaylistName={setPlaylistName}
-              onSave={handleEditPlaylist}
               onClose={() => setActiveModal(null)}
             />
           )}

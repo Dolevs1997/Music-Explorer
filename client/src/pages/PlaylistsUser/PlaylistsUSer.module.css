@@ -22,14 +22,43 @@
 }
 .playlistMenu {
   position: absolute;
-  top: calc(42% + 6px);
+  top: calc(18% + 6px);
   left: 0;
-
-  background-color: #1e1e1e;
+  background-color: var(--bg-secondary);
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-default);
+  padding: 5px;
+  z-index: 10;
+  width: 200px;
+}
+.menuItem,
+.menuItemAI {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 10px;
+  min-height: 28px;
+  padding: 0 5px;
+  border-radius: 4px;
+  color: #e5e0f0;
+  white-space: nowrap;
+}
+.menuItem:hover,
+.menuItemAI:hover {
+  background-color: var(--text-muted);
+}
 
-  min-width: 160px;
+.menuItemAI {
+  color: #c9a8ff;
+}
+.menuItem:last-child {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #392c56;
+  border-radius: 0;
+  color: #f28aab;
 }
 @media screen and (max-width: 768px) {
   .playlistMenuContainer {
@@ -37,14 +66,6 @@
     margin: 0 auto;
     margin-left: 10px;
   }
-}
-
-.menuItem {
-  padding: 8px 12px;
-  cursor: pointer;
-  color: #e3e3e3;
-  border-radius: 6px;
-  border: 1px solid #fff;
 }
 
 .playlistHeader {
