@@ -1,0 +1,178 @@
+.modalContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 3, 12, 0.76);
+  backdrop-filter: blur(6px);
+}
+
+.modal {
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 440px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 32px;
+  border: 1px solid var(--border-glow);
+  border-radius: 20px;
+  background: rgba(4, 3, 12, 0.76);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  color: var(--text-primary);
+}
+
+.closeModal {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.closeModal:hover {
+  border-color: var(--border-default);
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.closeModal:focus-visible,
+.cancelButton:focus-visible,
+.deleteButton:focus-visible {
+  outline: 2px solid var(--purple-neon);
+  outline-offset: 3px;
+}
+
+.warningIcon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 20px;
+  place-items: center;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+}
+
+.warningIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.titleModal {
+  margin: 0 40px 10px 0;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.playlistName {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cancelButton,
+.deleteButton {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  width: auto;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.cancelButton[type="cancel"] {
+  border-color: var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cancelButton[type="cancel"]:hover:not(:disabled) {
+  border-color: var(--border-glow);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  transform: none;
+}
+
+.deleteButton[type="delete"] {
+  border-color: rgba(248, 113, 113, 0.28);
+  background: #b93838;
+  color: #fff;
+}
+
+.deleteButton[type="delete"]:hover:not(:disabled) {
+  border-color: rgba(252, 165, 165, 0.56);
+  background: #cc4545;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 26px 22px 22px;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelButton,
+  .deleteButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modalContainer,
+  .modal {
+    animation: none;
+  }
+
+  .closeModal,
+  .cancelButton,
+  .deleteButton {
+    transition: none;
+  }
+}

@@ -1,28 +1,48 @@
+import styles from "./DeleteModalPlaylist.module.css";
 import propTypes from "prop-types";
-import Modal from "react-bootstrap/Modal";
+import { AlertTriangle, X } from "lucide-react";
 import Button from "../Button/Button";
 
 function DeleteModalPlaylist({ playlist, onDelete, onClose }) {
   return (
-    <div className="modalOverlay">
-      <Modal.Dialog>
-        <Modal.Header closeButton onClick={onClose}>
-          <Modal.Title>Delete Playlist</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete the playlist {playlist.name}?
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="modalActions">
-            <Button type="accept" onClick={onDelete}>
-              Delete
-            </Button>
-            <Button type="cancel" onClick={onClose}>
-              Cancel
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal.Dialog>
+    <div className={styles.modalContainer}>
+      <section
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-playlist-title"
+        aria-describedby="delete-playlist-description"
+      >
+        <button
+          className={styles.closeModal}
+          type="button"
+          onClick={onClose}
+          aria-label="Close dialog"
+        >
+          <X aria-hidden="true" />
+        </button>
+
+        <div className={styles.warningIcon} aria-hidden="true">
+          <AlertTriangle />
+        </div>
+        <h2 id="delete-playlist-title" className={styles.titleModal}>
+          Delete playlist?
+        </h2>
+        <p id="delete-playlist-description" className={styles.description}>
+          Are you sure you want to delete{" "}
+          <span className={styles.playlistName}>“{playlist.name}”</span>? This
+          action cannot be undone.
+        </p>
+
+        <div className={styles.modalActions}>
+          <Button type="cancel" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="accept" onClick={onDelete}>
+            Delete playlist
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }

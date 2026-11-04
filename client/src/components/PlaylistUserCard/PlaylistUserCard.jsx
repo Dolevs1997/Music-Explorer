@@ -20,12 +20,13 @@ function PlaylistUserCard({
       <CardBody className="overflow-visible py-2">
         <div className={styles.playlistBox}>
           <Ellipsis
-            size={18}
+            size={25}
             className={styles.editPlaylist}
             onClick={() => {
               setSelectedPlaylist(playlist);
+              const playlistId = playlist._id || playlist.id;
               setPlaylistMenu((currentMenu) =>
-                currentMenu === playlist?._id ? null : playlist?._id,
+                currentMenu === playlistId ? null : playlistId,
               );
             }}
           />
@@ -79,6 +80,7 @@ function PlaylistUserCard({
 PlaylistUserCard.propTypes = {
   playlist: propTypes.shape({
     _id: propTypes.string,
+    id: propTypes.string,
     name: propTypes.string,
     songs: propTypes.array,
     imageUrl: propTypes.string,

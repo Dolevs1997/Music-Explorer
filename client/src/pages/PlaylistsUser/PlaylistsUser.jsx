@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Plus, PencilToLine, Picture, SparklesFill } from "@gravity-ui/icons";
 import { toast } from "react-hot-toast";
@@ -21,11 +21,31 @@ function PlaylistsUser() {
   const [activeModal, setActiveModal] = useState(null);
   const [playlistName, setPlaylistName] = useState("");
   const [playlistMenu, setPlaylistMenu] = useState(null);
+  const playlistMenuContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [generatedImage, setGeneratedImage] = useState(null);
   const playlists = user.playlists;
+  console.log("playlistMenu: ", playlistMenu);
+
+  useEffect(() => {
+    if (!playlistMenu) return;
+
+    function handleOutsideClick(event) {
+      if (
+        playlistMenuContainerRef.current &&
+        !playlistMenuContainerRef.current.contains(event.target)
+      ) {
+        setPlaylistMenu(null);
+      }
+    }
+
+    document.addEventListener("pointerdown", handleOutsideClick);
+    return () =>
+      document.removeEventListener("pointerdown", handleOutsideClick);
+  }, [playlistMenu]);
+
   async function handleAddPlaylist() {
     setActiveModal(false);
     try {
@@ -171,7 +191,14 @@ function PlaylistsUser() {
                 const playlistId = playlist._id || playlist.id;
                 return (
                   <div key={playlistId || index}>
-                    <div className={styles.playlistMenuContainer}>
+                    <div
+                      className={styles.playlistMenuContainer}
+                      ref={
+                        playlistMenu === playlistId
+                          ? playlistMenuContainerRef
+                          : null
+                      }
+                    >
                       <PlaylistUserCard
                         playlist={playlist}
                         onClick={() => {
