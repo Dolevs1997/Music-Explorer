@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import OpenAI from "openai";
 import fs from "fs";
-// import { uploadToCloudinary } from "../services/Cloudniary_service";
+import { Playlist } from "../schemas/Playlist_schema";
+import { uploadToCloudinary } from "../services/Cloudniary_service";
 dotenv.config();
 
 const openaiAPIKey = process.env.OPENAI_API_KEY as string;
@@ -108,7 +109,8 @@ const SongSuggestionsVoice = async () => {
   return songSuggestions;
 };
 
-const generatePlaylistPicture = async (prompt: string) => {
+const generatePlaylistPicture = async (playlist: Playlist, prompt: string) => {
+  console.log("Generating playlist picture with prompt:", prompt); // Debugging line
   const result = await openai.images.generate({
     model: "gpt-image-1.5",
     prompt,
@@ -116,8 +118,20 @@ const generatePlaylistPicture = async (prompt: string) => {
   if (!result.data || result.data.length === 0) {
     throw new Error("Image generation failed");
   }
+  // Save base64 to Cloudinary
+  const image_base64 = result.data[0].b64_json;
+  if (!result.data || result.data.length === 0 || !image_base64) {
+    throw new Error("Image generation failed");
+  }
 
-  return result;
+  const image_bytes = Buffer.from(image_base64, "base64");
+
+  const { data } = await uploadToCloudinary(
+    image_bytes,
+    `playlist-${playlist._id}-${Date.now()}.png`,
+  );
+  playlist.imageUrl = data?.secure_url;
+  return playlist;
 };
 
 export { SongSuggestions, SongSuggestionsVoice, generatePlaylistPicture };

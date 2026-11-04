@@ -33,7 +33,7 @@ function PlaylistUserCard({
             <img
               alt={playlist.name}
               className="object-cover rounded-xl"
-              src={coverUrl(playlist.imageUrl)}
+              src={coverUrl(playlist.imageUrl) || playlist.imageUrl}
               height={130}
               width={200}
               onClick={onClick}

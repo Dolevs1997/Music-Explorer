@@ -5,6 +5,14 @@ export function coverUrl(publicId, size = 400) {
   if (!publicId) {
     return `https://res.cloudinary.com/${CLOUD}/image/upload/v1793543870/cover-7-indigo.svg`;
   }
+  try {
+    const url = new URL(publicId);
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return publicId;
+    }
+  } catch {
+    console.error("Invalid URL:", publicId);
+  }
   return `https://res.cloudinary.com/${CLOUD}/image/upload/c_scale,w_${size}/${publicId}.svg`;
 }
 
@@ -56,9 +64,22 @@ async function updatePlaylist(playlist, updatedData) {
     const response = await axios.put(
       `/api/playlist/?id=${playlist._id || playlist.id}`,
       updatedData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
     );
     return response;
   }
+}
+
+async function previewImageGeneration(playlist, prompt) {
+  const response = await axios.post("/api/openai/playlist/generate-image", {
+    playlist: playlist,
+    prompt: prompt,
+  });
+  return response;
 }
 
 export {
@@ -67,4 +88,5 @@ export {
   removePlaylist,
   updatePlaylist,
   createPlaylist,
+  previewImageGeneration,
 };

@@ -4,14 +4,11 @@ import SongSchema from "../schemas/Song_schema";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { uploadToCloudinary } from "../services/Cloudniary_service";
-import { generatePlaylistPicture } from "../services/OpenAI_service";
-// import { updateUser, getUser } from "../models/Firestore/user";
-// import { getPlaylistUser } from "../models/Firestore/playlistsUser";
+
 const updatePlaylist = async (req: Request, res: Response) => {
   // Implementation for updating a playlist
   const { id } = req.query;
   const playlist = await PlaylistSchema.findById(id);
-
   if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
@@ -28,31 +25,6 @@ const updatePlaylist = async (req: Request, res: Response) => {
       playlist.imageUrl = imageUrl;
     } catch (error: Error | any) {
       res.status(500).json({ error: error.message });
-    }
-  } else if (req.body.prompt) {
-    try {
-      const prompt = req.body.prompt;
-      const result = await generatePlaylistPicture(prompt);
-
-      // Save base64 to Cloudinary
-      const image_base64 = result.data[0].b64_json;
-      if (!result.data || result.data.length === 0 || !image_base64) {
-        throw new Error("Image generation failed");
-      }
-
-      const image_bytes = Buffer.from(image_base64, "base64");
-
-      const { data } = await uploadToCloudinary(
-        image_bytes,
-        `playlist-${id}-${Date.now()}.png`,
-      );
-      playlist.imageUrl = data?.secure_url;
-      await playlist.save();
-      return res
-        .status(200)
-        .json({ message: "playlist image generated successfully", playlist });
-    } catch (error: Error | any) {
-      return res.status(500).json({ error: error.message });
     }
   }
   const updates = req.body;

@@ -24,6 +24,7 @@ function PlaylistsUser() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
+  const [generatedImage, setGeneratedImage] = useState(null);
   const playlists = user.playlists;
   async function handleAddPlaylist() {
     setActiveModal(false);
@@ -77,7 +78,20 @@ function PlaylistsUser() {
       toast.error("Failed to delete playlist");
     }
   }
+  async function handleSaveGeneratedImage() {
+    if (!selectedPlaylist || !generatedImage) return;
 
+    const response = await updatePlaylist(selectedPlaylist, {
+      imageUrl: generatedImage,
+    });
+
+    if (response.status === 200) {
+      const updatedUser = updateUserPlaylist(response.data.playlist);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setActiveModal(null);
+      setSelectedPlaylist(null);
+    }
+  }
   async function handleEditPlaylist() {
     if (!selectedPlaylist) return;
 
@@ -120,26 +134,6 @@ function PlaylistsUser() {
     } catch (error) {
       console.error("Error uploading image:", error.message);
       toast.error("Failed to update playlist image. Please try again.");
-    }
-  }
-
-  async function handleGenerateImage(prompt) {
-    if (!selectedPlaylist) return;
-
-    setLoading(true);
-    try {
-      const response = await updatePlaylist(selectedPlaylist, { prompt });
-      if (response.status == 200) {
-        updateUserPlaylist(response.data.playlist);
-        toast.success(response.data.message);
-      } else toast.error(response.data.message);
-      setActiveModal(null);
-      setSelectedPlaylist(null);
-    } catch (error) {
-      console.error("Error generating playlist image:", error);
-      toast.error("Image generation failed.");
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -277,8 +271,11 @@ function PlaylistsUser() {
             <GeneratePlaylistImageModal
               playlist={selectedPlaylist}
               loading={loading}
-              onGenerate={handleGenerateImage}
+              setLoading={setLoading}
               onClose={() => setActiveModal(null)}
+              onUpdate={handleSaveGeneratedImage}
+              generatedImage={generatedImage}
+              setGeneratedImage={setGeneratedImage}
             />
           )}
         </>

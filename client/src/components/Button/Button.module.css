@@ -7,7 +7,6 @@ button {
   width: fit-content;
   background: transparent;
   border: 1px solid transparent;
-
   color: var(--text-secondary);
   transition:
     color 0.2s ease,
@@ -17,8 +16,6 @@ button {
 }
 /* ── Danger Button ── */
 
-button[type="cancel"],
-button[type="close"],
 button[type="delete"] {
   border: 1px solid rgba(220, 50, 50, 0.4);
   background: var(--color-button-delete);
@@ -31,18 +28,37 @@ button[type="delete"] {
     border-color 0.2s ease;
 }
 
-button[type="cancel"]:hover:not(:disabled),
-button[type="close"]:hover:not(:disabled),
 button[type="delete"]:hover:not(:disabled) {
   background: var(--color-button-delete-hover);
   border-color: rgba(220, 50, 50, 0.7);
   transform: scale(1.02);
 }
-button[type="cancel"]:disabled,
-button[type="close"]:disabled,
+
 button[type="delete"]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ── Cancel Button ── */
+
+button[type="cancel"] {
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: var(--color-button-cancel);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+button[type="cancel"]:hover:not(:disabled) {
+  background: var(--color-button-cancel-hover);
+  border-color: var(--border-glow);
+  transform: scale(1.02);
 }
 
 button[type="select"],
@@ -51,9 +67,11 @@ button[type="send"],
 button[type="login"],
 button[type="register"] {
   border: 1px solid var(--color-background-800);
+  border-radius: 10px;
   background: var(--color-button-send);
   color: white;
   font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
   width: fit-content;
   transition:
@@ -71,8 +89,8 @@ button[type="register"]:hover:not(:disabled) {
 }
 
 button[type="accept"] {
-  border: 1px solid #359a64;
-  background: var(--color-button-accept);
+  border: 1px solid var(--border-default);
+  background: var(--purple-glow);
   color: white;
   font-size: 0.9rem;
   cursor: pointer;
@@ -82,8 +100,7 @@ button[type="accept"] {
     border-color 0.2s ease;
 }
 button[type="accept"]:hover:not(:disabled) {
-  background: var(--color-button-accept-hover);
-  border-color: #359a6f;
+  border-color: var(--purple-neon);
   transform: scale(1.02);
 }
 

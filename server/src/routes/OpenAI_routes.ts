@@ -22,12 +22,18 @@ openaiRouter.post(
   authenticate,
   async (req: Request, res: Response) => {
     try {
-      const { prompt } = req.body;
-      if (!prompt)
+      const { prompt, playlist } = req.body;
+      console.log(
+        "Received request to generate playlist image with prompt:",
+        prompt,
+      ); // Debugging line
+      console.log("Playlist data:", playlist); // Debugging line
+      if (!prompt || !playlist)
         return res.status(400).json({
-          message: "OpenAI Error generate error: missing one or more fields",
+          message: "Image generation: missing one or more fields",
         });
-      const result = await generatePlaylistPicture(prompt);
+      const result = await generatePlaylistPicture(playlist, prompt);
+
       return res.status(200).json({
         message: "playlist image successfully generated",
         result,
