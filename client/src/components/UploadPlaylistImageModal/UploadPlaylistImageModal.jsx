@@ -1,55 +1,123 @@
-import { useState } from "react";
+import styles from "./UploadPlaylistImageModal.module.css";
+import { useRef, useState } from "react";
 import propTypes from "prop-types";
-import Form from "react-bootstrap/Form";
-import Modal from "react-bootstrap/Modal";
 import Button from "../Button/Button";
+import { X } from "lucide-react";
+import { previewImageUpload } from "../../utils/playlist";
+import { FileUpload } from "@/components/application/file-upload/file-upload-base";
 
-function UploadPlaylistImageModal({ playlist, onUpload, onClose }) {
+function UploadPlaylistImageModal({
+  onUpload,
+  onClose,
+  loading,
+  setLoading,
+  previewImage,
+  setPreviewImage,
+}) {
   const [file, setFile] = useState(null);
 
-  function handleFileChange(event) {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile && selectedFile.type.startsWith("image/")) {
-      setFile(selectedFile);
-    } else {
-      setFile(null);
-      alert("Please select a valid image file.");
-    }
+  const [progress, setProgress] = useState(0);
+  const uploadId = useRef(0);
+  function handleClose() {
+    setFile(null);
+    setProgress(0);
+    setPreviewImage(() => null);
+    setLoading(false);
+    onClose();
   }
 
-  function handleUpload() {
-    if (!file) {
-      alert("No file selected for upload.");
-      return;
-    }
-    onUpload(file);
-  }
+  const handleDropFiles = async (files) => {
+    setLoading(true);
+    const selectedFile = files[0];
+    if (!selectedFile) return;
+    const currentUploadId = ++uploadId.current;
+    setFile(selectedFile);
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+    if (currentUploadId !== uploadId.current) return;
+    const response = await previewImageUpload(formData, (event) => {
+      if (currentUploadId === uploadId.current && event.total) {
+        setProgress(Math.round((event.loaded / event.total) * 100));
+      } else {
+        return;
+      }
+    });
+
+    setLoading(false);
+    setProgress(100);
+    setPreviewImage(response.data.imageUrl);
+  };
+
+  const handleDeleteFile = () => {
+    ++uploadId.current;
+    setFile(null);
+    setProgress(0);
+    setPreviewImage(() => null);
+    setLoading(false);
+  };
 
   return (
-    <div className="modalOverlay">
-      <Modal.Dialog>
-        <Modal.Header closeButton onClick={onClose}>
-          <Modal.Title>Edit Playlist picture</Modal.Title>
-        </Modal.Header>
-        <Form.Group controlId="playlist-image-upload">
-          <Form.Label>Choose an image for {playlist.name}</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={handleFileChange}
+    <div className={styles.modalContainer}>
+      <section
+        className={styles.modal}
+        role="img"
+        aria-description="changing playlist image"
+      >
+        <button className={styles.closeModal}>
+          <X onClick={handleClose} />
+        </button>
+
+        <div className={styles.playlistImage}>
+          {previewImage && !loading && (
+            <>
+              <img src={previewImage} />
+            </>
+          )}
+          {!previewImage && !loading && (
+            <>
+              <h1 className={styles.title}>Edit playlist cover</h1>
+              <span className={styles.description}>
+                Choose an image that captures the mood of your playlist.
+              </span>
+            </>
+          )}
+          {!previewImage && loading && (
+            <div className={styles.imageBox}>
+              {loading && (
+                <FileUpload.List>
+                  <FileUpload.ListItemProgressBar
+                    className={styles.uploadedFile}
+                    name={file.name}
+                    size={file.size}
+                    progress={progress}
+                    onDelete={handleDeleteFile}
+                  />
+                </FileUpload.List>
+              )}
+            </div>
+          )}
+        </div>
+        <div className={styles.form}>
+          <FileUpload.DropZone
+            className={styles.upload}
             accept="image/*"
+            hint="Please upload PNG or JPEG images only."
+            onDropFiles={handleDropFiles}
+            allowsMultiple={false}
           />
-        </Form.Group>
-        <Modal.Footer>
-          <div className="modalActions">
-            <Button onClick={handleUpload} type="submit">
-              Save changes
-            </Button>
-            <Button onClick={onClose} type="close">
+
+          {/* <label>Choose an image for {playlist.name}</label>
+          <input type="file" onChange={handleFileChange} accept="image/*" /> */}
+          <footer className={styles.buttons}>
+            <Button onClick={handleClose} type="close">
               Close
             </Button>
-          </div>
-        </Modal.Footer>
-      </Modal.Dialog>
+            <Button onClick={onUpload} type="submit">
+              Save changes
+            </Button>
+          </footer>
+        </div>
+      </section>
     </div>
   );
 }
@@ -60,6 +128,10 @@ UploadPlaylistImageModal.propTypes = {
   }).isRequired,
   onUpload: propTypes.func.isRequired,
   onClose: propTypes.func.isRequired,
+  loading: propTypes.bool.isRequired,
+  setLoading: propTypes.func,
+  previewImage: propTypes.string.isRequired,
+  setPreviewImage: propTypes.func.isRequired,
 };
 
 export default UploadPlaylistImageModal;

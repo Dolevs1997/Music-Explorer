@@ -94,7 +94,11 @@ function GeneratePlaylistImageModal({
               <Button type="cancel" onClick={onClose} loading={loading}>
                 Cancel
               </Button>
-              <Button type="submit" loading={loading} onClick={onUpdate}>
+              <Button
+                type="submit"
+                loading={prompt ? loading : !loading}
+                onClick={onUpdate}
+              >
                 Use this cover
               </Button>
             </div>

@@ -40,7 +40,7 @@ button[type="delete"]:disabled {
 }
 
 /* ── Cancel Button ── */
-
+button[type="close"],
 button[type="cancel"] {
   border: 1px solid var(--border-default);
   border-radius: 10px;
@@ -55,6 +55,7 @@ button[type="cancel"] {
     border-color 0.2s ease;
 }
 
+button[type="close"]:hover:not(:disabled),
 button[type="cancel"]:hover:not(:disabled) {
   background: var(--color-button-cancel-hover);
   border-color: var(--border-glow);

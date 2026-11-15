@@ -54,30 +54,31 @@ async function removePlaylist(playlistId) {
 }
 
 async function updatePlaylist(playlist, updatedData) {
-  if (updatedData instanceof FormData) {
-    const response = await axios.put(
-      `/api/playlist/?id=${playlist._id || playlist.id}`,
-      updatedData,
-    );
-    return response;
-  } else {
-    const response = await axios.put(
-      `/api/playlist/?id=${playlist._id || playlist.id}`,
-      updatedData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+  console.log("updatedData: ", updatedData);
+
+  const response = await axios.put(
+    `/api/playlist/?id=${playlist._id || playlist.id}`,
+    updatedData,
+    {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
-    return response;
-  }
+    },
+  );
+  return response;
 }
 
 async function previewImageGeneration(playlist, prompt) {
   const response = await axios.post("/api/openai/playlist/generate-image", {
     playlist: playlist,
     prompt: prompt,
+  });
+  return response;
+}
+
+async function previewImageUpload(formData, onUploadProgress) {
+  const response = await axios.post(`/api/upload/`, formData, {
+    onUploadProgress,
   });
   return response;
 }
@@ -89,4 +90,5 @@ export {
   updatePlaylist,
   createPlaylist,
   previewImageGeneration,
+  previewImageUpload,
 };

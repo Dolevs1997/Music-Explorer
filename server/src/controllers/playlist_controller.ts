@@ -3,30 +3,30 @@ import { UserModel } from "../schemas/User_schema";
 import SongSchema from "../schemas/Song_schema";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { uploadToCloudinary } from "../services/Cloudniary_service";
 
 const updatePlaylist = async (req: Request, res: Response) => {
   // Implementation for updating a playlist
+  console.log("Request: ", req.body);
   const { id } = req.query;
   const playlist = await PlaylistSchema.findById(id);
   if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
-  if (req.file) {
-    try {
-      const file = req.file;
-      const { data } = await uploadToCloudinary(file.buffer, file.originalname);
-      const imageUrl = data?.secure_url;
-      if (!imageUrl) {
-        return res
-          .status(500)
-          .json({ error: "Failed to retrieve image URL from Cloudinary" });
-      }
-      playlist.imageUrl = imageUrl;
-    } catch (error: Error | any) {
-      res.status(500).json({ error: error.message });
-    }
-  }
+  // if (req.file) {
+  //   try {
+  //     const file = req.file;
+  //     const { data } = await uploadToCloudinary(file.buffer, file.originalname);
+  //     const imageUrl = data?.secure_url;
+  //     if (!imageUrl) {
+  //       return res
+  //         .status(500)
+  //         .json({ error: "Failed to retrieve image URL from Cloudinary" });
+  //     }
+  //     playlist.imageUrl = imageUrl;
+  //   } catch (error: Error | any) {
+  //     res.status(500).json({ error: error.message });
+  //   }
+  // }
   const updates = req.body;
   if (Object.keys(updates).length > 0) Object.assign(playlist, updates);
   await playlist.save();

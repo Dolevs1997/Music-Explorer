@@ -27,8 +27,8 @@ function PlaylistsUser() {
   const { user, setUser } = useContext(UserContext);
   const [generatedImage, setGeneratedImage] = useState(null);
   const playlists = user.playlists;
-  console.log("playlistMenu: ", playlistMenu);
-
+  const [previewImage, setPreviewImage] = useState(null);
+  console.log("Selected playlist: ", selectedPlaylist);
   useEffect(() => {
     if (!playlistMenu) return;
 
@@ -99,8 +99,11 @@ function PlaylistsUser() {
     }
   }
   async function handleSaveGeneratedImage() {
-    if (!selectedPlaylist || !generatedImage) return;
-
+    if (!selectedPlaylist || !generatedImage) {
+      console.log("generatedImage: ", generatedImage);
+      toast.error("Missig field to complete the request");
+      return;
+    }
     const response = await updatePlaylist(selectedPlaylist, {
       imageUrl: generatedImage,
     });
@@ -135,14 +138,13 @@ function PlaylistsUser() {
     }
   }
 
-  async function handleUploadImage(file) {
-    if (!selectedPlaylist) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
+  async function handleUploadImage() {
+    if (!selectedPlaylist || !previewImage) return;
 
     try {
-      const response = await updatePlaylist(selectedPlaylist, formData);
+      const response = await updatePlaylist(selectedPlaylist, {
+        imageUrl: previewImage,
+      });
       if (response.status == 200) {
         updateUserPlaylist(response.data.playlist);
         toast.success(response.data.message);
@@ -292,6 +294,10 @@ function PlaylistsUser() {
               playlist={selectedPlaylist}
               onUpload={handleUploadImage}
               onClose={() => setActiveModal(null)}
+              loading={loading}
+              setLoading={setLoading}
+              previewImage={previewImage}
+              setPreviewImage={setPreviewImage}
             />
           )}
           {activeModal === "generate-image" && selectedPlaylist && (
