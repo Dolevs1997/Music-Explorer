@@ -12,21 +12,7 @@ const updatePlaylist = async (req: Request, res: Response) => {
   if (!playlist) {
     return res.status(404).json({ message: "Playlist not found" });
   }
-  // if (req.file) {
-  //   try {
-  //     const file = req.file;
-  //     const { data } = await uploadToCloudinary(file.buffer, file.originalname);
-  //     const imageUrl = data?.secure_url;
-  //     if (!imageUrl) {
-  //       return res
-  //         .status(500)
-  //         .json({ error: "Failed to retrieve image URL from Cloudinary" });
-  //     }
-  //     playlist.imageUrl = imageUrl;
-  //   } catch (error: Error | any) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
+
   const updates = req.body;
   if (Object.keys(updates).length > 0) Object.assign(playlist, updates);
   await playlist.save();

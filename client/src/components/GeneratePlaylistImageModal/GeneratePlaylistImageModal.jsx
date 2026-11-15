@@ -22,20 +22,12 @@ function GeneratePlaylistImageModal({
     setLoading(true);
     try {
       const response = await previewImageGeneration(playlist, prompt);
-      console.log("response: ", response);
       if (response.status == 200) {
         toast.success(response.data.message);
         setGeneratedImage(response.data.result.imageUrl);
       } else {
         toast.error(response.data.message);
       }
-      // const response = await updatePlaylist(selectedPlaylist, { prompt });
-      // if (response.status == 200) {
-      //   updateUserPlaylist(response.data.playlist);
-      //   toast.success(response.data.message);
-      // } else toast.error(response.data.message);
-      // setActiveModal(null);
-      // setSelectedPlaylist(null);
     } catch (error) {
       console.error("Error generating playlist image:", error);
       toast.error("Image generation failed.");

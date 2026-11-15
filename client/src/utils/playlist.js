@@ -33,7 +33,6 @@ async function createPlaylist(playlistName, user) {
     playlistName: playlistName,
     user: user,
   });
-  console.log("createPlaylist response:", response);
   return response;
 }
 
@@ -49,13 +48,10 @@ async function removeSongFromPlaylist(videoId, user, playlistId) {
 
 async function removePlaylist(playlistId) {
   const response = await axios.delete(`/api/playlist/?id=${playlistId}`);
-  console.log("removePlaylist response:", response);
   return response.data;
 }
 
 async function updatePlaylist(playlist, updatedData) {
-  console.log("updatedData: ", updatedData);
-
   const response = await axios.put(
     `/api/playlist/?id=${playlist._id || playlist.id}`,
     updatedData,

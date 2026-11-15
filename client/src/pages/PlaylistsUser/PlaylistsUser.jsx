@@ -28,7 +28,6 @@ function PlaylistsUser() {
   const [generatedImage, setGeneratedImage] = useState(null);
   const playlists = user.playlists;
   const [previewImage, setPreviewImage] = useState(null);
-  console.log("Selected playlist: ", selectedPlaylist);
   useEffect(() => {
     if (!playlistMenu) return;
 
@@ -100,7 +99,6 @@ function PlaylistsUser() {
   }
   async function handleSaveGeneratedImage() {
     if (!selectedPlaylist || !generatedImage) {
-      console.log("generatedImage: ", generatedImage);
       toast.error("Missig field to complete the request");
       return;
     }
@@ -122,7 +120,6 @@ function PlaylistsUser() {
       const response = await updatePlaylist(selectedPlaylist, {
         name: playlistName,
       });
-      console.log("response: ", response);
       if (response.status == 200) {
         const updatedUser = updateUserPlaylist(response.data.playlist);
         localStorage.setItem("user", JSON.stringify(updatedUser));
