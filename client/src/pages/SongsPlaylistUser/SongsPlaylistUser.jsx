@@ -1,7 +1,6 @@
 import { useParams } from "react-router";
 import { useEffect, useState, useContext } from "react";
 import Logo from "../../components/Logo/Logo";
-import Search from "../../components/Search/Search";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import Songs from "../../components/Songs/Songs";
 import { removeBtn } from "../../Contexts/RemoveContext.jsx";
@@ -9,6 +8,7 @@ import { useLocation } from "react-router";
 import UserContext from "../../Contexts/UserContext";
 
 import axios from "axios";
+import SideBar from "../../components/SideBar/SideBar.jsx";
 
 function SongsPlaylistUser() {
   const { user, setUser } = useContext(UserContext);
@@ -16,29 +16,33 @@ function SongsPlaylistUser() {
   const { playlistId } = useParams();
   const location = useLocation();
   let playlist = location.state?.playlist;
+  console.log("playlist: ", playlist);
   const [songs, setSongs] = useState(location.state?.songs || []);
+  console.log("songs: ", songs);
   if (!playlist) {
     console.error("Playlist not found for ID:", playlistId);
   }
   if (!user) {
     console.error("User not found in local storage or state.");
   }
-  async function fetchPlaylistSongs() {
-    if (!playlistId) return;
+  useEffect(() => {
+    async function fetchPlaylistSongs() {
+      if (!playlistId) return;
 
-    try {
-      const response = await axios.get(`/api/playlist/?id=${playlistId}`);
-      if (response.status !== 200) {
-        setSongs([]);
-        throw new Error("Failed to fetch playlist songs");
+      try {
+        const response = await axios.get(`/api/playlist/?id=${playlistId}`);
+        if (response.status !== 200) {
+          setSongs([]);
+          throw new Error("Failed to fetch playlist songs");
+        }
+        const data = await response.data;
+        setSongs((data.songs || []).filter((songObj) => songObj?.song));
+      } catch (error) {
+        console.error("Error fetching playlist songs:", error);
       }
-      const data = await response.data;
-      setSongs((data.songs || []).filter((songObj) => songObj?.song));
-    } catch (error) {
-      console.error("Error fetching playlist songs:", error);
     }
-  }
-
+    fetchPlaylistSongs();
+  }, [playlistId]);
   function handleRemoveSong(removedSong, videoId) {
     setSongs((prevSongs) =>
       prevSongs.filter((songItem) => {
@@ -82,10 +86,6 @@ function SongsPlaylistUser() {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   }
 
-  useEffect(() => {
-    fetchPlaylistSongs();
-  }, [playlistId]);
-
   return (
     <div className="app-container">
       <removeBtn.Provider
@@ -93,22 +93,16 @@ function SongsPlaylistUser() {
       >
         <header className="header">
           <Logo />
-          <Search />
           <DropDownComponent />
         </header>
-
-        <div className="homeContainer">
+        <SideBar />
+        <main className="home">
           <h1>{playlist.name} Playlist</h1>
           {songs.length === 0 && <p>No songs in this playlist.</p>}
-        </div>
-        <div className="playlist-songs"></div>
-        {songs.length > 0 && (
-          <Songs
-            songSuggestions={songs}
-            user={user}
-            onRemoveSong={handleRemoveSong}
-          />
-        )}
+          <div className="playlists">
+            <Songs songSuggestions={songs} onRemoveSong={handleRemoveSong} />
+          </div>
+        </main>
       </removeBtn.Provider>
     </div>
   );

@@ -18,16 +18,14 @@ function Song({ song, onRemoveSong, index, onPlay }) {
   const playlists = user?.playlists || [];
   const canPlay = Boolean(song.videoId);
 
-  // console.log("song details: ", song);
   // console.log(playlists);
+  // console.log("song details: ", song);
+  function formatTime(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
 
-  function formatTime(time) {
-    const minutes = time?.minutes;
-    const seconds = time?.seconds;
-
-    const paddedMinutes = String(minutes).padStart(2, "0");
-    const paddedSeconds = String(seconds).padStart(2, "0");
-    return `${paddedMinutes}:${paddedSeconds}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
   async function handleRemoveSongFromPlaylist(videoId, targetPlaylistId) {
     try {

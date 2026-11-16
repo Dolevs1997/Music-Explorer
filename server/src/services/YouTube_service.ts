@@ -299,7 +299,6 @@ async function fetchSong(song: string, country = "US") {
       }
       const detailsData = await detailsResponse.json();
       const duration = detailsData.items?.[0]?.contentDetails?.duration;
-      console.log("duration: ", duration);
       await setCachedSong(song, country, {
         title,
         videoId,

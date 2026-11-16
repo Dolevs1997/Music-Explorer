@@ -71,11 +71,7 @@ function CategorySongsPlaylist() {
         <h2 className={styles.categorySongsPlaylistTitle}>{playlistName}</h2>
         {playlistSongs.length > 0 ? (
           <div className="playlists">
-            <Songs
-              songSuggestions={playlistSongs}
-              sourceId={playlistId}
-              country={country}
-            />
+            <Songs songSuggestions={playlistSongs} country={country} />
           </div>
         ) : isLoading ? (
           <Spinner />

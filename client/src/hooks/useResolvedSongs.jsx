@@ -6,8 +6,12 @@ import { parse } from "iso8601-duration";
 function isoToSeconds(iso) {
   if (!iso) return null;
   const d = parse(iso);
-  // console.log("d: ", d);
-  return d;
+  return (
+    (d.days ?? 0) * 86400 +
+    (d.hours ?? 0) * 3600 +
+    (d.minutes ?? 0) * 60 +
+    (d.seconds ?? 0)
+  );
 }
 
 export function useResolvedSongs(songs, country = "US") {
@@ -34,7 +38,7 @@ export function useResolvedSongs(songs, country = "US") {
       return {
         ...song,
         videoId: songQuery.videoId,
-        duration: isoToSeconds(songQuery.duration) ?? song.duration,
+        duration: song.duration ?? isoToSeconds(songQuery.duration),
       };
     });
   }, [data, songs]);

@@ -17,11 +17,14 @@ export function coverUrl(publicId, size = 400) {
 }
 
 async function addSongToPlaylist(song, user, playlist) {
+  console.log("song: ", song);
   const response = await axios.post(
     `/api/playlist/addSong?id=${playlist._id || playlist.id}`,
     {
       song: song.query,
       videoId: song?.videoId,
+      album: song.album,
+      duration: song.duration,
       user: user,
     },
   );

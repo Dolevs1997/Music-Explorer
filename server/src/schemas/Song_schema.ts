@@ -11,6 +11,14 @@ const SongSchema = new mongoose.Schema({
     unique: true,
     sparse: true,
   },
+  album: {
+    type: String,
+    required: true,
+  },
+  duration: {
+    type: String,
+    required: true,
+  },
   regionCode: {
     type: String,
     required: false,

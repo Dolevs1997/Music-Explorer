@@ -97,6 +97,7 @@ body {
   color: var(--color-text);
   font-size: 1.2rem;
   text-decoration: none;
+  z-index: 100;
 }
 
 .link:hover {

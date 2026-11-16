@@ -63,11 +63,13 @@ const createPlaylist = async (req: Request, res: Response) => {
 };
 
 const addSongToPlaylist = async (req: Request, res: Response) => {
-  const { song, videoId } = req.body;
+  const { song, videoId, album, duration } = req.body;
   const playlistId = req.query.id;
   console.log("song: ", song);
   console.log("videoId: ", videoId);
-  if (!song || !videoId || !playlistId) {
+  console.log("album: ", album);
+  console.log("duration: ", duration);
+  if (!song || !videoId || !playlistId || !album || !duration) {
     return res.status(400).json({ message: "Missing required fields" });
   }
   try {
@@ -99,6 +101,8 @@ const addSongToPlaylist = async (req: Request, res: Response) => {
       const newSong = new SongSchema({
         song: song,
         videoId: videoId,
+        album: album,
+        duration: duration,
         playlists: [playlist._id],
       });
       await newSong.save();
