@@ -169,6 +169,7 @@ function PlaylistsUser() {
         <DropDownComponent />
       </header>
       <SideBar />
+
       <main className="home">
         <>
           <div className={styles.playlistHeader}>

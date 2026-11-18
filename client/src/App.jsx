@@ -31,6 +31,7 @@ import propTypes from "prop-types";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PlayerBar from "./components/PlayerBar/PlayerBar";
+import RecentSongs from "./pages/RecentSongs/RecentSongs";
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -169,6 +170,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <SongsPlaylistUser />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/recentsongs"
+                  element={
+                    <ProtectedRoute>
+                      <RecentSongs />
                     </ProtectedRoute>
                   }
                 />

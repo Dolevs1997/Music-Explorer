@@ -25,9 +25,30 @@ const getAll = async (req: Request, res: Response) => {
     return res.status(400).json({ error: err.message });
   }
 };
-
+// album
+// :
+// "21"
+// artists
+// :
+// "Adele"
+// duration
+// :
+// "PT4M45S"
+// id
+// :
+// "Adele - Someone Like You"
+// query
+// :
+// "Adele - Someone Like You"
+// title
+// :
+// "Someone Like You"
+// videoId
+// :
+// null
 const getBatch = async (req: Request, res: Response) => {
   const songs = req.body?.songs;
+  console.log("songs in getBatch: ", songs);
   const country = (req.body?.country || "US") as string;
   if (!Array.isArray(songs) || songs.length === 0) {
     return res.status(400).json({ error: "Songs must be a non-empty array" });
@@ -43,6 +64,7 @@ const getBatch = async (req: Request, res: Response) => {
         results[i] = data?.videoId
           ? {
               query,
+              authors: songs[i].artists,
               videoId: data.videoId,
               duration: data.duration,
               title: data.title,

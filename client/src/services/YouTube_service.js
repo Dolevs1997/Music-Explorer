@@ -8,6 +8,7 @@ async function fetchSongYT(song, country) {
 }
 
 async function fetchSongsYT(songs, country) {
+  console.log("songs: ", songs);
   const response = await axios.post(`/api/recommends/batch`, {
     songs,
     country,

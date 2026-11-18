@@ -3,14 +3,15 @@ import { fetchSongsYT } from "../services/YouTube_service";
 import { useQuery } from "@tanstack/react-query";
 import { parse } from "iso8601-duration";
 
-function isoToSeconds(iso) {
+function isoToMilliseconds(iso) {
   if (!iso) return null;
   const d = parse(iso);
   return (
-    (d.days ?? 0) * 86400 +
-    (d.hours ?? 0) * 3600 +
-    (d.minutes ?? 0) * 60 +
-    (d.seconds ?? 0)
+    ((d.days ?? 0) * 86400 +
+      (d.hours ?? 0) * 3600 +
+      (d.minutes ?? 0) * 60 +
+      (d.seconds ?? 0)) *
+    1000
   );
 }
 
@@ -38,7 +39,7 @@ export function useResolvedSongs(songs, country = "US") {
       return {
         ...song,
         videoId: songQuery.videoId,
-        duration: song.duration ?? isoToSeconds(songQuery.duration),
+        duration: isoToMilliseconds(songQuery.duration) ?? song.duration,
       };
     });
   }, [data, songs]);

@@ -16,9 +16,7 @@ function SongsPlaylistUser() {
   const { playlistId } = useParams();
   const location = useLocation();
   let playlist = location.state?.playlist;
-  console.log("playlist: ", playlist);
   const [songs, setSongs] = useState(location.state?.songs || []);
-  console.log("songs: ", songs);
   if (!playlist) {
     console.error("Playlist not found for ID:", playlistId);
   }

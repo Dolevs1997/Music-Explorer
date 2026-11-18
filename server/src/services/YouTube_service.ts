@@ -256,8 +256,8 @@ async function fetchSpotifyPlaylistsBySearch(
 async function fetchSong(song: string, country = "US") {
   const controller = new AbortController();
   const signal = controller.signal;
-
   const cachedSong = await getCachedSong(song, country);
+  console.log("song in fetchSong: ", song);
   if (
     cachedSong &&
     (cachedSong as any).videoId &&
@@ -267,7 +267,7 @@ async function fetchSong(song: string, country = "US") {
     return cachedSong;
   }
   // console.log("Fetching song from YouTube API:", song);
-
+  // const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent()}`;
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&regionCode=${country}&q=${encodeURIComponent(
     `${song} official music video`,
   )}&key=${API_KEY}`;
@@ -297,12 +297,15 @@ async function fetchSong(song: string, country = "US") {
           `Failed to fetch video details: ${detailsResponse.status} ${detailsResponse.statusText}`,
         );
       }
+      const album = itemWithVideo.snippet?.album;
       const detailsData = await detailsResponse.json();
       const duration = detailsData.items?.[0]?.contentDetails?.duration;
+      console.log("duration: ", duration);
       await setCachedSong(song, country, {
         title,
         videoId,
         duration,
+        album,
       });
 
       return { title, videoId, duration };

@@ -23,10 +23,15 @@ function SideBar() {
         <Library size={22} strokeWidth={1.5} aria-hidden="true" />
         <span>Library</span>
       </NavLink>
-      <div className={styles.navItem}>
+      <NavLink
+        to="/recentsongs"
+        className={({ isActive }) =>
+          `${styles.navItem}${isActive ? ` ${styles.active}` : ""}`
+        }
+      >
         <History size={22} strokeWidth={1.5} aria-hidden="true" />
         <span>Recent Listening</span>
-      </div>
+      </NavLink>
     </nav>
   );
 }

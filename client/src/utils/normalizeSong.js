@@ -5,7 +5,7 @@ export function normalizeSong(raw) {
     query: getSongDetails(raw),
     title,
     artists,
-    album: raw.album?.name ?? raw.album ?? "",
+    album: raw.album?.name || raw?.album ? raw.album : "",
     videoId: raw.videoId ?? null,
     duration: raw.duration ?? null,
   };

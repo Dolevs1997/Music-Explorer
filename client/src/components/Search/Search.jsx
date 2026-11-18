@@ -1,14 +1,11 @@
 import styles from "./Search.module.css";
 import { useNavigate } from "react-router";
-import { useContext, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { getSongSuggestions } from "../../services/OpenAI_service";
-import { deduplicateSongs } from "../../utils/deduplicateSongs";
-import { fetchSongsYT } from "../../services/YouTube_service";
 import propTypes from "prop-types";
 import Voice from "../Voice/Voice";
 import Record from "../Record/Record";
-import UserContext from "../../Contexts/UserContext";
 import Global from "../Global/Global";
 import { ArrowRight } from "lucide-react";
 
@@ -17,7 +14,6 @@ export default function Search({ setSongSuggestions }) {
   const menuRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { user } = useContext(UserContext);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -33,15 +29,15 @@ export default function Search({ setSongSuggestions }) {
     };
     try {
       const response = await getSongSuggestions(payload);
-      const uniqueSongs = deduplicateSongs(response);
-      const recommendations = await fetchSongsYT(
-        uniqueSongs,
-        user.country?.shortName || "US",
-      );
+      // // const uniqueSongs = deduplicateSongs(response);
+      // const recommendations = await fetchSongsYT(
+      //   response,
+      //   user.country?.shortName || "US",
+      // );
       // console.log("recommendations: ", recommendations);
-      setSongSuggestions(recommendations);
+      setSongSuggestions(response);
       setSearchQuery("");
-      if (recommendations.length === 0) {
+      if (response.length === 0) {
         alert("No song suggestions found. Please try again.");
       } else {
         navigate("/home/songSuggestions");

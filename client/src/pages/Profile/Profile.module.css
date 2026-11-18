@@ -132,17 +132,6 @@
   font-size: 0.9rem;
 }
 /* Tabs */
-:global(.panelTitle) {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 1.5rem;
-}
-.emptyState {
-  color: #555;
-  font-size: 0.95rem;
-  margin-top: 1rem;
-}
 
 .tabsContainer {
   display: flex;
@@ -184,52 +173,6 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 50px;
   }
-}
-
-/* History Tab */
-.historyList {
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
-  margin-top: 1.5rem;
-  padding: 0;
-  margin: 0;
-}
-
-.historyItem {
-  align-items: center;
-  gap: 1rem;
-  padding: 10px 14px;
-  background: #1a1a1a;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background 0.2s ease;
-  cursor: pointer;
-}
-.historyItem:hover {
-  background: #222;
-}
-
-.historyThumb {
-  width: 48px;
-  height: 36px;
-  object-fit: cover;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.historyInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.historySongName {
-  font-size: 0.9rem;
-  color: #ddd;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* Settings Tab */

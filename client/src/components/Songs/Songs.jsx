@@ -12,6 +12,7 @@ function Songs({ songSuggestions, country, onRemoveSong }) {
     () => songSuggestions.map(normalizeSong),
     [songSuggestions],
   );
+  console.log("normailzedSongs: ", normalizedSongs);
   const { songs } = useResolvedSongs(normalizedSongs, country);
   const playPlaylist = usePlayerStore((s) => s.playPlaylist);
   const location = useLocation();

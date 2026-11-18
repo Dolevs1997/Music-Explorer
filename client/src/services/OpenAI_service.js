@@ -3,7 +3,6 @@ import axios from "axios";
 async function getSongSuggestions(payload) {
   try {
     const response = await axios.post(`/api/openai`, payload);
-    console.log("response from getSongSuggestions:", response);
     return response.data;
   } catch (error) {
     console.error("Error fetching song suggestions:", error);

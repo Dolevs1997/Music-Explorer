@@ -44,8 +44,10 @@ const SongSuggestions = async (text: Message) => {
                     properties: {
                       title: { type: "string" },
                       artists: { type: "string" },
+                      album: { type: "string" },
+                      duration: { type: "string" },
                     },
-                    required: ["title", "artists"],
+                    required: ["title", "artists", "album", "duration"],
                     additionalProperties: false,
                   },
                 },
@@ -64,7 +66,7 @@ const SongSuggestions = async (text: Message) => {
       {
         role: "system",
         content:
-          "You are a strict music assistant. Return only song suggestions that clearly match the user's description. Return valid JSON with a songs array containing up to 50 objects. Each object must have exactly this shape: { song: { title: string, artists: string } }. Exclude live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, and non-music/video content. Do not include duplicates. If no relevant songs exist, return { songs: [] }.",
+          "You are a strict music assistant. Return only song suggestions that clearly match the user's description. Return valid JSON with a songs array containing up to 50 objects. Each object must have exactly this shape: { song: { title: string, artists: string,album:string,duration:string } }. Exclude live versions, trailers, podcasts, interviews, reviews, covers, remixes, instrumentals, and non-music/video content. Do not include duplicates.Set duration to null; do not estimate.  If no relevant songs exist, return { songs: [] }.",
       },
       {
         role: text.role,
@@ -85,7 +87,10 @@ const SongSuggestions = async (text: Message) => {
   const parsedSuggestions = JSON.parse(suggestions) as {
     songs?: SongSuggestion[];
   };
-  console.log("Parsed suggestions:", parsedSuggestions); // Debugging line
+  if (Array.isArray(parsedSuggestions.songs))
+    parsedSuggestions?.songs.map(({ song }) => {
+      console.log("song fetched from openai: ", song);
+    });
   return Array.isArray(parsedSuggestions.songs)
     ? parsedSuggestions.songs.map(({ song }) => song)
     : [];
@@ -110,7 +115,6 @@ const SongSuggestionsVoice = async () => {
 };
 
 const generatePlaylistPicture = async (playlist: Playlist, prompt: string) => {
-  console.log("Generating playlist picture with prompt:", prompt); // Debugging line
   const result = await openai.images.generate({
     model: "gpt-image-1.5",
     prompt,

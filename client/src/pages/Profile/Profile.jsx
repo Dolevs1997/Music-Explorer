@@ -1,5 +1,4 @@
 import Logo from "../../components/Logo/Logo";
-import Search from "../../components/Search/Search";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import { useContext, useState, useEffect, useRef } from "react";
 import UserContext from "../../Contexts/UserContext";
@@ -12,30 +11,18 @@ import { useNavigate } from "react-router";
 import { updateUserActivity } from "../../utils/userActivity";
 import { uploadImageToCloudinary } from "../../services/Cloudinary_service";
 import toast from "react-hot-toast";
-import Song from "../../components/Song/Song";
 import Account from "../../components/Settings/Account/Account";
 import Preferences from "../../components/Settings/Preferences/Preferences";
 import Privacy from "../../components/Settings/Privacy/Privacy";
-import axios from "axios";
+import SideBar from "../../components/SideBar/SideBar";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
-  const [songObj, setSongObj] = useState({
-    title: "",
-    videoId: "",
-  });
   const [activeTab, setActiveTab] = useState("playlists");
   //Avatar states
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef(null);
-
-  //History states
-  const [recentSongs, setRecentSongs] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [historyFetched, setHistoryFetched] = useState(false);
-  const [playingVideoId, setPlayingVideoId] = useState(null);
-  const [songTitle, setSongTitle] = useState(null);
 
   //Settings states
 
@@ -54,30 +41,6 @@ function Profile() {
       if (avatarPreview) URL.revokeObjectURL(avatarPreview);
     };
   }, [avatarPreview]);
-
-  useEffect(() => {
-    if (activeTab !== "history" || historyFetched || !user) return;
-
-    async function fetchHistory() {
-      setHistoryLoading(true);
-      try {
-        const response = await axios.get(
-          `/api/userActivity/songsHistory?id=${user._id}`,
-        );
-        if (response.status !== 200) throw new Error("Failed to fetch history");
-        const data = await response.data;
-        setRecentSongs(data.recentSongs || []);
-        setHistoryFetched(true);
-      } catch (error) {
-        console.error("Error fetching history:", error);
-        toast.error("Could not load history.");
-      } finally {
-        setHistoryLoading(false);
-      }
-    }
-
-    fetchHistory();
-  }, [activeTab, historyFetched, user]);
 
   if (!user) return null;
 
@@ -115,20 +78,6 @@ function Profile() {
       setIsSaving(false);
     }
   }
-  // ── History
-  function handlePlaySong(song) {
-    console.log("song: ", song);
-    // Reset first so Song unmounts and remounts fresh for the new song
-    setPlayingVideoId(null);
-    setSongTitle(null);
-
-    // Small timeout lets React unmount the old Song before mounting the new one
-    setTimeout(() => {
-      setSongTitle(song.title);
-      setPlayingVideoId(song.videoId);
-      setSongObj({ songDetail: song.title, videoId: song.videoId });
-    }, 50);
-  }
 
   // ── Derived ──────────────────────────────────────────────────────────────
   const totalSongs =
@@ -140,9 +89,9 @@ function Profile() {
     <div className="app-container">
       <header className="header">
         <Logo />
-        <Search />
         <DropDownComponent />
       </header>
+      <SideBar />
       <div className={styles.profilePageContainer}>
         <div className={styles.profileHeader}>
           <div className={styles.avatarWrapper}>
@@ -225,17 +174,6 @@ function Profile() {
                 <Tabs.Indicator />
               </Tabs.Tab>
               <Tabs.Tab
-                className={activeTab === "history" ? styles.activeTab : ""}
-                id="history"
-                onClick={() => {
-                  setActiveTab("history");
-                  setSettingsView("main");
-                }}
-              >
-                History
-                <Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab
                 className={activeTab === "settings" ? styles.activeTab : ""}
                 id="settings"
                 onClick={() => setActiveTab("settings")}
@@ -277,52 +215,7 @@ function Profile() {
               </div>
             </div>
           </Tabs.Panel>
-          {/* History Tab */}
-          <Tabs.Panel className="pt-4" id="history">
-            {activeTab === "history" && (
-              <div>
-                <h2 className={styles.panelTitle}>Recently Played</h2>
-                {historyLoading && (
-                  <p className={styles.emptyState}>Loading songs...</p>
-                )}
-                {!historyLoading && recentSongs.length === 0 && (
-                  <p className={styles.emptyState}>
-                    No songs found. Start listening to see your history!
-                  </p>
-                )}
-                {!historyLoading && recentSongs.length > 0 && (
-                  <div className={styles.historyList}>
-                    {recentSongs.map((song, index) => (
-                      <div
-                        key={song.videoId || index}
-                        className={styles.historyItem}
-                        onClick={() => {
-                          handlePlaySong(song);
-                        }}
-                      >
-                        <img
-                          className={styles.historyThumb}
-                          src={`https://img.youtube.com/vi/${song.videoId}/default.jpg`}
-                          alt={song.title}
-                        />
-                        <div className={styles.historyInfo}>
-                          <p className={styles.historySongName}>{song.title}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {playingVideoId && songTitle && (
-                  <Song
-                    song={songObj}
-                    playingVideoId={playingVideoId}
-                    setPlayingVideoId={setPlayingVideoId}
-                    key={playingVideoId} // ← forces remount on every new song
-                  />
-                )}
-              </div>
-            )}
-          </Tabs.Panel>
+
           {/* Settings Tab */}
           <Tabs.Panel className="pt-4" id="settings">
             {activeTab === "settings" && (

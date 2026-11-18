@@ -89,8 +89,9 @@ const addHistorySong = async (req: Request, res: Response) => {
   const uid = user._id.toString();
   const { song } = req.body;
   const songVideo = {
-    title: song?.song,
+    title: song?.query,
     videoId: song?.videoId,
+    album: song?.album,
     duration: song?.duration,
   };
   const idToken = req.cookies?.accessToken;
