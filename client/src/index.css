@@ -2,6 +2,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
+#root:has(.cp__card) {
+  padding-bottom: 120px; /* adjust to the player's actual height */
+}
 :root {
   /* Backgrounds */
   --bg-primary: #070611;

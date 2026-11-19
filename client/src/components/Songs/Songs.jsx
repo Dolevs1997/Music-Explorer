@@ -1,5 +1,5 @@
 import Song from "../Song/Song";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import propTypes from "prop-types";
 import styles from "./Songs.module.css";
 import { normalizeSong } from "../../utils/normalizeSong";
@@ -12,10 +12,11 @@ function Songs({ songSuggestions, country, onRemoveSong }) {
     () => songSuggestions.map(normalizeSong),
     [songSuggestions],
   );
-  console.log("normailzedSongs: ", normalizedSongs);
   const { songs } = useResolvedSongs(normalizedSongs, country);
   const playPlaylist = usePlayerStore((s) => s.playPlaylist);
   const location = useLocation();
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+
   const source = {
     pathname: location.pathname,
     search: location.search,
@@ -41,6 +42,13 @@ function Songs({ songSuggestions, country, onRemoveSong }) {
             onRemoveSong={onRemoveSong}
             index={index}
             onPlay={() => playPlaylist(songs, index, source)}
+            menuPlaylistsOpen={openMenuIndex === index}
+            setMenuPlaylistsOpen={(isOpen) =>
+              setOpenMenuIndex(isOpen ? index : null)
+            }
+            onTogglePlaylistMenu={() =>
+              setOpenMenuIndex((current) => (current === index ? null : index))
+            }
           />
         ))}
       </div>

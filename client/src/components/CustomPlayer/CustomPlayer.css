@@ -2,27 +2,23 @@
   --cp-gray: #8a8a8a;
   --cp-track: #e2e2e2;
   --cp-text: #111;
-  max-width: 700px;
-  width: 100%;
   font-family: inherit;
 }
 
 /* Video area (YouTube iframe is injected inside) */
 .cp__video {
   position: fixed;
-  right: 16px;
   bottom: 100px;
-  width: 320px;
+  width: 270px;
   aspect-ratio: 16 / 9;
-  transform: translateY(150%);
+  transform: translateX(calc(100%-40px));
   transition: transform 0.2s;
 }
 .is-open {
   position: fixed;
   bottom: 200px;
-  left: 50%;
+  left: 0;
   z-index: 1000; /* מעל שאר התוכן */
-  transform: translateX(-50%);
 }
 .cp__video iframe {
   position: absolute;
@@ -33,8 +29,12 @@
 
 /* Card */
 .cp__card {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
   background: var(--bg-primary);
-  border: 1px solid var(--purple-neon);
+  border: 1px solid #04040b;
   border-radius: 0 0 8px 8px;
   padding: 16px 20px 14px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
@@ -43,6 +43,7 @@
 /* Progress row */
 .cp__progress {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 14px;
 }
@@ -54,6 +55,7 @@
 }
 .cp__progress .cp__range {
   flex: 1;
+  min-width: 0;
 }
 
 /* Controls row */
@@ -62,19 +64,25 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 12px;
+  min-width: 0;
+  gap: clamp(6px, 2vw, 20px);
 }
 .cp__transport {
+  flex: 1;
+  min-width: 0;
   align-items: center;
 }
 .cp__volume {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 140px;
+  width: auto;
+  flex-shrink: 0;
+
   justify-content: flex-end;
 }
 .cp__volume .cp__range {
-  width: 90px;
+  width: clamp(44px, 8vw, 90px);
 }
 
 /* Buttons */
@@ -162,4 +170,14 @@
 .cp__range:disabled {
   opacity: 0.5;
   cursor: default;
+}
+.controllerBox {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: 100%;
+  min-width: 0;
+
+  gap: clamp(8px, 2vw, 24px);
+  align-items: center;
+  gap: 24px;
 }

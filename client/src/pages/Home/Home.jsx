@@ -38,7 +38,7 @@ export default function Home() {
   }, [isMapVisible, navigate, location.state, setIsMapVisible]);
 
   return (
-    <div>
+    <div className="app-container">
       <header className="header">
         <Logo />
         <DropDownComponent />
@@ -54,7 +54,11 @@ export default function Home() {
         {songSuggestions.length > 0 &&
           !isVoiceSearch &&
           !isMapVisible &&
-          !isRecording && <Songs songSuggestions={songSuggestions} />}
+          !isRecording && (
+            <div>
+              <Songs songSuggestions={songSuggestions} />
+            </div>
+          )}
 
         {songSuggestions.length > 0 &&
           !isMapVisible &&

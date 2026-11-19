@@ -171,10 +171,10 @@ export default function CustomPlayer({
       <div className={`cp__video ${showVideo ? "is-open" : ""}`}>
         <div ref={mountRef} />
       </div>
-      <button onClick={() => setShowVideo((v) => !v)}>
-        {showVideo ? "Hide video" : "Show video"}
-      </button>
       <div className="cp__card">
+        <button onClick={() => setShowVideo((v) => !v)}>
+          {showVideo ? "Hide video" : "Show video"}
+        </button>
         {/* Progress row */}
         <button
           type="button"
@@ -184,28 +184,6 @@ export default function CustomPlayer({
         >
           <Xmark />
         </button>
-
-        <div className="cp__progress">
-          <span className="cp__time">{formatTime(current)}</span>
-          <input
-            className="cp__range cp__range--progress"
-            type="range"
-            min={0}
-            max={duration || 0}
-            step={0.1}
-            value={current}
-            disabled={!ready}
-            style={{ ["--fill"]: `${pct(current, duration)}%` }}
-            onMouseDown={() => setSeeking(true)}
-            onTouchStart={() => setSeeking(true)}
-            onChange={(e) => setCurrent(Number(e.target.value))}
-            onMouseUp={(e) => commitSeek(Number(e.target.value))}
-            onTouchEnd={(e) => commitSeek(Number(e.target.value))}
-            onKeyUp={(e) => commitSeek(Number(e.target.value))}
-            aria-label="Seek"
-          />
-          <span className="cp__time">{formatTime(duration)}</span>
-        </div>
 
         {/* Controls row */}
         <div className="cp__controls">
@@ -251,6 +229,59 @@ export default function CustomPlayer({
                 <ForwardStepFill />
               </button>
             </div>
+            <div className="controllerBox">
+              <div className="cp__progress">
+                <span className="cp__time">{formatTime(current)}</span>
+                <input
+                  className="cp__range cp__range--progress"
+                  type="range"
+                  min={0}
+                  max={duration || 0}
+                  step={0.1}
+                  value={current}
+                  disabled={!ready}
+                  style={{ ["--fill"]: `${pct(current, duration)}%` }}
+                  onMouseDown={() => setSeeking(true)}
+                  onTouchStart={() => setSeeking(true)}
+                  onChange={(e) => setCurrent(Number(e.target.value))}
+                  onMouseUp={(e) => commitSeek(Number(e.target.value))}
+                  onTouchEnd={(e) => commitSeek(Number(e.target.value))}
+                  onKeyUp={(e) => commitSeek(Number(e.target.value))}
+                  aria-label="Seek"
+                />
+                <span className="cp__time">{formatTime(duration)}</span>
+              </div>
+              <div className="cp__volume">
+                <button
+                  className="cp__icon-btn"
+                  onClick={toggleMute}
+                  aria-label="Mute"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                  >
+                    {shownVolume === 0 ? (
+                      <path d="M16.5 12A4.5 4.5 0 0 0 14 8v2.2l2.5 2.5V12zM19 12c0 .9-.2 1.8-.5 2.6l1.5 1.5A8.9 8.9 0 0 0 21 12c0-4.3-3-7.9-7-8.8v2.1c2.9.9 5 3.5 5 6.7zM4.3 3 3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.3c-.7.5-1.4.9-2.3 1.1v2.1c1.4-.3 2.6-.9 3.7-1.8l2 2 1.3-1.3L4.3 3zM12 4 9.9 6.1 12 8.2V4z" />
+                    ) : (
+                      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.900-7-8.800z" />
+                    )}
+                  </svg>
+                </button>
+                <input
+                  className="cp__range cp__range--volume"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={shownVolume}
+                  style={{ ["--fill"]: `${shownVolume}%` }}
+                  onChange={(e) => changeVolume(Number(e.target.value))}
+                  aria-label="Volume"
+                />
+              </div>
+            </div>
             <Link
               className="link-playlist"
               to={{ pathname: source.pathname, search: source.search }}
@@ -258,36 +289,6 @@ export default function CustomPlayer({
             >
               Go to playlist
             </Link>
-          </div>
-          <div className="cp__volume">
-            <button
-              className="cp__icon-btn"
-              onClick={toggleMute}
-              aria-label="Mute"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                fill="currentColor"
-              >
-                {shownVolume === 0 ? (
-                  <path d="M16.5 12A4.5 4.5 0 0 0 14 8v2.2l2.5 2.5V12zM19 12c0 .9-.2 1.8-.5 2.6l1.5 1.5A8.9 8.9 0 0 0 21 12c0-4.3-3-7.9-7-8.8v2.1c2.9.9 5 3.5 5 6.7zM4.3 3 3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.3c-.7.5-1.4.9-2.3 1.1v2.1c1.4-.3 2.6-.9 3.7-1.8l2 2 1.3-1.3L4.3 3zM12 4 9.9 6.1 12 8.2V4z" />
-                ) : (
-                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.900-7-8.800z" />
-                )}
-              </svg>
-            </button>
-            <input
-              className="cp__range cp__range--volume"
-              type="range"
-              min={0}
-              max={100}
-              value={shownVolume}
-              style={{ ["--fill"]: `${shownVolume}%` }}
-              onChange={(e) => changeVolume(Number(e.target.value))}
-              aria-label="Volume"
-            />
           </div>
         </div>
       </div>

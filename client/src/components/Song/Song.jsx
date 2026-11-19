@@ -10,16 +10,25 @@ import { removeBtn } from "../../Contexts/RemoveContext";
 import { removeSongFromPlaylist } from "../../utils/playlist";
 // import { generateImagePlaylist } from "../../services/OpenAI_service";
 
-function Song({ song, onRemoveSong, index, onPlay }) {
+function Song({
+  song,
+  onRemoveSong,
+  index,
+  onPlay,
+  menuPlaylistsOpen,
+  setMenuPlaylistsOpen,
+  onTogglePlaylistMenu,
+}) {
   const remove = useContext(removeBtn);
   const [isHover, setIsHover] = useState(false);
-  const [menuPlaylistsOpen, setMenuPlaylistsOpen] = useState(false);
   const { user } = useContext(UserContext);
   const playlists = user?.playlists || [];
   const canPlay = Boolean(song.videoId);
-
   // console.log(playlists);
   // console.log("song details: ", song);
+  function handleClickMenu() {
+    onTogglePlaylistMenu();
+  }
   function formatTime(milliseconds) {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -89,7 +98,7 @@ function Song({ song, onRemoveSong, index, onPlay }) {
           onClick={() =>
             remove
               ? handleRemoveSongFromPlaylist(song.videoId, remove.playlistId)
-              : setMenuPlaylistsOpen((isOpen) => !isOpen)
+              : handleClickMenu()
           }
           aria-label={
             remove ? "Remove song from playlist" : "Add song to playlist"
@@ -131,6 +140,9 @@ Song.propTypes = {
   onRemoveSong: propTypes.func,
   index: propTypes.number,
   onPlay: propTypes.func,
+  menuPlaylistsOpen: propTypes.bool,
+  setMenuPlaylistsOpen: propTypes.func,
+  onTogglePlaylistMenu: propTypes.func,
 };
 
 export default Song;

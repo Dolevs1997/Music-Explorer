@@ -3,7 +3,7 @@ function findPlayable(queue, from, step) {
   for (let i = from; i >= 0 && i < queue.length; i += step) {
     if (queue[i]?.videoId) return i;
   }
-  return -1; // אין שיר שאפשר לנגן בכיוון הזה
+  return -1;
 }
 export const usePlayerStore = create((set, get) => ({
   queue: [],
@@ -25,7 +25,7 @@ export const usePlayerStore = create((set, get) => ({
     const { queue, currentIndex } = get();
     const i = findPlayable(queue, currentIndex + 1, 1);
     if (i === -1) {
-      set({ isPlaying: false }); // סוף התור
+      set({ isPlaying: false });
       return;
     }
     set({ currentIndex: i });
