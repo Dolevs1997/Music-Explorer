@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import { addSongToPlaylist, createPlaylist } from "../../utils/playlist";
 import toast from "react-hot-toast";
 import CreateModalPlaylist from "../CreateModalPlaylist/CreateModalPlaylist";
+import { X } from "lucide-react";
 
 function PlaylistMenu({
   menuPlaylistsOpen,
@@ -114,7 +115,7 @@ function PlaylistMenu({
               onClick={() => setMenuPlaylistsOpen(false)}
               aria-label="Close playlist menu"
             >
-              ×
+              <X />
             </button>
           </div>
           <div className={styles.playlistList}>

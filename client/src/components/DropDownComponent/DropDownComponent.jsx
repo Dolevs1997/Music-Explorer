@@ -4,14 +4,13 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import toast from "react-hot-toast";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 
 import { useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
 function DropDownComponent() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-  const { currentLocation } = useContext(CurrentLocationContext);
+
   async function handleLogout() {
     try {
       const response = await axios.get(`/auth/logout`);
@@ -33,14 +32,9 @@ function DropDownComponent() {
         menuVariant="dark"
         id="nav-dropdown-dark-example"
       >
-        <NavDropdown.Item>
-          <span className="countrySelector">{currentLocation}</span>
-        </NavDropdown.Item>
+        <NavDropdown.Item></NavDropdown.Item>
         <NavDropdown.Item onClick={() => navigate("/profile")}>
           Profile
-        </NavDropdown.Item>
-        <NavDropdown.Item onClick={() => navigate("/myplaylists")}>
-          Playlists
         </NavDropdown.Item>
         <NavDropdown.Divider />
 

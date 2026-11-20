@@ -4,9 +4,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import UserContext from "../../Contexts/UserContext";
 import styles from "./Profile.module.css";
 import "@heroui/styles";
-import { Tabs } from "@heroui/react";
 import "@heroui/react/styles";
-import { Card } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { updateUserActivity } from "../../utils/userActivity";
 import { uploadImageToCloudinary } from "../../services/Cloudinary_service";
@@ -15,9 +13,11 @@ import Account from "../../components/Settings/Account/Account";
 import Preferences from "../../components/Settings/Preferences/Preferences";
 import Privacy from "../../components/Settings/Privacy/Privacy";
 import SideBar from "../../components/SideBar/SideBar";
+import DeleteAccount from "../../components/DeleteAccount/DeleteAccount";
+import { Card } from "@heroui/react";
+import { ArrowRight, Upload, User } from "lucide-react";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
-  const [activeTab, setActiveTab] = useState("playlists");
   //Avatar states
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -25,8 +25,6 @@ function Profile() {
   const fileInputRef = useRef(null);
 
   //Settings states
-
-  const [settingsView, setSettingsView] = useState("main"); // "main" | "account" | "preferences" | "privacy"
 
   const navigate = useNavigate();
 
@@ -83,8 +81,7 @@ function Profile() {
   const totalSongs =
     user.playlists?.reduce((acc, p) => acc + (p.songs?.length || 0), 0) ?? 0;
 
-  const currentAvatar =
-    avatarPreview || user.avatar || "public/default-avatar-user.jpg";
+  const currentAvatar = avatarPreview || user.avatar;
   return (
     <div className="app-container">
       <header className="header">
@@ -92,28 +89,26 @@ function Profile() {
         <DropDownComponent />
       </header>
       <SideBar />
-      <div className={styles.profilePageContainer}>
+      <main className="home">
         <div className={styles.profileHeader}>
           <div className={styles.avatarWrapper}>
-            <img
-              className={styles.avatarImage}
-              src={currentAvatar}
-              alt="User Avatar"
-            />
+            {currentAvatar ? (
+              <img
+                className={styles.avatarImage}
+                src={currentAvatar}
+                alt="User Avatar"
+              />
+            ) : (
+              <div className={styles.avatarImage}>
+                <User />
+              </div>
+            )}
             <button
               className={styles.changeAvatarBtn}
               onClick={() => fileInputRef.current?.click()}
               title="Change avatar"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#1f1f1f"
-              >
-                <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
-              </svg>
+              <Upload className={styles.iconUpload} />
             </button>
             <input
               ref={fileInputRef}
@@ -125,7 +120,11 @@ function Profile() {
           </div>
 
           <div className={styles.profileMeta}>
-            <p className={styles.userEmail}>{user.email}</p>
+            <div>
+              <h6>Your Account</h6>
+              <Card.Title>Profile</Card.Title>
+              <p className={styles.userEmail}>{user.email}</p>
+            </div>
 
             {avatarFile && (
               <span className={styles.pendingBadge}>
@@ -138,156 +137,44 @@ function Profile() {
               onClick={handleSaveChanges}
               disabled={isSaving || !avatarFile}
             >
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? "Saving..." : "Save photo"}
             </button>
           </div>
         </div>
         {/* Stats Dashboard */}
         <div className={styles.statsDashboard}>
-          <div className={styles.stat}>
-            <h3>{user.playlists?.length || 0}</h3>
-            <p>Playlists</p>
+          <div className="card-stats" onClick={() => navigate("/myplaylists")}>
+            <Card.Title className="settingsSectionTitle">
+              {user.playlists?.length || 0}
+            </Card.Title>
+            <Card.Description className="settingsCardSub">
+              Playlists
+            </Card.Description>
+            <ArrowRight color="#a99abd" />
           </div>
-          <div className={styles.stat}>
-            <h3>{totalSongs}</h3>
-            <p>Songs</p>
+
+          <div className="card-stats">
+            <Card.Title className="settingsSectionTitle">
+              {totalSongs}
+            </Card.Title>
+            <Card.Description className="settingsCardSub">
+              Songs
+            </Card.Description>
           </div>
         </div>
 
-        {/* Tabs */}
+        <h2 className={styles.panelTitle}>Settings</h2>
 
-        <Tabs
-          className={`${styles.tabsContainer} w-full max-w-md`}
-          variant="secondary"
-        >
-          <Tabs.ListContainer>
-            <Tabs.List>
-              <Tabs.Tab
-                className={activeTab === "playlists" ? styles.activeTab : ""}
-                id="playlists"
-                onClick={() => {
-                  setActiveTab("playlists");
-                  setSettingsView("main");
-                }}
-              >
-                Playlists
-                <Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab
-                className={activeTab === "settings" ? styles.activeTab : ""}
-                id="settings"
-                onClick={() => setActiveTab("settings")}
-              >
-                Settings
-                <Tabs.Indicator />
-              </Tabs.Tab>
-            </Tabs.List>
-          </Tabs.ListContainer>
-          {/* Tab Playlists*/}
-          <Tabs.Panel className="pt-4" id="playlists">
-            <div>
-              <h2>My Playlists</h2>
-              <div className={styles.playlistGrid}>
-                {user.playlists?.map((playlist) => (
-                  <Card
-                    key={playlist._id}
-                    className={`${styles.card} w-[200px] gap-2`}
-                    onClick={() =>
-                      navigate(`/myplaylists/${playlist._id}`, {
-                        state: { playlist: playlist },
-                      })
-                    }
-                  >
-                    <img
-                      className="pointer-events-none aspect-square w-14 rounded-2xl object-cover select-none"
-                      src={playlist.imageUrl || "/default-playlist.png"}
-                      alt={playlist.name}
-                      loading="lazy"
-                    />
-                    <Card.Header>
-                      <Card.Title>{playlist.name}</Card.Title>
-                      <Card.Description>
-                        {playlist.songs?.length || 0} songs
-                      </Card.Description>
-                    </Card.Header>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </Tabs.Panel>
-
-          {/* Settings Tab */}
-          <Tabs.Panel className="pt-4" id="settings">
-            {activeTab === "settings" && (
-              <>
-                {/* ── Main Settings View ── */}
-                {settingsView === "main" && (
-                  <div>
-                    <h2 className={styles.panelTitle}>Settings</h2>
-
-                    <section className={styles.settingsSection}>
-                      <Card
-                        className={`${styles.card} w-[200px] gap-2`}
-                        onClick={() => setSettingsView("account")}
-                      >
-                        <Card.Title className={styles.settingsSectionTitle}>
-                          Account
-                        </Card.Title>
-                        <Card.Content>
-                          <div className={styles.settingsCardIcon}>👤</div>
-                        </Card.Content>
-                        <Card.Description className={styles.settingsCardSub}>
-                          Password, delete account
-                        </Card.Description>
-                      </Card>
-                      <Card
-                        className={`${styles.card} w-[200px] gap-2`}
-                        onClick={() => setSettingsView("preferences")}
-                      >
-                        <Card.Title className={styles.settingsSectionTitle}>
-                          Preferences
-                        </Card.Title>
-                        <Card.Content>
-                          <div className={styles.settingsCardIcon}>🎵</div>
-                        </Card.Content>
-                        <Card.Description className={styles.settingsCardSub}>
-                          Default region
-                        </Card.Description>
-                      </Card>
-                      <Card
-                        className={`${styles.card} w-[200px] gap-2`}
-                        onClick={() => setSettingsView("privacy")}
-                      >
-                        <Card.Title className={styles.settingsSectionTitle}>
-                          Privacy
-                        </Card.Title>
-                        <Card.Content>
-                          <div className={styles.settingsCardIcon}>🔒</div>
-                        </Card.Content>
-                        <Card.Description className={styles.settingsCardSub}>
-                          Clear history
-                        </Card.Description>
-                      </Card>
-                    </section>
-                  </div>
-                )}
-              </>
-            )}
-          </Tabs.Panel>
-        </Tabs>
         {/* ── Account View ── */}
-        <div>
-          {settingsView === "account" && (
-            <Account setSettingsView={setSettingsView} />
-          )}
-          {settingsView === "preferences" && (
-            <Preferences setSettingsView={setSettingsView} />
-          )}
-          {settingsView === "privacy" && (
-            <Privacy setSettingsView={setSettingsView} />
-          )}
+        <div className={styles.settingsContainer}>
+          <Account />
+
+          <Preferences />
+
+          <Privacy />
+          <DeleteAccount />
         </div>
-      </div>
+      </main>
     </div>
   );
 }

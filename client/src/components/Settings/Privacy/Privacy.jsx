@@ -4,8 +4,10 @@ import { deleteSongsHistory } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
 import Button from "../../Button/Button";
+import { Card } from "@heroui/react";
+import { Lock } from "lucide-react";
 
-function Privacy({ setSettingsView }) {
+function Privacy() {
   const [deleteSongsModal, setDeleteSongsModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { user, setUser } = useContext(UserContext);
@@ -26,46 +28,56 @@ function Privacy({ setSettingsView }) {
     }
   }
   return (
-    <div>
-      <button className="backBtn" onClick={() => setSettingsView("main")}>
-        ‹ Back
-      </button>
-      <h2 className="panelTitle">Privacy</h2>
-      <section className="settingsSection">
-        <h3
-          className="settingsSectionTitle"
-          onClick={() => setDeleteSongsModal((prev) => !prev)}
-        >
-          Clear All Songs History
-        </h3>
-      </section>
-      {deleteSongsModal && (
-        <div className="modalOverlay">
-          <div className="modalContent">
-            <h3 className="modalTitle">Delete All History Songs</h3>
-            <p className="modalText">
-              Are you sure? This will permanently delete your history songs
-            </p>
-            <div className="modalActions">
-              <Button
-                type="accept"
-                onClick={handleDeleteSongsHistory}
-                loading={deleteLoading}
-              >
-                {deleteLoading ? "Deleting..." : "Yes, Delete"}
-              </Button>
-              <Button
-                type="cancel"
-                onClick={() => setDeleteSongsModal(false)}
-                disabled={deleteLoading}
-              >
-                Cancel
-              </Button>
-            </div>
+    <Card className="card">
+      <div style={{ display: "flex" }}>
+        <div className="header-card">
+          <div className="icon-card">
+            <Lock />
+          </div>
+          <div className="description">
+            <Card.Title className="settingsSectionTitle">Privacy</Card.Title>
+            <Card.Description className="settingsCardSub">
+              Remove every song from your listening history
+            </Card.Description>
           </div>
         </div>
-      )}
-    </div>
+        <div className="buttonActions">
+          <Button
+            className="clear-btn"
+            onClick={() => setDeleteSongsModal((prev) => !prev)}
+          >
+            Clear History
+          </Button>
+        </div>
+        {deleteSongsModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3 className="modal-title">Delete All History Songs</h3>
+
+              <Card.Description className="modal-text">
+                This will permanently delete your history songs
+              </Card.Description>
+              <div className="modalActions">
+                <Button
+                  type="accept"
+                  onClick={handleDeleteSongsHistory}
+                  loading={deleteLoading}
+                >
+                  {deleteLoading ? "Deleting..." : "Yes, Delete"}
+                </Button>
+                <Button
+                  type="cancel"
+                  onClick={() => setDeleteSongsModal(false)}
+                  disabled={deleteLoading}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }
 

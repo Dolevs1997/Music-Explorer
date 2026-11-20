@@ -37,3 +37,8 @@
   gap: 0.75rem;
   justify-content: flex-end;
 }
+
+.settingsForm {
+  display: flex;
+  gap: 0.75rem;
+}

@@ -137,3 +137,9 @@ button[type="create-playlist"]:hover {
   background: rgba(168, 85, 247, 0.2);
   box-shadow: 0 0 16px rgba(168, 85, 247, 0.14);
 }
+:global(.clear-btn) {
+  border: 1px solid var(--border-default);
+}
+:global(.clear-btn):hover {
+  transform: scale(1.05);
+}

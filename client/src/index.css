@@ -3,7 +3,7 @@
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
 #root:has(.cp__card) {
-  padding-bottom: 120px; /* adjust to the player's actual height */
+  padding-bottom: 120px;
 }
 :root {
   /* Backgrounds */
@@ -11,7 +11,7 @@
   --bg-secondary: #0d0a1b;
   --bg-card: #151027;
   --bg-elevated: #1c1233;
-
+  --bg-dark-card: #05040e;
   /* Brand colors */
   --purple-primary: #a855f7;
   --purple-neon: #c084fc;
@@ -221,6 +221,7 @@ h2:hover {
   pointer-events: auto;
 }
 /* Prevent the visual layer from catching clicks (adjust selectors as needed) */
+
 .background > :not(.background-content),
 .background canvas,
 .background svg {
@@ -246,64 +247,6 @@ h2:hover {
   align-items: center;
   justify-content: center;
   gap: 5px;
-}
-/* .settingsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-} */
-.countrySelector {
-  margin-left: -4px;
-}
-/* Language dropdown - Desktop only */
-.languageSelect,
-.countrySelector,
-.settingsInput {
-  border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #1a1a1a;
-  color: #eee;
-  font-size: 0.9rem;
-  outline: none;
-  padding: 8px 10px;
-  cursor: pointer;
-}
-
-.languageSelect:focus,
-.countrySelector:focus,
-.settingsInput:focus {
-  border-color: #6246ea;
-}
-/* Hide on mobile */
-@media screen and (max-width: 768px) {
-  .languageSelect {
-    display: none;
-  }
-}
-/* Tablet and desktop */
-@media (min-width: 768px) {
-  .hamburger {
-    display: none;
-  }
-
-  .searchBar,
-  .languageSelect {
-    display: flex;
-  }
-}
-.settingsInput {
-  border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #1a1a1a;
-  color: #eee;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.settingsInput:focus {
-  border-color: var(--color-button, #6246ea);
 }
 
 @layer components {

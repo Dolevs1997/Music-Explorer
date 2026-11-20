@@ -10,7 +10,18 @@
   padding: 12px;
   z-index: 1000;
 }
-
+.country {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  color: var(--purple-neon);
+  background-color: var(--bg-elevated);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  align-self: center;
+}
 .navItem {
   display: flex;
   align-items: center;

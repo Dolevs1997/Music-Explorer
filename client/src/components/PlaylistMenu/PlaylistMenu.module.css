@@ -64,18 +64,23 @@
 }
 
 .closeMenuButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   display: grid;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   place-items: center;
   border: 1px solid transparent;
-  border-radius: 50%;
+  border-radius: 9px;
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   cursor: pointer;
-  font-size: 1.35rem;
-  line-height: 1;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
 }
 
 .closeMenuButton:hover {

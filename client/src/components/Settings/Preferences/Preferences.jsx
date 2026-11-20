@@ -6,8 +6,9 @@ import { updateUserActivity } from "../../../utils/userActivity";
 import UserContext from "../../../Contexts/UserContext";
 import toast from "react-hot-toast";
 import { CurrentLocationContext } from "../../../Contexts/CurrentLocationContext";
-function Preferences({ setSettingsView }) {
-  const [countryOptionSelected, setCountryOptionSelected] = useState(false);
+import { Card } from "@heroui/react";
+import { Globe } from "lucide-react";
+function Preferences() {
   const [loading, setLoading] = useState(false);
   const options = countryList().getData();
   const { user, setUser } = useContext(UserContext);
@@ -36,8 +37,6 @@ function Preferences({ setSettingsView }) {
     try {
       await updateUserActivity(user, { country });
       setUser({ ...user, country });
-      setCountryOptionSelected(false);
-      console.log("country full name: ", countryFullName);
       setCurrentLocation(countryFullName);
       toast.success("Preferences updated successfully.");
     } catch (error) {
@@ -52,19 +51,22 @@ function Preferences({ setSettingsView }) {
     // Components consuming currentLocation context will update
   }, []);
   return (
-    <div>
-      <button className="backBtn" onClick={() => setSettingsView("main")}>
-        ‹ Back
-      </button>
-      <h2 className="panelTitle">Preferences</h2>
-      <section className="settingsSection">
-        <h3
-          className="settingsSectionTitle"
-          onClick={() => setCountryOptionSelected((prev) => !prev)}
-        >
-          Change Country
-        </h3>
-        {countryOptionSelected && (
+    <Card className="card">
+      <div style={{ display: "flex" }}>
+        <div className="header-card">
+          <div className="icon-card">
+            <Globe />
+          </div>
+          <div className="description">
+            <Card.Title className="settingsSectionTitle">
+              Preferences
+            </Card.Title>
+            <Card.Description className="settingsCardSub">
+              Default region for song recommendations
+            </Card.Description>
+          </div>
+        </div>
+        <section className="settingsSection">
           <select
             value={countryShortName}
             className="settingsInput"
@@ -85,12 +87,14 @@ function Preferences({ setSettingsView }) {
               </option>
             ))}
           </select>
-        )}
-        <ButtonComponent onClick={handleUserPreferences} type="submit">
-          {loading ? "Loading..." : "Save"}
-        </ButtonComponent>
-      </section>
-    </div>
+          <div className="buttonActions">
+            <ButtonComponent onClick={handleUserPreferences} type="submit">
+              {loading ? "Loading..." : "Save"}
+            </ButtonComponent>
+          </div>
+        </section>
+      </div>
+    </Card>
   );
 }
 
