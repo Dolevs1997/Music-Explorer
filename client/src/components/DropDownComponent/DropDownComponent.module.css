@@ -1,5 +1,21 @@
 /* NavBar.module.css - COMPLETE UPDATE */
+.dropdown :global(.dropdown-menu) {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-default);
+}
 
+.dropdown :global(.dropdown-item) {
+  color: white;
+}
+.dropdown :global(.dropdown-divider) {
+  border: 1px solid var(--border-default);
+}
+.dropdown :global(.dropdown-item:hover) {
+  border-color: rgba(192, 132, 252, 0.24);
+  background: var(--purple-primary);
+  color: white;
+}
 .modal {
   position: fixed;
   width: 20%;
@@ -8,13 +24,6 @@
   left: 90%;
   transform: translate(-50%, -50%);
   opacity: 0.8;
-}
-
-.playlistDropdown {
-  justify-self: start;
-  margin-left: 5px;
-  color: white;
-  width: 100%;
 }
 
 /* Desktop - 70x70px avatar */

@@ -28,11 +28,10 @@ function DropDownComponent() {
   return (
     <nav className={styles.navbar}>
       <NavDropdown
+        className={styles.dropdown}
         title={<img src={user?.avatar || "/default-avatar-user.jpg"} />}
-        menuVariant="dark"
         id="nav-dropdown-dark-example"
       >
-        <NavDropdown.Item></NavDropdown.Item>
         <NavDropdown.Item onClick={() => navigate("/profile")}>
           Profile
         </NavDropdown.Item>
