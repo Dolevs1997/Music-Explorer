@@ -1,7 +1,3 @@
-.songsList {
-  width: 100%;
-}
-
 .songDetails {
   display: grid;
   grid-template-columns: 42px minmax(0, 2fr) minmax(0, 1fr) 88px 44px;

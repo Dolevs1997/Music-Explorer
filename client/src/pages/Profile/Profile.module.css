@@ -195,23 +195,31 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
-
+:global(.settingsInput .dropdown-menu) {
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-default);
+}
 :global(.settingsInput) {
   border-radius: 7px;
-  border: 1px solid var(--border-default);
-  background: var(--bg-dark-card);
   color: #eee;
   font-size: 0.9rem;
   outline: none;
   padding: 8px 10px;
   cursor: pointer;
 }
-:global(.settingsInput)::placeholder {
-  color: var(--text-secondary);
+:global(.settingsInput),
+:global(.dropdown-item) {
+  color: white;
 }
-/* :global(.settingsInput option):hover {
-  background-color: var(--text-secondary);
-} */
+
+:global(.dropdown-item:hover) {
+  border-color: rgba(192, 132, 252, 0.24);
+  background: var(--purple-primary);
+  color: white;
+}
 
 :global(.settingsSectionTitle),
 :global(.settingsSectionTitleDanger) {

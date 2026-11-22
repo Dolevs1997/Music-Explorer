@@ -1,3 +1,4 @@
+import styles from "./Voice.module.css";
 import { SearchContext } from "../../Contexts/SearchContext";
 import { getSongSuggestions } from "../../services/OpenAI_service";
 import { createVoiceRecognition } from "../../utils/voice_search_song";
@@ -12,6 +13,7 @@ import {
   SPEECH_RECOGNITION_LANGUAGES,
 } from "../../utils/voice_search_song";
 import { useNavigate } from "react-router";
+import { NavDropdown } from "react-bootstrap";
 function Voice() {
   const { setIsMapVisible, setIsRecording, setSongSuggestions } =
     useContext(SearchContext);
@@ -23,6 +25,7 @@ function Voice() {
   const transcriptRef = useRef("");
   const recognitionFailedRef = useRef(false);
   const navigate = useNavigate();
+  console.log("selected language: ", selectedLanguage);
   async function handleRecognitionEnd() {
     recognitionRef.current = null;
 
@@ -143,8 +146,25 @@ function Voice() {
   );
 
   return (
-    <nav>
+    <nav className={styles.voiceTool}>
+      <NavDropdown
+        className="settingsInput"
+        title={SPEECH_RECOGNITION_LANGUAGES[selectedLanguage]}
+        onSelect={(eventKey) => {
+          if (typeof eventKey === "string") {
+            setSelectedLanguage(eventKey);
+          }
+        }}
+        disabled={status !== "idle"}
+      >
+        {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
+          <NavDropdown.Item key={code} eventKey={code}>
+            {name}
+          </NavDropdown.Item>
+        ))}
+      </NavDropdown>
       <button
+        className="search-tool"
         type="button"
         onClick={handleMicClick}
         disabled={status === "processing"}
@@ -178,20 +198,6 @@ function Voice() {
           </span>
         </div>
       </button>
-
-      <select
-        value={selectedLanguage}
-        onChange={(event) => setSelectedLanguage(event.target.value)}
-        className="languageSelect"
-        title="Select language for voice search"
-        disabled={status !== "idle"}
-      >
-        {Object.entries(SPEECH_RECOGNITION_LANGUAGES).map(([code, name]) => (
-          <option key={code} value={code}>
-            {name}
-          </option>
-        ))}
-      </select>
     </nav>
   );
 }

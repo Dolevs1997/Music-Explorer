@@ -6,27 +6,64 @@
   align-items: center;
   gap: 10px;
   width: 100%;
+  padding: 6px;
+  border: 1px solid var(--border-default);
+  border-radius: 50px;
+  background: var(--bg-card);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.searchBar:focus-within {
+  border-color: var(--purple-primary);
+  box-shadow: 0 0 0 3px var(--border-glow);
 }
 .searchBar input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+  padding: 10px 56px 10px 16px;
   border: none;
   border-radius: 50px;
-  background-color: #1a1a1a;
-  color: white;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
-.submitFormButton {
-  color: white;
-  border-radius: 50%;
-  padding: 8px 12px;
-  cursor: pointer;
-  margin-left: -60px;
-  transition: background-color 0.2s;
+.searchBar input::placeholder {
+  color: var(--text-muted);
 }
-.searchTools {
+.submitFormButton {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  margin-left: -60px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--purple-primary);
+  color: white;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.submitFormButton:hover {
+  background: var(--purple-secondary);
+}
+.submitFormButton:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+:global(.search-tools) {
   display: flex;
   align-items: center;
   gap: 10px;
+  transform-origin: left center;
+  transition: transform 200ms ease-in-out;
+}
+:global(.search-tool:hover) {
+  cursor: pointer;
+  transform: scale(1.05);
 }
 /* ===== DESKTOP ICONS ===== */
 

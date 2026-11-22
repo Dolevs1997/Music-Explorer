@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { CurrentLocationContext } from "../../../Contexts/CurrentLocationContext";
 import { Card } from "@heroui/react";
 import { Globe } from "lucide-react";
+import { NavDropdown } from "react-bootstrap";
 function Preferences() {
   const [loading, setLoading] = useState(false);
   const options = countryList().getData();
@@ -23,6 +24,10 @@ function Preferences() {
     shortName: countryShortName,
     fullName: countryFullName,
   };
+  const selectedCountryLabel = options.find(
+    (option) => option.value === countryShortName,
+  )?.label;
+  console.log(selectedCountryLabel);
   async function handleUserPreferences() {
     if (
       !countryShortName ||
@@ -67,26 +72,25 @@ function Preferences() {
           </div>
         </div>
         <section className="settingsSection">
-          <select
-            value={countryShortName}
+          <NavDropdown
             className="settingsInput"
-            onChange={(e) => {
-              setCountryShortName(e.target.value);
-              const selectedName =
-                options.find((opt) => opt.value === e.target.value)?.label ||
-                "";
-              setCountryFullName(selectedName);
+            title={selectedCountryLabel || "Select Country"}
+            onSelect={(countryCode) => {
+              const selectedCountry = options.find(
+                (option) => option.value === countryCode,
+              );
+              if (selectedCountry) {
+                setCountryShortName(selectedCountry.value);
+                setCountryFullName(selectedCountry.label);
+              }
             }}
           >
-            <option value="" disabled>
-              Select Country
-            </option>
             {options.map((option) => (
-              <option key={option.value} value={option.value}>
+              <NavDropdown.Item key={option.value} eventKey={option.value}>
                 {option.label}
-              </option>
+              </NavDropdown.Item>
             ))}
-          </select>
+          </NavDropdown>
           <div className="buttonActions">
             <ButtonComponent onClick={handleUserPreferences} type="submit">
               {loading ? "Loading..." : "Save"}

@@ -87,7 +87,7 @@ export default function Search({ setSongSuggestions }) {
           {isLoading ? "Searching..." : <ArrowRight />}
         </button>
       </form>
-      <div className={styles.searchTools}>
+      <div className="search-tools">
         <Voice />
         <Record setSongSuggestions={setSongSuggestions} />
         <Global />

@@ -17,9 +17,11 @@
   align-items: center;
   gap: 10px;
   z-index: 1000;
+  transform-origin: left center;
+  transition: transform 200ms ease-in-out;
 }
 
 .logo:hover {
   cursor: pointer;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
