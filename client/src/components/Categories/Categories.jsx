@@ -1,18 +1,19 @@
-/* eslint-disable react/prop-types */
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import axios from "axios";
 import Category from "../Category/Category";
 import styles from "./Categories.module.css";
-import { Link, useParams, useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getLocaleForCountry } from "../../utils/countryLocalMap";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
 // const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const INITIAL_COUNT = 6;
+
 function Categories() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [showMore, setShowMore] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const params = useParams();
   // const location = useLocation();
 
@@ -21,102 +22,56 @@ function Categories() {
   const { currentLocation } = useContext(CurrentLocationContext);
   // Determine locale based on country code
   const locale = getLocaleForCountry(country);
-  let limit = categories.length === 0 ? 6 : categories.length;
   useEffect(() => {
     if (userData == null) navigate("/login");
-  });
-
-  useEffect(
-    function () {
-      async function fetchGenres() {
-        try {
-          const response = await axios.get(
-            `/api/categories/getAll?limit=${limit}&locale=${locale}`,
-          );
-
-          setCategories(response.data.categories.items);
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-          toast.error("Error fetching categories", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            newestOnTop: true,
-            rtl: false,
-            theme: "light",
-          });
-        }
-      }
-      fetchGenres();
-    },
-    [limit, locale],
-  );
-
-  async function handleShowCategories(show) {
-    try {
-      if (show == "show more") {
-        setShowMore(true);
-      } else if (show == "show less") {
-        setShowMore(false);
-      }
-
-      limit = showMore ? 6 : 50;
-
-      const response = await axios.get(`/api/categories/getAll?limit=${limit}`);
-      if (response.status !== 200) {
-        console.error("Error fetching categories:", response.statusText);
-      } else {
+  }, [userData, navigate]);
+  useEffect(() => {
+    async function fetchGenres() {
+      try {
+        const response = await axios.get(
+          `/api/categories/getAll?limit=50&locale=${locale}`,
+        );
         setCategories(response.data.categories.items);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Error fetching categories");
       }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      toast.error("unable to show more Categories", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        rtl: false,
-        draggable: true,
-        theme: "light",
-      });
     }
-  }
+    fetchGenres();
+  }, [locale]);
+  const sorted = useMemo(
+    () => [...categories].sort((a, b) => a.name.localeCompare(b.name)),
+    [categories],
+  );
+  const visible = showAll ? sorted : sorted.slice(0, INITIAL_COUNT);
 
   return (
     <>
-      <div>
-        <h1 className="pageTitle">Categories</h1>
+      <div className={styles.sectionHead}>
+        <div className={styles.sectionTitleBox}>
+          <span className={styles.eyebrow}>Browse by genre</span>
+          <h2 className={styles.sectionTitle}>Categories</h2>
+        </div>
+        <button
+          type="button"
+          className={styles.sectionLink}
+          onClick={() => setShowAll((v) => !v)}
+          aria-expanded={showAll}
+        >
+          {showAll ? "Show less" : "View all →"}
+        </button>
       </div>
       <ToastContainer />
       <div className={styles.categories}>
-        {categories
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map((category) => (
-            <Category
-              key={category.id}
-              category={category}
-              country={country}
-              location={currentLocation}
-            />
-          ))}
+        {visible.map((category) => (
+          <Category
+            key={category.id}
+            category={category}
+            country={country}
+            location={currentLocation}
+          />
+        ))}
       </div>
-      {!showMore ? (
-        <Link
-          className="link"
-          onClick={() => handleShowCategories("show more")}
-        >
-          Show More
-        </Link>
-      ) : (
-        <Link
-          className="link"
-          onClick={() => handleShowCategories("show less")}
-        >
-          Show Less
-        </Link>
-      )}
     </>
   );
 }

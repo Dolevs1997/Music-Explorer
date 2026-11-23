@@ -81,13 +81,8 @@ function Record() {
   };
 
   return (
-    <div>
-      {/* Identify Song */}
-      <button
-        className={styles.recordingButton}
-        onClick={handleRecordClick}
-        disabled={proccessRecording && !isRecording}
-      >
+    <div className={styles.recordContainer}>
+      <button className={styles.recordingButton} onClick={handleRecordClick}>
         <div className="search-tool">
           <AudioLines
             size={28}
@@ -101,21 +96,13 @@ function Record() {
           Identify Song
         </div>
       </button>
-      {!isRecording && (
-        <div>
-          {proccessRecording && (
-            <>
-              <Spinner />
-              Proccessing...
-            </>
-          )}
-        </div>
-      )}
-      {isRecording && (
-        <>
+      {(isRecording || proccessRecording) && (
+        <div className={styles.status}>
           <Spinner />
-          Please wait {secondsLeft} seconds...
-        </>
+          {isRecording
+            ? `Please wait ${secondsLeft} seconds...`
+            : "Processing..."}
+        </div>
       )}
     </div>
   );

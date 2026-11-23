@@ -1,5 +1,9 @@
-.playlistHeader h1 {
+.playlistHeader {
   margin-right: 20px;
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .userSongsContainer {

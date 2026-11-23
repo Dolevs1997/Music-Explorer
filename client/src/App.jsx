@@ -32,6 +32,7 @@ import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PlayerBar from "./components/PlayerBar/PlayerBar";
 import RecentSongs from "./pages/RecentSongs/RecentSongs";
+import SideBar from "./components/SideBar/SideBar";
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -193,15 +194,14 @@ function App() {
                   path="/global/categories/:country"
                   element={
                     <ProtectedRoute>
+                      <div className="header">
+                        <Logo />
+                        <DropDownComponent />
+                      </div>
+                      <SideBar />
                       <div className="home">
-                        <div className="header">
-                          <Logo />
-                          <Search />
-                          <DropDownComponent />
-                        </div>
-                        <div className="homeContainer">
-                          <Categories />
-                        </div>
+                        <Search />
+                        <Categories />
                       </div>
                     </ProtectedRoute>
                   }

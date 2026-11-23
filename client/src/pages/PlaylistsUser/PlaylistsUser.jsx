@@ -173,7 +173,7 @@ function PlaylistsUser() {
       <main className="home">
         <>
           <div className={styles.playlistHeader}>
-            <h1>Your Playlists</h1>
+            <h2>Your Playlists</h2>
             <Button
               type="create-playlist"
               onClick={() => setActiveModal("create")}

@@ -84,21 +84,29 @@
 
 @media (max-width: 520px) {
   .songContainerBox {
-    grid-template-columns: 28px minmax(0, 2fr) minmax(0, 1fr) 64px 36px;
+    grid-template-columns: 28px minmax(0, 1fr) 56px 36px;
     gap: 8px;
     padding: 10px 6px;
   }
 
+  .album {
+    display: none;
+  }
+
   .thumbnail {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
   }
 
   .imageContainer {
     gap: 6px;
   }
 
-  .album,
+  .songTitle,
+  .songArtists {
+    white-space: nowrap;
+  }
+
   .duration {
     font-size: 0.75rem;
   }

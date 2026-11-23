@@ -192,6 +192,31 @@ textarea {
   max-width: 500px;
   font-size: 1.2rem;
 }
+.title-application {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px;
+  background: linear-gradient(
+    90deg,
+    #fff 0%,
+    #d8b4fe 60%,
+    #a855f7 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+.subtitle {
+  margin: 0;
+  max-width: 540px;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
 h2 {
   font-size: 2rem;
   text-align: center;
@@ -205,9 +230,6 @@ h2 {
 }
 h2:hover {
   cursor: pointer;
-}
-.pageTitle {
-  margin-bottom: 50px;
 }
 
 .background {

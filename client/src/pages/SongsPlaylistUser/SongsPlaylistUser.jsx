@@ -1,3 +1,4 @@
+import styles from "./SongsPlaylistUser.module.css";
 import { useParams } from "react-router";
 import { useEffect, useState, useContext } from "react";
 import Logo from "../../components/Logo/Logo";
@@ -95,7 +96,7 @@ function SongsPlaylistUser() {
         </header>
         <SideBar />
         <main className="home">
-          <h1>{playlist.name} Playlist</h1>
+          <h2 className={styles.playlistHeader}>{playlist.name} Playlist</h2>
           {songs.length === 0 && <p>No songs in this playlist.</p>}
           <div className="playlists">
             <Songs songSuggestions={songs} onRemoveSong={handleRemoveSong} />

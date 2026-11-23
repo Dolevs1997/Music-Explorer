@@ -46,8 +46,10 @@ export default function Home() {
       <SideBar />
 
       <main className="home">
-        <h2>Discover Your Next Vibe</h2>
-        <p>Tell us for you feel, explore new music around the globe</p>
+        <h1 className="title-application">Discover Your Next Vibe</h1>
+        <p className="subtitle">
+          Tell us for you feel, explore new music around the globe
+        </p>
         <Search setSongSuggestions={setSongSuggestions} />
 
         {songSuggestions.length == 0 && !isMapVisible && <Categories />}

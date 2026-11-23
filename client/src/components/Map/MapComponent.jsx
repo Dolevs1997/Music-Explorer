@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import PoiMarker from "./Marker";
 import countryList from "react-select-country-list";
 import { CurrentLocationContext } from "../../Contexts/CurrentLocationContext";
+import { NavDropdown } from "react-bootstrap";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;
@@ -87,31 +88,35 @@ function MapContent() {
     });
     setShowDialog(false);
   }
-
+  const selectedCountry = options.find(
+    (option) => option.value === countryShortName,
+  )?.label;
   return (
     <>
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
-        <select
-          value={countryShortName}
+        <NavDropdown
+          title={selectedCountry || "Choose a country from the list"}
           className="settingsInput"
-          onChange={(e) => {
-            const selectedVal = e.target.value;
-            const selectedLabel =
-              options.find((opt) => opt.value === selectedVal)?.label || "";
-            setCountryShortName(selectedVal);
-            geocodeAddress(selectedLabel);
+          onSelect={(countryCode) => {
+            const selectedCountry = options.find(
+              (opt) => opt.value === countryCode,
+            );
+            console.log(selectedCountry);
+            if (selectedCountry) {
+              setCountryShortName(selectedCountry.value);
+              geocodeAddress(selectedCountry.label);
+            }
+            // setCountryShortName(selectedVal);
+            // geocodeAddress(selectedLabel);
           }}
           style={{ width: "300px", height: "30px" }}
         >
-          <option value="" disabled>
-            Choose a country from the list
-          </option>
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <NavDropdown.Item key={option.value} eventKey={option.value}>
               {option.label}
-            </option>
+            </NavDropdown.Item>
           ))}
-        </select>
+        </NavDropdown>
       </div>
 
       <Map
@@ -145,8 +150,12 @@ export default function MapComponent() {
   return (
     <div style={{ marginTop: "30px" }}>
       <div style={{ textAlign: "center" }}>
-        <h1>Explore music trends around the globe!</h1>
-        <p>Use pins to mark your location to get personalized music</p>
+        <h1 className="title-application">
+          Explore music trends around the globe!
+        </h1>
+        <span className="subtitle">
+          Use pins to mark your location to get personalized music
+        </span>
       </div>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <MapContent />

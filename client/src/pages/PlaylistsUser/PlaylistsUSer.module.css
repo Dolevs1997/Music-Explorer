@@ -69,9 +69,10 @@
 }
 
 .playlistHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 50px;
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 .createPlaylistBtn {
   display: flex;

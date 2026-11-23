@@ -1,0 +1,16 @@
+.recordContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.status {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
