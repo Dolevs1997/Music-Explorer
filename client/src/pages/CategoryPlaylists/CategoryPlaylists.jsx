@@ -6,6 +6,7 @@ import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import SideBar from "../../components/SideBar/SideBar";
+import NavBar from "../../components/NavBar/NavBar";
 
 function CategoryPlaylists() {
   const location = useLocation();
@@ -25,8 +26,9 @@ function CategoryPlaylists() {
 
   return (
     <div>
-      <header className="header">
+      <header className="header homeHeader">
         <Logo />
+        <NavBar />
         <DropDownComponent />
       </header>
       <SideBar />

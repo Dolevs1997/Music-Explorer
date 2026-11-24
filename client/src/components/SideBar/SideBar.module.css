@@ -38,3 +38,9 @@
   color: var(--purple-neon);
   background-color: var(--bg-elevated);
 }
+
+@media screen and (max-width: 1032px) {
+  .sideBar {
+    display: none;
+  }
+}

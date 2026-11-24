@@ -12,6 +12,7 @@ import { useInactivity } from "../../hooks/useInactivity";
 import axios from "axios";
 import propTypes from "prop-types";
 import SideBar from "../../components/SideBar/SideBar";
+import NavBar from "../../components/NavBar/NavBar";
 export default function Home() {
   const { songSuggestions, setSongSuggestions, isRecording, isVoiceSearch } =
     useContext(SearchContext);
@@ -39,8 +40,9 @@ export default function Home() {
 
   return (
     <div className="app-container">
-      <header className="header">
+      <header className="header homeHeader">
         <Logo />
+        <NavBar />
         <DropDownComponent />
       </header>
       <SideBar />

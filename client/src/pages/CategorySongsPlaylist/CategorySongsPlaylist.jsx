@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Search from "../../components/Search/Search";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
-// import Song from "../../components/Song/Song";
+
 import { Spinner } from "../../components/ui/spinner";
 import axios from "axios";
 import Songs from "../../components/Songs/Songs";
 import SideBar from "../../components/SideBar/SideBar";
+import NavBar from "../../components/NavBar/NavBar";
 function getUniqueSongs(songs) {
   const seen = new Set();
 
@@ -61,8 +62,9 @@ function CategorySongsPlaylist() {
   }, [playlistId, country, playlistSongs]);
   return (
     <div className="app-container">
-      <header className="header">
+      <header className="header homeHeader">
         <Logo />
+        <NavBar />
         <DropDownComponent />
       </header>
       <SideBar />
@@ -78,14 +80,6 @@ function CategorySongsPlaylist() {
         ) : (
           <p>No playlist found</p>
         )}
-
-        {/* <iframe
-          id="ytplayer"
-          type="text/html"
-          width="640"
-          height="40"
-          src="https://www.youtube.com/embed/fV4DiAyExN0?si=QWwntI3GoJx9GqqB"
-        ></iframe> */}
       </main>
     </div>
   );

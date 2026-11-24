@@ -1,6 +1,8 @@
 .playlistCard {
   border: 1px solid var(--bg-card);
   border-radius: 10px;
+  width: 100%;
+  min-width: 0;
 }
 .playlistCard:hover {
   cursor: pointer;
@@ -9,8 +11,15 @@
 .playlistBox {
   display: flex;
   position: relative;
+  width: 100%;
+  min-width: 0;
 }
-
+.playlistBox img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
 .editPlaylist {
   position: absolute;
   top: 8px;

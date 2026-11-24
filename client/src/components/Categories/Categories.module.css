@@ -59,4 +59,29 @@
   .categories {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .sectionHead {
+    box-sizing: border-box;
+    width: 100%;
+    gap: 12px;
+    margin: 32px 0 16px;
+    padding: 0 16px;
+  }
+
+  .sectionTitleBox {
+    align-items: flex-start;
+  }
+
+  .eyebrow {
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+  }
+
+  .sectionTitle {
+    font-size: clamp(1.5rem, 6vw, 1.875rem);
+  }
+
+  .sectionLink {
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
 }

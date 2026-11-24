@@ -7,6 +7,7 @@ import Songs from "../../components/Songs/Songs";
 import Logo from "../../components/Logo/Logo";
 import DropDownComponent from "../../components/DropDownComponent/DropDownComponent";
 import SideBar from "../../components/SideBar/SideBar";
+import NavBar from "../../components/NavBar/NavBar";
 function RecentSongs() {
   //History states
   const [recentSongs, setRecentSongs] = useState([]);
@@ -39,8 +40,9 @@ function RecentSongs() {
 
   return (
     <div>
-      <header className="header">
+      <header className="header homeHeader">
         <Logo />
+        <NavBar />
         <DropDownComponent />
       </header>
       <SideBar />

@@ -154,10 +154,6 @@
     padding: 26px 22px 22px;
   }
 
-  .modalActions {
-    flex-direction: column-reverse;
-  }
-
   .cancelButton,
   .deleteButton {
     width: 100%;

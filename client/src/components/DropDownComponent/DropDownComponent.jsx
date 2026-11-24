@@ -1,4 +1,3 @@
-// /* eslint-disable react/prop-types */
 import styles from "./DropDownComponent.module.css";
 import { useNavigate } from "react-router";
 import axios from "axios";
@@ -7,15 +6,17 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
+import { usePlayerStore } from "../../hooks/usePlayerStore";
 function DropDownComponent() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-
+  const closePlayer = usePlayerStore((s) => s.closePlayer);
   async function handleLogout() {
     try {
       const response = await axios.get(`/auth/logout`);
       if (response.status === 204) {
         setUser(null);
+        closePlayer();
         navigate("/login", { replace: true });
         toast.success("Logout successful!", { duration: 2000 });
       }

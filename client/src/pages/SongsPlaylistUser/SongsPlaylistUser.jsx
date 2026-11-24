@@ -10,6 +10,7 @@ import UserContext from "../../Contexts/UserContext";
 
 import axios from "axios";
 import SideBar from "../../components/SideBar/SideBar.jsx";
+import NavBar from "../../components/NavBar/NavBar.jsx";
 
 function SongsPlaylistUser() {
   const { user, setUser } = useContext(UserContext);
@@ -90,8 +91,9 @@ function SongsPlaylistUser() {
       <removeBtn.Provider
         value={{ label: "Remove from Playlist", playlistId: playlistId }}
       >
-        <header className="header">
+        <header className="header homeHeader">
           <Logo />
+          <NavBar />
           <DropDownComponent />
         </header>
         <SideBar />

@@ -16,6 +16,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import DeleteAccount from "../../components/DeleteAccount/DeleteAccount";
 import { Card } from "@heroui/react";
 import { ArrowRight, Upload, User } from "lucide-react";
+import NavBar from "../../components/NavBar/NavBar";
 function Profile() {
   const { user, setUser } = useContext(UserContext);
   //Avatar states
@@ -84,8 +85,9 @@ function Profile() {
   const currentAvatar = avatarPreview || user.avatar;
   return (
     <div className="app-container">
-      <header className="header">
+      <header className="header homeHeader">
         <Logo />
+        <NavBar />
         <DropDownComponent />
       </header>
       <SideBar />

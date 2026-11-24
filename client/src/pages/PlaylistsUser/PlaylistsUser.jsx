@@ -15,6 +15,7 @@ import { removePlaylist, updatePlaylist } from "../../utils/playlist.js";
 import styles from "./PlaylistsUser.module.css";
 import Button from "../../components/Button/Button.jsx";
 import { createPlaylist } from "../../utils/playlist.js";
+import NavBar from "../../components/NavBar/NavBar.jsx";
 
 function PlaylistsUser() {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -164,8 +165,9 @@ function PlaylistsUser() {
 
   return (
     <div>
-      <header className="header">
+      <header className="header homeHeader">
         <Logo />
+        <NavBar />
         <DropDownComponent />
       </header>
       <SideBar />

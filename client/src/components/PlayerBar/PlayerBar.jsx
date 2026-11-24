@@ -11,6 +11,7 @@ function PlayerBar() {
   const prev = usePlayerStore((s) => s.prev);
   const closePlayer = usePlayerStore((s) => s.closePlayer);
   const { user } = useContext(UserContext);
+
   useEffect(() => {
     async function addingSongToHistory() {
       await addSongToHistory(user, song);

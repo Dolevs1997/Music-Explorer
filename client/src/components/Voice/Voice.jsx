@@ -1,4 +1,3 @@
-import styles from "./Voice.module.css";
 import { SearchContext } from "../../Contexts/SearchContext";
 import { getSongSuggestions } from "../../services/OpenAI_service";
 import { createVoiceRecognition } from "../../utils/voice_search_song";
@@ -146,7 +145,7 @@ function Voice() {
   );
 
   return (
-    <nav className={styles.voiceTool}>
+    <nav className="voice-tool">
       <NavDropdown
         className="settingsInput"
         title={SPEECH_RECOGNITION_LANGUAGES[selectedLanguage]}

@@ -181,3 +181,120 @@
   align-items: center;
   gap: 24px;
 }
+@media (max-width: 640px) {
+  .is-open {
+    position: fixed;
+    bottom: 200px;
+    left: 0;
+    z-index: 99;
+  }
+  .cp__card {
+    box-sizing: border-box;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .cp__card > button:first-child,
+  .cp__card > .options-btn {
+    position: absolute;
+    top: 8px;
+    z-index: 1;
+  }
+
+  .cp__card > button:first-child {
+    left: 12px;
+  }
+
+  .cp__card > .options-btn {
+    right: 12px;
+  }
+
+  .cp__controls {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-areas:
+      "repeat info"
+      "actions actions"
+      "progress progress"
+      "volume volume"
+      "playlist playlist";
+    gap: 8px 10px;
+    margin-top: 36px;
+  }
+
+  .cp__controls > button:first-child {
+    grid-area: repeat;
+  }
+
+  .cp__controls > div:nth-child(2) {
+    grid-area: info;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .cp__controls > div:nth-child(2) img {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    object-fit: cover;
+  }
+
+  .cp__controls > div:nth-child(2) span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cp__transport,
+  .controllerBox {
+    display: contents;
+  }
+
+  .controllers {
+    grid-area: actions;
+    justify-content: center;
+    gap: clamp(16px, 8vw, 36px);
+    margin: 0;
+  }
+
+  .cp__progress {
+    grid-area: progress;
+    gap: 8px;
+  }
+
+  .cp__time {
+    min-width: 38px;
+    font-size: 13px;
+  }
+
+  .cp__volume {
+    grid-area: volume;
+    justify-content: center;
+  }
+
+  .link-playlist {
+    grid-area: playlist;
+    justify-self: center;
+  }
+}
+@media (max-width: 380px) {
+  .cp__card {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .cp__progress {
+    gap: 5px;
+  }
+
+  .cp__time {
+    min-width: 34px;
+    font-size: 12px;
+  }
+
+  .cp__volume .cp__range {
+    width: 64px;
+  }
+}
